@@ -1,0 +1,14 @@
+{
+  "name": "ficha-dnd-5e",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test":  "node tests/run-tests.mjs",
+    "check": "node --check src/app.js && node --check src/wizard.js && node --check src/state.js",
+    "serve": "python3 -m http.server 8080"
+  },
+  "devDependencies": {
+    "playwright": "^1.50.0"
+  }
+}

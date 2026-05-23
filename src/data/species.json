@@ -1,0 +1,244 @@
+[
+  {
+    "id": "Enano",
+    "nombre": "Enano",
+    "speed": 7.5,
+    "vision": "Oscuridad 18m",
+    "abilityBonus": { "CON": 2 },
+    "traits": [
+      "Resistencia al veneno (ventaja en TS y resistencia al daño por veneno)",
+      "Entrenamiento de combate enano (hachas de batalla, hachas de mano, martillos ligeros, martillos de guerra)",
+      "Conocimiento de la piedra (bonificador doble en Historia sobre piedra o trabajos de albañilería)",
+      "Competencia en 1 herramienta de artesano (a elección)"
+    ],
+    "languages": ["Común", "Enano"],
+    "subraces": [
+      {
+        "id": "Enano de Colinas",
+        "nombre": "Enano de Colinas",
+        "abilityBonus": { "WIS": 1 },
+        "traits": ["+1 PG adicional por nivel (en total a 0)"],
+        "desc": "Más sabios y aguantadores, conocidos por su tesón y buen ojo."
+      },
+      {
+        "id": "Enano de Montañas",
+        "nombre": "Enano de Montañas",
+        "abilityBonus": { "STR": 2 },
+        "traits": ["Competencia con armadura ligera y media"],
+        "desc": "Fuertes y entrenados en el arte de la guerra desde tierna edad."
+      }
+    ],
+    "desc": "Raza antigua forjada bajo tierra. Resistentes, hábiles artesanos y férreos guerreros."
+  },
+  {
+    "id": "Elfo",
+    "nombre": "Elfo",
+    "speed": 9,
+    "vision": "Oscuridad 18m",
+    "abilityBonus": { "DEX": 2 },
+    "traits": [
+      "Ancestro feérico (ventaja en TS contra ser hechizado; inmune a magia de sueño)",
+      "Trance (no duermes; meditas 4h para obtener los efectos de un descanso largo)",
+      "Sentidos aguzados (competencia en Percepción)"
+    ],
+    "languages": ["Común", "Élfico"],
+    "subraces": [
+      {
+        "id": "Elfo Alto",
+        "nombre": "Elfo Alto",
+        "abilityBonus": { "INT": 1 },
+        "traits": [
+          "Entrenamiento con armas élficas (espadas largas, estoques, arcos cortos, arcos largos)",
+          "1 truco de mago (INT es el atributo)",
+          "+1 idioma a elección"
+        ],
+        "desc": "Dotados de mente aguda y maestría arcana. Comunes en las ciudades élfica."
+      },
+      {
+        "id": "Elfo de los Bosques",
+        "nombre": "Elfo de los Bosques",
+        "abilityBonus": { "WIS": 1 },
+        "speed": 10.5,
+        "traits": [
+          "Entrenamiento con armas élficas (espadas largas, estoques, arcos cortos, arcos largos)",
+          "Máscara del bosque (esconderse incluso cuando solo ligeramente oscurecido por follaje, lluvia, nieve, niebla o fenómenos naturales)",
+          "Velocidad 10.5m"
+        ],
+        "desc": "Sigilosos y ágiles. Guardianes de los bosques, maestros del camouflaje y la flecha."
+      },
+      {
+        "id": "Drow",
+        "nombre": "Drow (Elfo Oscuro)",
+        "abilityBonus": { "CHA": 1 },
+        "vision": "Oscuridad superior 36m",
+        "traits": [
+          "Visión superior en la oscuridad (36m)",
+          "Sensibilidad a la luz solar (desventaja en ataques y Percepción bajo luz solar directa)",
+          "Magia drow: Luces danzantes (truco). Fuego de hadas (nivel 3). Oscuridad (nivel 5).",
+          "Entrenamiento con armas drow (estoques, ballesta de mano, espadas cortas)"
+        ],
+        "desc": "Elfos de la oscuridad subterránea. Portadores de magia innata pero malditos por Corellon."
+      }
+    ],
+    "desc": "Seres de gracia sobrenatural, larga vida y lazos con la naturaleza y la magia. Nunca duermen, sino que meditan."
+  },
+  {
+    "id": "Mediano",
+    "nombre": "Mediano",
+    "speed": 7.5,
+    "vision": "Normal",
+    "abilityBonus": { "DEX": 2 },
+    "traits": [
+      "Suerte (cuando sacas 1 en d20, puedes relanzar y debes usar el nuevo resultado)",
+      "Valiente (ventaja en TS contra ser asustado)",
+      "Agilidad de mediano (puedes moverte por el espacio de criaturas de talla mayor)"
+    ],
+    "languages": ["Común", "Mediano"],
+    "subraces": [
+      {
+        "id": "Mediano Pie Ligero",
+        "nombre": "Mediano Pie Ligero",
+        "abilityBonus": { "CHA": 1 },
+        "traits": ["Naturalmente sigiloso (puedes intentar esconderte detrás de criaturas de talla mayor)"],
+        "desc": "Sociables y nómadas. Prefieren la diplomacia y el sigilo al combate."
+      },
+      {
+        "id": "Mediano Robusto",
+        "nombre": "Mediano Robusto",
+        "abilityBonus": { "CON": 1 },
+        "traits": ["Resiliencia robusta (ventaja en TS contra veneno; resistencia al daño por veneno)"],
+        "desc": "Más duros y saludables. Se adaptan a climas extremos y resisten bien las enfermedades."
+      }
+    ],
+    "desc": "Pequeños y ágiles, con pies grandes y peludos. Afortunados por naturaleza y sorprendentemente valientes."
+  },
+  {
+    "id": "Humano",
+    "nombre": "Humano",
+    "speed": 9,
+    "vision": "Normal",
+    "abilityBonus": {},
+    "traits": [],
+    "languages": ["Común", "+1 idioma a elección"],
+    "subraces": [
+      {
+        "id": "Humano Estándar",
+        "nombre": "Humano Estándar",
+        "abilityBonus": { "STR": 1, "DEX": 1, "CON": 1, "INT": 1, "WIS": 1, "CHA": 1 },
+        "traits": ["+1 a todos los atributos", "1 idioma adicional a elección"],
+        "desc": "La opción clásica. Sube todos los atributos +1 y aprende un idioma extra."
+      },
+      {
+        "id": "Humano Variante",
+        "nombre": "Humano Variante",
+        "abilityBonus": { "_choose2": 1 },
+        "traits": ["+1 a dos atributos a elección", "1 competencia en habilidad a elección", "1 dote a elección"],
+        "desc": "Versión flexible: elige tus bonificadores, una habilidad y una dote. Requiere aprobación del DM."
+      }
+    ],
+    "desc": "La raza más versátil y adaptable. Su ambición y variedad los hace presentes en todos los rincones del mundo."
+  },
+  {
+    "id": "Dracónido",
+    "nombre": "Dracónido",
+    "speed": 9,
+    "vision": "Normal",
+    "abilityBonus": { "STR": 2, "CHA": 1 },
+    "traits": [
+      "Arma de soplo: según ancestro — usa acción, TS DEX o CON CD (8 + comp + mod CON); daño 2d6 (escala por nivel: 3d6 nv.6, 4d6 nv.11, 5d6 nv.16); 1 vez por descanso corto/largo",
+      "Resistencia al daño del tipo de tu ancestro dracónico"
+    ],
+    "languages": ["Común", "Dracónico"],
+    "subraces": [
+      { "id": "Ancestro Negro",   "nombre": "Negro  (Ácido)",      "traits": ["Soplo: línea 1.5×9m — TS DEX. Resistencia al ácido."],      "desc": "Dragones negros, señores de los pantanos. Soplo de ácido corrosivo." },
+      { "id": "Ancestro Azul",    "nombre": "Azul  (Relámpago)",   "traits": ["Soplo: línea 1.5×9m — TS DEX. Resistencia al relámpago."],   "desc": "Dragones del desierto. Soplo de relámpago devastador." },
+      { "id": "Ancestro Cobre",   "nombre": "Cobre  (Ácido)",      "traits": ["Soplo: línea 1.5×9m — TS DEX. Resistencia al ácido."],       "desc": "Dragones traviesos y bromistas. Soplo de ácido." },
+      { "id": "Ancestro Dorado",  "nombre": "Dorado  (Fuego)",     "traits": ["Soplo: cono 4.5m — TS DEX. Resistencia al fuego."],          "desc": "Los más nobles de los dragones metálicos. Soplo de fuego cegador." },
+      { "id": "Ancestro Latón",   "nombre": "Latón  (Fuego)",      "traits": ["Soplo: línea 1.5×9m — TS DEX. Resistencia al fuego."],       "desc": "Dragones parlanchines y amigables. Soplo de fuego en línea." },
+      { "id": "Ancestro Plateado","nombre": "Plateado  (Frío)",    "traits": ["Soplo: cono 4.5m — TS CON. Resistencia al frío."],           "desc": "Dragones guardianes. Soplo de frío paralizante." },
+      { "id": "Ancestro Bronce",  "nombre": "Bronce  (Relámpago)", "traits": ["Soplo: línea 1.5×9m — TS DEX. Resistencia al relámpago."],   "desc": "Dragones curiosos y aventureros. Soplo de relámpago." },
+      { "id": "Ancestro Verde",   "nombre": "Verde  (Veneno)",     "traits": ["Soplo: cono 4.5m — TS CON. Resistencia al veneno."],         "desc": "Dragones manipuladores del bosque. Soplo de nube venenosa." },
+      { "id": "Ancestro Rojo",    "nombre": "Rojo  (Fuego)",       "traits": ["Soplo: cono 4.5m — TS DEX. Resistencia al fuego."],          "desc": "Los más temidos de todos. Soplo de llamas ardientes." },
+      { "id": "Ancestro Blanco",  "nombre": "Blanco  (Frío)",      "traits": ["Soplo: cono 4.5m — TS CON. Resistencia al frío."],           "desc": "Dragones primitivos de las regiones árticas. Soplo de frío." }
+    ],
+    "desc": "Orgullosos humanoides de linaje dracónico. Portadores de un soplo devastador y resistencia elemental."
+  },
+  {
+    "id": "Gnomo",
+    "nombre": "Gnomo",
+    "speed": 7.5,
+    "vision": "Oscuridad 18m",
+    "abilityBonus": { "INT": 2 },
+    "traits": [
+      "Astucia gnómica (ventaja en TS de INT, SAB y CAR contra magia)"
+    ],
+    "languages": ["Común", "Gnómico"],
+    "subraces": [
+      {
+        "id": "Gnomo de las Rocas",
+        "nombre": "Gnomo de las Rocas",
+        "abilityBonus": { "CON": 1 },
+        "traits": [
+          "Saber del artífice (ventaja doble en Historia sobre objetos mágicos, alquimia e inventos gnómicos)",
+          "Manitas (creas pequeños autómatas, relojes y mecanismos simples)"
+        ],
+        "desc": "Inventores compulsivos. Aman los engranajes, los gadgets y las explosiones accidentales."
+      },
+      {
+        "id": "Gnomo de los Bosques",
+        "nombre": "Gnomo de los Bosques",
+        "abilityBonus": { "DEX": 1 },
+        "traits": [
+          "Ilusionista natural (truco Ilusión Menor; INT es el atributo)",
+          "Hablar con animales pequeños (comunicación básica con bestias de talla Pequeña o menor)"
+        ],
+        "desc": "Amantes de la naturaleza y la ilusión. Se ocultan en los bosques y conversan con ardillas."
+      }
+    ],
+    "desc": "Pequeños e ingeniosos, con una chispa de magia y una curiosidad insaciable por el mundo."
+  },
+  {
+    "id": "Semi-Elfo",
+    "nombre": "Semi-Elfo",
+    "speed": 9,
+    "vision": "Oscuridad 18m",
+    "abilityBonus": { "CHA": 2, "_choose2": 1 },
+    "traits": [
+      "+2 CAR y +1 a dos atributos a elección (no CAR)",
+      "Ancestro feérico (ventaja en TS contra ser hechizado; inmune a magia de sueño)",
+      "2 competencias en habilidades a elección"
+    ],
+    "languages": ["Común", "Élfico", "+1 idioma a elección"],
+    "subraces": [],
+    "desc": "Entre dos mundos: aceptados por ambas razas, pero plenamente de ninguna. Carismáticos y adaptables."
+  },
+  {
+    "id": "Semi-Orco",
+    "nombre": "Semi-Orco",
+    "speed": 9,
+    "vision": "Oscuridad 18m",
+    "abilityBonus": { "STR": 2, "CON": 1 },
+    "traits": [
+      "Amenazador (competencia en Intimidar)",
+      "Aguante implacable (cuando caes a 0 PG pero no mueres, en su lugar quedas en 1 PG; 1 vez por descanso largo)",
+      "Ataques salvajes (en un crítico cuerpo a cuerpo, añade 1 dado de daño extra del arma)"
+    ],
+    "languages": ["Común", "Orco"],
+    "subraces": [],
+    "desc": "La fuerza del orco y la determinación humana. Sobrevivientes por naturaleza."
+  },
+  {
+    "id": "Tiefling",
+    "nombre": "Tiefling",
+    "speed": 9,
+    "vision": "Oscuridad 18m",
+    "abilityBonus": { "INT": 1, "CHA": 2 },
+    "traits": [
+      "Resistencia infernal (resistencia al daño por fuego)",
+      "Legado infernal: Taumaturgia (truco). Reprensión Infernal (nivel 3, 1/descanso largo). Oscuridad (nivel 5, 1/descanso largo)."
+    ],
+    "languages": ["Común", "Infernal"],
+    "subraces": [],
+    "desc": "Marcados por un pacto diabólico ancestral. Portadores de magia oscura innata y una belleza inquietante."
+  }
+]

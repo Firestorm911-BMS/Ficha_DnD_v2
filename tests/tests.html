@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Tests RAW — Ficha D&D 5e</title>
+  <style>
+    body { font-family: monospace; background: #0d1117; color: #c9d1d9; padding: 24px; margin: 0; }
+    h1   { color: #c9a84c; font-size: 18px; border-bottom: 1px solid #30363d; padding-bottom: 8px; }
+    h2   { color: #8b949e; font-size: 13px; margin: 20px 0 4px; text-transform: uppercase; letter-spacing: 1px; }
+    .pass { color: #3fb950; }
+    .fail { color: #f85149; }
+    .skip { color: #8b949e; }
+    .result { font-size: 13px; padding: 2px 0; }
+    #summary { margin-top: 20px; font-size: 14px; border-top: 1px solid #30363d; padding-top: 12px; }
+    #log     { font-size: 11px; color: #8b949e; margin-top: 16px; white-space: pre-wrap; }
+  </style>
+</head>
+<body>
+  <h1>Tests RAW — Ficha D&D 5e</h1>
+  <p style="font-size:12px;color:#8b949e;">
+    Ejecutar con: <code>python3 -m http.server 8080</code> desde la raíz del proyecto<br>
+    Abrir: <code>http://localhost:8080/tests/tests.html</code>
+  </p>
+
+  <!-- DOM mínimo para funciones que leen el DOM -->
+  <div style="display:none">
+    <input id="score-STR" value="10">
+    <input id="score-DEX" value="16">
+    <input id="score-CON" value="14">
+    <input id="score-INT" value="10">
+    <input id="score-WIS" value="12">
+    <input id="score-CHA" value="8">
+    <span  id="hpCurrent">0</span>
+    <span  id="hpMax">20</span>
+    <span  id="hpTemp">0</span>
+    <span  id="statAC">10</span>
+    <span  id="armorCalcDetail"></span>
+    <div   id="deathSavesContainer"></div>
+    <!-- Para shortRest: necesita .hero-pill[data-field="class"] .meta-value -->
+    <div class="hero-pill" data-field="class">
+      <span class="meta-value" id="test-class-meta">Druida</span>
+    </div>
+  </div>
+
+  <div id="results"></div>
+  <div id="summary"></div>
+  <pre id="log"></pre>
+
+  <!-- app.js como módulo — expone sus globals en window vía el bridge -->
+  <script type="module" src="../src/app.js"></script>
+
+  <script type="module">
+    import { state } from '../src/state.js';
+
+    const out     = document.getElementById('results');
+    const sumEl   = document.getElementById('summary');
+    const logEl   = document.getElementById('log');
+    let passed = 0, failed = 0, skipped = 0;
+    const logs = [];
+
+    function section(name) {
+      const h = document.createElement('h2');
+      h.textContent = name;
+      out.appendChild(h);
+    }
+
+    function test(name, fn) {
+      const div = document.createElement('div');
+      div.className = 'result';
+      try {
+        fn();
+        div.className += ' pass';
+        div.textContent = `✓ ${name}`;
+        passed++;
+      } catch (e) {
+        div.className += ' fail';
+        div.textContent = `✗ ${name}: ${e.message}`;
+        logs.push(`FAIL [${name}]: ${e.stack || e.message}`);
+        failed++;
+      }
+      out.appendChild(div);
+    }
+
+    function skip(name, reason) {
+      const div = document.createElement('div');
+      div.className = 'result skip';
+      div.textContent = `– ${name}  (${reason})`;
+      out.appendChild(div);
+      skipped++;
+    }
+
+    function assert(cond, msg) {
+      if (!cond) throw new Error(msg || 'Assertion failed');
+    }
+
+    function assertEqual(a, b, msg) {
+      if (a !== b) throw new Error(msg || `Expected ${JSON.stringify(b)}, got ${JSON.stringify(a)}`);
+    }
+
+    // ─────────────────────────────────────────────
+    //  Acceso a funciones vía window bridge
+    // ─────────────────────────────────────────────
+    const {
+      _syncPactSlots, pactSlotsState,
+      normalizeAttack,
+      getRageDamageBonus,
+      CHARACTER_STATE,
+      computeSpellSlots,
+      shortRest,
+      spellSlotsState,
+      migrateState,
+      parseEquipmentLine,
+      PROF_BONUS_TABLE,
+    } = window;
+
+    const allLoaded = typeof _syncPactSlots === 'function'
+                   && typeof normalizeAttack === 'function'
+                   && typeof getRageDamageBonus === 'function'
+                   && typeof migrateState === 'function'
+                   && typeof parseEquipmentLine === 'function';
+
+    if (!allLoaded) {
+      out.innerHTML = '<p style="color:#f85149">ERROR: Las funciones de app.js no están disponibles en window.<br>Verifica que el servidor esté corriendo y que app.js cargó correctamente.</p>';
+    } else {
+
+      // ══════════════════════════════════════════
+      //  BRUJO — Espacios de Pacto (CODEX-01)
+      // ══════════════════════════════════════════
+      section('Brujo — Espacios de Pacto (CODEX-01)');
+
+      test('Brujo nv1: pactSlotsState.max === 1', () => {
+        window._syncPactSlots('Brujo 1');
+        assertEqual(window.pactSlotsState.max, 1);
+      });
+
+      test('Brujo nv1: pactSlotsState.level === 1', () => {
+        window._syncPactSlots('Brujo 1');
+        assertEqual(window.pactSlotsState.level, 1);
+      });
+
+      test('Brujo nv5: pactSlotsState.level === 3', () => {
+        window._syncPactSlots('Brujo 5');
+        assertEqual(window.pactSlotsState.level, 3);
+      });
+
+      test('Brujo nv5: pactSlotsState.max === 2', () => {
+        window._syncPactSlots('Brujo 5');
+        assertEqual(window.pactSlotsState.max, 2);
+      });
+
+      test('Brujo nv11: pactSlotsState.level === 5', () => {
+        window._syncPactSlots('Brujo 11');
+        assertEqual(window.pactSlotsState.level, 5);
+      });
+
+      test('No-Brujo: pactSlotsState.max === 0', () => {
+        window._syncPactSlots('Mago 5');
+        assertEqual(window.pactSlotsState.max, 0);
+      });
+
+      // ══════════════════════════════════════════
+      //  normalizeAttack — bonus string → number (BUG-02)
+      // ══════════════════════════════════════════
+      section('normalizeAttack — BUG-02');
+
+      test('attackBonus "3" → 3', () => {
+        const atk = window.normalizeAttack({ attackBonus: '3' });
+        assertEqual(atk.attackBonus, 3);
+      });
+
+      test('attackBonus "+3" → 3', () => {
+        const atk = window.normalizeAttack({ attackBonus: '+3' });
+        assertEqual(atk.attackBonus, 3);
+      });
+
+      test('attackBonus -2 (number) → -2', () => {
+        const atk = window.normalizeAttack({ attackBonus: -2 });
+        assertEqual(atk.attackBonus, -2);
+      });
+
+      test('attackBonus null → null', () => {
+        const atk = window.normalizeAttack({ attackBonus: null });
+        assertEqual(atk.attackBonus, null);
+      });
+
+      test('sin attackBonus → null', () => {
+        const atk = window.normalizeAttack({});
+        assertEqual(atk.attackBonus, null);
+      });
+
+      // ══════════════════════════════════════════
+      //  getRageDamageBonus — CODEX-07
+      // ══════════════════════════════════════════
+      section('getRageDamageBonus — CODEX-07');
+
+      test('Furia activa + CaC STR → bono > 0', () => {
+        window.rageActive = true;
+        window.CHARACTER_STATE.classResource = { damageBonus: 2, physResist: true, name: 'Furia', recovery: 'long' };
+        const bonus = window.getRageDamageBonus({ melee: true });
+        assert(bonus > 0, `bonus debe ser > 0, got ${bonus}`);
+        window.rageActive = false;
+      });
+
+      test('Furia activa + CaC DEX (finesse) → bono === 0', () => {
+        window.rageActive = true;
+        window.CHARACTER_STATE.classResource = { damageBonus: 2, physResist: true, name: 'Furia', recovery: 'long' };
+        const bonus = window.getRageDamageBonus({ ability: 'DEX', melee: true });
+        assertEqual(bonus, 0);
+        window.rageActive = false;
+      });
+
+      test('Furia activa + ataque a distancia → bono === 0', () => {
+        window.rageActive = true;
+        window.CHARACTER_STATE.classResource = { damageBonus: 2, physResist: true, name: 'Furia', recovery: 'long' };
+        const bonus = window.getRageDamageBonus({ melee: false });
+        assertEqual(bonus, 0);
+        window.rageActive = false;
+      });
+
+      test('Sin furia + CaC STR → bono === 0', () => {
+        window.rageActive = false;
+        window.CHARACTER_STATE.classResource = { damageBonus: 2, physResist: true, name: 'Furia', recovery: 'long' };
+        const bonus = window.getRageDamageBonus({ melee: true });
+        assertEqual(bonus, 0);
+      });
+
+      // ══════════════════════════════════════════
+      //  computeSpellSlots — slots por clase
+      // ══════════════════════════════════════════
+      section('computeSpellSlots — tablas RAW');
+
+      test('Mago 1: ranura nv1 = 2', () => {
+        const slots = window.computeSpellSlots('Mago 1');
+        assertEqual(slots[1].max, 2);
+      });
+
+      test('Mago 5: ranura nv3 = 2', () => {
+        const slots = window.computeSpellSlots('Mago 5');
+        assertEqual(slots[3].max, 2);
+      });
+
+      test('Paladín 2: ranura nv1 = 2', () => {
+        const slots = window.computeSpellSlots('Paladín 2');
+        assertEqual(slots[1].max, 2);
+      });
+
+      test('Paladín 1: sin ranuras (medio-lanzador nv1)', () => {
+        const slots = window.computeSpellSlots('Paladín 1');
+        assert(slots === null || !slots || Object.values(slots).every(s => s.max === 0),
+          'Paladín nv1 no debe tener ranuras');
+      });
+
+      test('Brujo 5: computeSpellSlots retorna null (pool separado)', () => {
+        const slots = window.computeSpellSlots('Brujo 5');
+        assertEqual(slots, null);
+      });
+
+      test('Druida 5: ranura nv3 = 2', () => {
+        const slots = window.computeSpellSlots('Druida 5');
+        assertEqual(slots[3].max, 2);
+      });
+
+      // ══════════════════════════════════════════
+      //  Daño a 0 PG — CODEX-09
+      // ══════════════════════════════════════════
+      section('applyDamageAmount a 0 PG — CODEX-09');
+
+      test('Daño a 0 PG: fallo de death save +1', () => {
+        // Setup: personaje a 0 PG
+        document.getElementById('hpCurrent').textContent = '0';
+        document.getElementById('hpMax').textContent = '20';
+        document.getElementById('hpTemp').textContent = '0';
+        window.CHARACTER_STATE.deathSaves = { s: 0, f: 0 };
+        window.applyDamageAmount(5);
+        assertEqual(window.CHARACTER_STATE.deathSaves.f, 1);
+      });
+
+      test('Daño ≥ PG máx a 0 PG: 3 fallos (muerte instantánea)', () => {
+        document.getElementById('hpCurrent').textContent = '0';
+        document.getElementById('hpMax').textContent = '20';
+        document.getElementById('hpTemp').textContent = '0';
+        window.CHARACTER_STATE.deathSaves = { s: 0, f: 0 };
+        window.applyDamageAmount(20);
+        assertEqual(window.CHARACTER_STATE.deathSaves.f, 3);
+      });
+
+      test('Daño crítico a 0 PG: +2 fallos', () => {
+        document.getElementById('hpCurrent').textContent = '0';
+        document.getElementById('hpMax').textContent = '20';
+        document.getElementById('hpTemp').textContent = '0';
+        window.CHARACTER_STATE.deathSaves = { s: 0, f: 0 };
+        window.applyDamageAmount(5, { critical: true });
+        assertEqual(window.CHARACTER_STATE.deathSaves.f, 2);
+      });
+
+      // ══════════════════════════════════════════
+      //  CA — Defensa sin armadura (CODEX-05)
+      // ══════════════════════════════════════════
+      section('updateArmorClass — CODEX-05');
+
+      test('Estándar sin equipo: CA = 10 + DEX mod (10 + 3 = 13)', () => {
+        // DEX 16 → mod +3
+        document.getElementById('score-DEX').value = '16';
+        window.inventory = [];
+        window.CHARACTER_STATE.unarmedDefFormula = 'standard';
+        const ca = window.updateArmorClass();
+        assertEqual(ca, 13);
+      });
+
+      test('Monje DES+3/SAB+1 sin equipo: CA = 10+3+1 = 14', () => {
+        document.getElementById('score-DEX').value = '16';
+        document.getElementById('score-WIS').value = '12';
+        window.inventory = [];
+        window.CHARACTER_STATE.unarmedDefFormula = 'monk';
+        const ca = window.updateArmorClass();
+        assertEqual(ca, 14);
+      });
+
+      test('Monje con escudo: usa CA estándar + escudo (NO fórmula Monje)', () => {
+        document.getElementById('score-DEX').value = '16'; // mod +3
+        document.getElementById('score-WIS').value = '12'; // mod +1
+        window.inventory = [{ type: 'shield', equipped: true, qty: 1, acBonus: 2 }];
+        window.CHARACTER_STATE.unarmedDefFormula = 'monk';
+        const ca = window.updateArmorClass();
+        // CA estándar 10+3=13 + escudo 2 = 15, NO 10+3+1+2=16
+        assertEqual(ca, 15);
+      });
+
+      test('Bárbaro DES+2/CON+3 sin equipo: CA = 10+2+3 = 15', () => {
+        document.getElementById('score-DEX').value = '14'; // mod +2
+        document.getElementById('score-CON').value = '16'; // mod +3
+        window.inventory = [];
+        window.CHARACTER_STATE.unarmedDefFormula = 'barbarian';
+        const ca = window.updateArmorClass();
+        assertEqual(ca, 15);
+      });
+
+      test('Bárbaro con armadura media (CA 14, dex limit 2): no usa fórmula bárbaro', () => {
+        document.getElementById('score-DEX').value = '14'; // mod +2
+        document.getElementById('score-CON').value = '16'; // mod +3
+        window.inventory = [{ type: 'armor', equipped: true, qty: 1, acBase: 14, dexLimit: 2, acBonus: 0 }];
+        window.CHARACTER_STATE.unarmedDefFormula = 'barbarian';
+        const ca = window.updateArmorClass();
+        assertEqual(ca, 16); // armadura 14 + dex min(2,2) = 16, bárbaro sería 15 — armadura gana
+      });
+
+      // ══════════════════════════════════════════
+      //  migrateState — schema v1→v2
+      // ══════════════════════════════════════════
+      section('migrateState — schema v1→v2');
+
+      test('save v1 sin deathSaves → añade {s:0,f:0}', () => {
+        const r = migrateState({ version: 1 });
+        assert(r.deathSaves?.s === 0 && r.deathSaves?.f === 0, 'deathSaves debe ser {s:0,f:0}');
+      });
+
+      test('save sin version → se trata como v1 y sube a 2', () => {
+        const r = migrateState({});
+        assertEqual(r.version, 2);
+      });
+
+      test('save v2 → no sobreescribe campos existentes', () => {
+        const r = migrateState({ version: 2, conditions: ['poisoned'] });
+        assertEqual(r.conditions[0], 'poisoned');
+      });
+
+      test('save v1 → rageActive se inicializa a false', () => {
+        const r = migrateState({ version: 1 });
+        assertEqual(r.rageActive, false);
+      });
+
+      test('save v1 → unarmedDefFormula se inicializa a "standard"', () => {
+        const r = migrateState({ version: 1 });
+        assertEqual(r.unarmedDefFormula, 'standard');
+      });
+
+      // ══════════════════════════════════════════
+      //  shortRest — recuperación selectiva
+      // ══════════════════════════════════════════
+      section('shortRest — recuperación selectiva de slots (BUG-01)');
+
+      function setupRestTest(className, slotsUsed) {
+        document.querySelector('.hero-pill[data-field="class"] .meta-value').textContent = className;
+        window.spellSlotsState[1] = { max: 4, used: slotsUsed };
+      }
+
+      test('Druida: shortRest NO toca slots de conjuro', () => {
+        const origConfirm = window.confirm;
+        window.confirm = () => true;
+        setupRestTest('Druida', 2);
+        window.shortRest();
+        window.confirm = origConfirm;
+        assertEqual(window.spellSlotsState[1].used, 2);
+      });
+
+      test('Clérigo: shortRest NO toca slots de conjuro', () => {
+        const origConfirm = window.confirm;
+        window.confirm = () => true;
+        setupRestTest('Clérigo', 3);
+        window.shortRest();
+        window.confirm = origConfirm;
+        assertEqual(window.spellSlotsState[1].used, 3);
+      });
+
+      test('Guerrero: shortRest NO toca slots de conjuro', () => {
+        const origConfirm = window.confirm;
+        window.confirm = () => true;
+        setupRestTest('Guerrero', 1);
+        window.shortRest();
+        window.confirm = origConfirm;
+        assertEqual(window.spellSlotsState[1].used, 1);
+      });
+
+      test('Brujo: shortRest sí restaura espacios de pacto', () => {
+        const origConfirm = window.confirm;
+        window.confirm = () => true;
+        window._syncPactSlots('Brujo 5');
+        window.pactSlotsState.used = 2;
+        window.shortRest();
+        window.confirm = origConfirm;
+        assertEqual(window.pactSlotsState.used, 0);
+      });
+
+      // ══════════════════════════════════════════
+      //  parseEquipmentLine — parser de equipo
+      // ══════════════════════════════════════════
+      section('parseEquipmentLine — parser de equipo (CODEX-04)');
+
+      test('"X o Y" → type radio, 2 opciones', () => {
+        const r = parseEquipmentLine('Hacha grande o cualquier arma marcial CaC');
+        assertEqual(r.type, 'radio');
+        assertEqual(r.options.length, 2);
+        assertEqual(r.options[0], 'Hacha grande');
+      });
+
+      test('"X y Y" sin " o " → type check, 1 opción', () => {
+        const r = parseEquipmentLine('Paquete de explorador y cuatro jabalinas');
+        assertEqual(r.type, 'check');
+        assertEqual(r.options.length, 1);
+      });
+
+      test('"A o B o C" → 3 opciones', () => {
+        const r = parseEquipmentLine('Maza o martillo de guerra o cualquier arma simple');
+        assertEqual(r.options.length, 3);
+      });
+
+      test('"o" embebido en palabra no divide (ej: "explorador")', () => {
+        const r = parseEquipmentLine('Paquete de explorador');
+        assertEqual(r.options.length, 1);
+      });
+
+      // ══════════════════════════════════════════
+      //  PROF_BONUS_TABLE — PHB 5e RAW
+      // ══════════════════════════════════════════
+      section('PROF_BONUS_TABLE — PHB 5e RAW');
+
+      test('Nivel 1: bono +2', () => {
+        assertEqual(PROF_BONUS_TABLE[1], 2);
+      });
+
+      test('Nivel 5: bono +3', () => {
+        assertEqual(PROF_BONUS_TABLE[5], 3);
+      });
+
+      test('Nivel 9: bono +4', () => {
+        assertEqual(PROF_BONUS_TABLE[9], 4);
+      });
+
+      test('Nivel 17: bono +6', () => {
+        assertEqual(PROF_BONUS_TABLE[17], 6);
+      });
+
+      test('Nivel 20: bono +6', () => {
+        assertEqual(PROF_BONUS_TABLE[20], 6);
+      });
+
+      // ══════════════════════════════════════════
+      //  Concentración — check al recibir daño
+      // ══════════════════════════════════════════
+      section('Concentración — check al recibir daño (hp.js, PHB p.203)');
+
+      function setupConcTest(hp = 30) {
+        document.getElementById('hpCurrent').textContent = hp;
+        document.getElementById('hpMax').textContent = '40';
+        document.getElementById('hpTemp').textContent = '0';
+        document.getElementById('concCheckPrompt')?.remove();
+        state.concentrationSpell = null;
+        state.rageActive = false;
+      }
+
+      test('Daño 5 con concentración: prompt con CD 10 (suelo RAW)', () => {
+        setupConcTest();
+        state.concentrationSpell = { id: 'bless', name: 'Bless' };
+        window.applyDamageAmount(5);
+        const popup = document.getElementById('concCheckPrompt');
+        assert(popup !== null, 'debe crear popup de concentración');
+        assert(popup.innerHTML.includes('CD 10'), `CD debe ser 10, popup: ${popup.innerHTML.substring(0,200)}`);
+        popup.remove();
+        state.concentrationSpell = null;
+      });
+
+      test('Daño 30 con concentración: CD = 15 (floor(30/2))', () => {
+        setupConcTest();
+        state.concentrationSpell = { id: 'fly', name: 'Volar' };
+        window.applyDamageAmount(30);
+        const popup = document.getElementById('concCheckPrompt');
+        assert(popup !== null, 'debe crear popup de concentración');
+        assert(popup.innerHTML.includes('CD 15'), `CD debe ser 15, popup: ${popup.innerHTML.substring(0,200)}`);
+        popup.remove();
+        state.concentrationSpell = null;
+      });
+
+      test('Daño 0 con concentración: no dispara prompt', () => {
+        setupConcTest();
+        state.concentrationSpell = { id: 'bless', name: 'Bless' };
+        window.applyDamageAmount(0);
+        const popup = document.getElementById('concCheckPrompt');
+        assert(popup === null, 'daño 0 no debe crear popup');
+        state.concentrationSpell = null;
+      });
+
+      test('Sin concentración activa: no dispara prompt aunque haya daño', () => {
+        setupConcTest();
+        state.concentrationSpell = null;
+        window.applyDamageAmount(10);
+        const popup = document.getElementById('concCheckPrompt');
+        assert(popup === null, 'sin concentración activa no debe crear popup');
+      });
+
+    } // fin if allLoaded
+
+    // ══════════════════════════════════════════
+    //  sanitizeRichText — hardening XSS (9.1)
+    // ══════════════════════════════════════════
+    {
+      const { sanitizeRichText } = await import('../src/modules/dom-utils.js');
+      section('sanitizeRichText — hardening XSS (FASE 9.1)');
+
+      test('Elimina <script> y su contenido', () => {
+        const out = sanitizeRichText('<p>Hola</p><script>alert(1)</script>');
+        assert(!out.includes('<script'), 'no debe contener <script');
+        assert(!out.includes('alert'),   'no debe contener el payload');
+      });
+
+      test('Elimina atributo onerror en <img>', () => {
+        const out = sanitizeRichText('<img src="x" onerror="alert(1)">');
+        assert(!out.includes('onerror'), 'no debe contener onerror');
+      });
+
+      test('Elimina onclick en elemento permitido', () => {
+        const out = sanitizeRichText('<b onclick="alert(1)">texto</b>');
+        assert(!out.includes('onclick'), 'no debe contener onclick');
+        assert(out.includes('texto'),    'debe conservar el texto');
+      });
+
+      test('Elimina href javascript: en <a>', () => {
+        const out = sanitizeRichText('<a href="javascript:alert(1)">link</a>');
+        assert(!out.includes('javascript:'), 'no debe contener javascript:');
+      });
+
+      test('Conserva formato inocuo: <b>, <i>, <p>', () => {
+        const out = sanitizeRichText('<p><b>Negrita</b> y <i>cursiva</i></p>');
+        assert(out.includes('<b>'),    'debe conservar <b>');
+        assert(out.includes('<i>'),    'debe conservar <i>');
+        assert(out.includes('<p>'),    'debe conservar <p>');
+      });
+
+      test('Cadena vacía devuelve cadena vacía', () => {
+        assertEqual(sanitizeRichText(''), '');
+        assertEqual(sanitizeRichText(null), '');
+      });
+    }
+
+    // ─────────────────────────────────────────────
+    //  Resumen
+    // ─────────────────────────────────────────────
+    sumEl.innerHTML = `
+      <strong>Resultado:</strong>
+      <span class="pass">${passed} pasaron</span> ·
+      <span class="fail">${failed} fallaron</span> ·
+      <span class="skip">${skipped} omitidos</span>
+    `;
+    if (logs.length) logEl.textContent = logs.join('\n\n');
+
+  </script>
+</body>
+</html>

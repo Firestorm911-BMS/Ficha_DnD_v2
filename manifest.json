@@ -1,0 +1,14 @@
+{
+  "name": "Ficha D&D 5e",
+  "short_name": "D&D Ficha",
+  "description": "Ficha de personaje portable para D&D 5e",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0d0a06",
+  "theme_color": "#c9a84c",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

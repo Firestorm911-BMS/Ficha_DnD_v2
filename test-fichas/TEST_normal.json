@@ -1,0 +1,52 @@
+{
+  "version": "2.0",
+  "charName": "TEST Normal",
+  "metaValues": ["Clérigo 4", "", "Humano Estándar", "Acólito"],
+  "hp": { "current": "28", "max": "28", "temp": "0" },
+  "xp": { "current": "2700", "next": "6500" },
+  "statAC": "14",
+  "statInit": "+1",
+  "statSpeed": "9",
+  "profBonus": "+2",
+  "initBonus": 0,
+  "scores": { "STR": "12", "DEX": "12", "CON": "14", "INT": "10", "WIS": "16", "CHA": "12" },
+  "skills": [
+    {"prof":false,"expert":false},{"prof":false,"expert":false},{"prof":false,"expert":false},
+    {"prof":false,"expert":false},{"prof":false,"expert":false},{"prof":false,"expert":false},
+    {"prof":false,"expert":false},{"prof":false,"expert":false},{"prof":false,"expert":false},
+    {"prof":false,"expert":false},{"prof":true,"expert":false},{"prof":false,"expert":false},
+    {"prof":false,"expert":false},{"prof":false,"expert":false},{"prof":true,"expert":false},
+    {"prof":false,"expert":false},{"prof":false,"expert":false},{"prof":false,"expert":false}
+  ],
+  "saveProfs": [false, false, false, false, true, true],
+  "classResource": {
+    "name": "Canal Divinidad",
+    "icon": "✨",
+    "maxUses": 1,
+    "recovery": "short",
+    "damageBonus": 0,
+    "physResist": false,
+    "effects": ["Reprender No-Muertos"]
+  },
+  "rageUsesSpent": 0,
+  "hitDice": [{ "die": "d8", "count": 4, "spent": 2 }],
+  "spells": [
+    {"id":"s1","name":"Curar Heridas","level":1,"school":"Evocación","castTime":"1 acción","range":"Toque","components":"V, S","duration":"Instantáneo","concentration":false,"prepared":true,"desc":"Cura 1d8 + mod SAB PG."}
+  ],
+  "spellSlotsState": {
+    "1": {"max": 4, "used": 4},
+    "2": {"max": 3, "used": 3}
+  },
+  "pactSlotsState": {"level": 0, "max": 0, "used": 0},
+  "spellcastingAttr": "WIS",
+  "concentrationSpell": null,
+  "traits": [],
+  "attacks": [],
+  "inventory": [],
+  "activeConditions": [false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],
+  "deathSaves": {"s":0,"f":0},
+  "exhaustion": 0,
+  "rageActive": false,
+  "classThemeIndex": 2,
+  "editables": { "heroEpithet": "Siervo de Lathander", "charPlayerName": "Jugador: Tester" }
+}

@@ -1,0 +1,353 @@
+[
+  {
+    "id": "Acólito",
+    "nombre": "Acólito",
+    "skills": ["Perspicacia", "Religión"],
+    "toolProf": [],
+    "languages": 2,
+    "equipment": "Símbolo sagrado, libro de oraciones o rueda de oraciones, 5 varitas de incienso, vestiduras, conjunto de ropa corriente y 15 po",
+    "feature": "Refugio de los Fieles",
+    "featureDesc": "Puedes pedir refugio, curación y asistencia (sin coste) en templos y santuarios de tu deidad o de una aliada.",
+    "desc": "Pasaste tu vida al servicio de un templo o deidad, aprendiendo rituales y sirviendo a los sacerdotes.",
+    "personalityTraits": [
+      "Idolatro a un héroe de mi fe y menciono sus hazañas y ejemplo a cada oportunidad.",
+      "Puedo encontrar terreno común entre los enemigos más feroces, empatizando con ellos y calmando tensiones."
+    ],
+    "ideals": [
+      "Tradición: Las antiguas tradiciones de adoración y sacrificio deben preservarse y mantenerse. (Lawful)",
+      "Caridad: Siempre trato de ayudar a los necesitados, sin importar el costo personal. (Good)"
+    ],
+    "bonds": [
+      "Daría mi vida por recuperar una antigua reliquia de mi fe que fue robada.",
+      "Debo la vida al sacerdote que me acogió cuando era un huérfano."
+    ],
+    "flaws": [
+      "Soy inflexible en mi pensamiento.",
+      "Desconfío de los extraños y espero lo peor de ellos."
+    ]
+  },
+  {
+    "id": "Artista",
+    "nombre": "Artista",
+    "skills": ["Acrobacias", "Interpretación"],
+    "toolProf": ["Kit de disfraz", "1 instrumento musical (a elección)"],
+    "languages": 0,
+    "equipment": "Instrumento musical, favor de un admirador, disfraz y 15 po",
+    "feature": "Por Demanda Popular",
+    "featureDesc": "Siempre puedes encontrar alojamiento y comida en una taberna o posada a cambio de actuar; tu público puede darte información local.",
+    "desc": "Amaestrador, malabarista, músico, actor o poeta. Dominas el escenario y la atención de la multitud.",
+    "personalityTraits": [
+      "Conozco un chiste, poema o historia adecuado para cualquier ocasión.",
+      "Cuando me propongo algo lo hago. Mi determinación y trabajo duro son legendarios."
+    ],
+    "ideals": [
+      "Creatividad: El mundo necesita arte nuevo para recordarnos que la vida vale la pena vivirse. (Free)",
+      "Pueblo: Las historias, leyendas y canciones que cuento elevan a la gente común. (Good)"
+    ],
+    "bonds": [
+      "Mi instrumento es mi posesión más preciada y me recuerda a alguien a quien amé.",
+      "Debo mi reputación a mi mentor. Haré lo necesario para proteger su legado."
+    ],
+    "flaws": [
+      "Hago lo imposible por ser el centro de atención.",
+      "Soy un romántico incorregible, siempre buscando el «gran amor»."
+    ]
+  },
+  {
+    "id": "Artesano de Gremio",
+    "nombre": "Artesano de Gremio",
+    "skills": ["Perspicacia", "Persuasión"],
+    "toolProf": ["1 herramienta de artesano (a elección)"],
+    "languages": 1,
+    "equipment": "Herramientas de artesano (las de tu oficio), carta de presentación del gremio, conjunto de ropa de viajero y 15 po",
+    "feature": "Membresía de Gremio",
+    "featureDesc": "Los miembros de tu gremio te brindan alojamiento, información y recursos. A cambio, pagas cuotas anuales de 5 po.",
+    "desc": "Miembro de un gremio de artesanos. Tu oficio es reconocido y tu gremio te respaldará en momentos difíciles.",
+    "personalityTraits": [
+      "Creo que cualquier cosa merece hacerse bien. Cuando me comprometo con una tarea la termino de forma excelente.",
+      "Soy un optimista eterno y siempre encuentro el lado bueno de cualquier situación."
+    ],
+    "ideals": [
+      "Comunidad: Es deber de toda persona civilizada reforzar la fuerza de su comunidad. (Lawful)",
+      "Generosidad: Mis talentos me fueron dados para beneficiar al mundo. (Good)"
+    ],
+    "bonds": [
+      "El taller donde aprendí el oficio es lo más importante para mí; sacrificaría mucho para protegerlo.",
+      "Pronto recuperaré mi negocio de manos de quien me lo arrebató."
+    ],
+    "flaws": [
+      "Nunca confío del todo en nadie que no sea miembro de mi gremio.",
+      "Soy increíblemente arrogante y creo que nadie puede igualar mi trabajo."
+    ]
+  },
+  {
+    "id": "Charlatán",
+    "nombre": "Charlatán",
+    "skills": ["Engañar", "Juego de Manos"],
+    "toolProf": ["Kit de disfraz", "Kit de falsificación"],
+    "languages": 0,
+    "equipment": "Conjunto de ropa fina, kit de disfraz, herramientas de un estafador y 15 po",
+    "feature": "Identidad Falsa",
+    "featureDesc": "Tienes una segunda identidad establecida: documentos falsos, contactos y disfraces. Puedes falsificar documentos cuando tengas un modelo.",
+    "desc": "Maestro del engaño y el disfraz. Siempre tienes un truco bajo la manga y una historia que nadie cuestionará.",
+    "personalityTraits": [
+      "Me río con facilidad y la gente disfruta de mi compañía. Aunque estoy engañando a alguien, me cae bien.",
+      "Las mentiras salen de mis labios con más fluidez que la verdad."
+    ],
+    "ideals": [
+      "Independencia: Soy un espíritu libre — ningún gobernante ni norma puede controlarme. (Chaotic)",
+      "Justicia: No robo a los pobres. Solo a los que merecen un poco de humillación. (Neutral)"
+    ],
+    "bonds": [
+      "Defraudo a personas ricas para dar a los necesitados.",
+      "Algo importante me fue robado, y haré cualquier cosa para recuperarlo."
+    ],
+    "flaws": [
+      "No puedo resistirme a una estafa si creo que puedo salirme con la mía.",
+      "El dinero siempre se me escapa. Si tengo un buen día, me aseguro de que sea un día malo al anochecer."
+    ]
+  },
+  {
+    "id": "Criminal",
+    "nombre": "Criminal",
+    "skills": ["Engañar", "Sigilo"],
+    "toolProf": ["1 juego de apuestas (a elección)", "Herramientas de ladrón"],
+    "languages": 0,
+    "equipment": "Palanca, conjunto de ropa oscura con capucha y 15 po",
+    "feature": "Contacto Criminal",
+    "featureDesc": "Tienes un contacto confiable en el mundo criminal que puede darte información, suministros o acceso a redes clandestinas.",
+    "desc": "Pasaste tiempo en el lado equivocado de la ley. Ya sea ladrón, asesino o espía, sabes cómo hacer el trabajo sucio.",
+    "personalityTraits": [
+      "Siempre tengo un plan para cuando las cosas se tuercen.",
+      "Soy siempre tranquilo, no importa la situación. Nunca levanto la voz ni dejo que mis emociones me controlen."
+    ],
+    "ideals": [
+      "Libertad: Las cadenas son para ser rotas, igual que los que forjan tales restricciones. (Chaotic)",
+      "Honor: No robo a los que no pueden permitírselo y no mato si no es estrictamente necesario. (Neutral)"
+    ],
+    "bonds": [
+      "Le debo mi vida a un protector que me sacó del arroyo. Haré cualquier cosa por esa persona.",
+      "Intento pagar mis deudas, siempre."
+    ],
+    "flaws": [
+      "Cuando veo algo valioso, no puedo pensar más que en cómo robarlo.",
+      "Huyo cuando las cosas se ponen mal."
+    ]
+  },
+  {
+    "id": "Eremita",
+    "nombre": "Eremita",
+    "skills": ["Medicina", "Religión"],
+    "toolProf": ["Kit de herboristería"],
+    "languages": 1,
+    "equipment": "Estuche de pergamino con anotaciones de estudio, ropa de invierno, kit de herboristería y 5 po",
+    "feature": "Descubrimiento",
+    "featureDesc": "Tu reclusión te ha revelado una verdad única: un gran secreto, una verdad cósmica o una revelación que aún buscas comprender.",
+    "desc": "Viviste en total aislamiento: un anacoreta, un peregrino o alguien que buscaba iluminación lejos del mundo.",
+    "personalityTraits": [
+      "Estoy completamente centrado en la tarea que me llevo entre manos.",
+      "No me afecta fácilmente el asombro. Soy imperturbable."
+    ],
+    "ideals": [
+      "Mayor Bien: Mis dones me fueron dados para beneficiar al mundo, no a mí. (Good)",
+      "Lógica: Las emociones no deben nublar nuestro pensamiento lógico. (Lawful)"
+    ],
+    "bonds": [
+      "Nada es más importante que los demás miembros de mi ermita o comunidad.",
+      "Mi descubrimiento puede cambiar el mundo — debo protegerlo."
+    ],
+    "flaws": [
+      "Tengo miedo a que mi descubrimiento sea maligno en su naturaleza.",
+      "Soy dogmático en mi pensamiento, incapaz de cambiar de opinión."
+    ]
+  },
+  {
+    "id": "Forastero",
+    "nombre": "Forastero",
+    "skills": ["Atletismo", "Supervivencia"],
+    "toolProf": ["1 instrumento musical (a elección)"],
+    "languages": 1,
+    "equipment": "Bastón, trampa de caza, trofeo de un animal que hayas cazado, conjunto de ropa de viajero y 10 po",
+    "feature": "Vagabundo",
+    "featureDesc": "Recuerdas la geografía y puedes encontrar comida y agua potable para ti y hasta 5 personas en terreno natural.",
+    "desc": "Criado en los confines del mundo: una tribu nómada, un pueblo remoto o simplemente en la naturaleza salvaje.",
+    "personalityTraits": [
+      "Estoy consumido por un sentido de nostalgia por mi tierra. Anhelo volver al lugar donde crecí.",
+      "Tiendo a ser brusco al relacionarme con la gente de la ciudad. No entiendo su formalismo."
+    ],
+    "ideals": [
+      "Cambio: La vida es como las estaciones: en constante cambio, y debemos cambiar con ella. (Chaotic)",
+      "Gloria: Debo ganarme la gloria en batalla para que mi pueblo cante mis hazañas. (Any)"
+    ],
+    "bonds": [
+      "Mi familia, clan o tribu son lo más importante de mi vida, incluso si vivimos lejos el uno del otro.",
+      "Una injusticia aplastante destruyó mi comunidad. Viajaré hasta vengarme."
+    ],
+    "flaws": [
+      "La violencia es mi respuesta a casi cualquier reto.",
+      "No confío en nadie que no haya probado ser digno de mi confianza."
+    ]
+  },
+  {
+    "id": "Héroe del Pueblo",
+    "nombre": "Héroe del Pueblo",
+    "skills": ["Trato con Animales", "Supervivencia"],
+    "toolProf": ["1 herramienta de artesano (a elección)", "Vehículos terrestres"],
+    "languages": 0,
+    "equipment": "Herramientas de artesano (las de tu oficio), pala, olla de hierro, conjunto de ropa corriente y 10 po",
+    "feature": "Hospitalidad Rústica",
+    "featureDesc": "La gente del pueblo común te dará refugio y ayuda. Pueden esconderte, pero no arriesgarán su vida por ti.",
+    "desc": "Procedes de gente humilde, pero el destino te hizo algo más. El pueblo cree en ti y corre la voz de tus hazañas.",
+    "personalityTraits": [
+      "Juzgo a la gente por sus acciones, no por sus palabras.",
+      "Si alguien está con apuros, siempre tiendo una mano de ayuda."
+    ],
+    "ideals": [
+      "Respeto: La gente merece ser tratada con dignidad y respeto. (Good)",
+      "Destino: Nada ni nadie puede apartarme de mi misión superior. (Any)"
+    ],
+    "bonds": [
+      "El tirano que oprime a mi pueblo debe ser derrocado. Algún día volveré a mi hogar y lo haré.",
+      "Un hacendado codicioso me arruinó a mí y a mi familia. No descansaré hasta que me haya vengado."
+    ],
+    "flaws": [
+      "El secreto de mi pasado vergonzoso podría arruinarme si se revelara.",
+      "Escondo un miedo profundo a fracasar cuando más se me necesite."
+    ]
+  },
+  {
+    "id": "Marinero",
+    "nombre": "Marinero",
+    "skills": ["Atletismo", "Percepción"],
+    "toolProf": ["Herramientas de navegación", "Vehículos acuáticos"],
+    "languages": 0,
+    "equipment": "Palanca, cuerda de seda (15m), trofeo de suerte, conjunto de ropa corriente y 10 po",
+    "feature": "Pasaje en Barco",
+    "featureDesc": "Puedes obtener pasaje gratuito en barcos de vela para ti y tus compañeros, a cambio de trabajo a bordo.",
+    "desc": "Surcaste los mares durante años. Conoces los vientos, el mástil y las tradiciones de los hombres del mar.",
+    "personalityTraits": [
+      "Mi lenguaje es tan crudo como la proa de un barco en un mar tempestuoso.",
+      "La mar me ha templado y ya nada me espanta. Cuando hay un reto lo enfrento de frente."
+    ],
+    "ideals": [
+      "Respeto: Lo que mantiene un barco en funcionamiento es el respeto mutuo entre el capitán y la tripulación. (Good)",
+      "Libertad: El mar es libertad — la posibilidad de ir a cualquier parte. (Chaotic)"
+    ],
+    "bonds": [
+      "Soy leal a mi capitán antes que a cualquier otra cosa. Combatí junto a él en muchas batallas.",
+      "Llevaré el barco que perdí de las manos del pirata que lo atacó."
+    ],
+    "flaws": [
+      "Sigo las órdenes aunque el mar me diga que me dirijo al abismo.",
+      "Me obsesiono con una vieja enemistad con otro marino que me ha perseguido a lo largo de los años."
+    ]
+  },
+  {
+    "id": "Noble",
+    "nombre": "Noble",
+    "skills": ["Historia", "Persuasión"],
+    "toolProf": ["1 juego de apuestas (a elección)"],
+    "languages": 1,
+    "equipment": "Conjunto de ropa fina, anillo de sello, pergamino de genealogía y 25 po",
+    "feature": "Posición Privilegiada",
+    "featureDesc": "Tu posición noble te abre puertas inaccesibles a la gente común: audiencias reales, mejores alojamientos e información privilegiada.",
+    "desc": "Naciste en una familia privilegiada. Tu nombre abre puertas, tu dinero habla y tu posición te da influencia.",
+    "personalityTraits": [
+      "Mi elocuencia y mis modales me distinguen en cualquier salón o taberna.",
+      "Me cuesta trabajo ocultarlo: me considero más inteligente que la mayoría."
+    ],
+    "ideals": [
+      "Nobleza Obliga: Es mi responsabilidad proteger y proveer a los que se hallan por debajo de mí. (Good)",
+      "Poder: Si puedo conquistar el poder, nadie me dirá qué hacer. (Evil)"
+    ],
+    "bonds": [
+      "Haré cualquier cosa para proteger el honor de mi familia.",
+      "Mi casa, mi sangre y mi legado — nada me importa más."
+    ],
+    "flaws": [
+      "Me engancho fácilmente en duelos de palabras, desafiando a cualquiera que cuestione mi honor.",
+      "Estoy convencido de que los de clase baja no entienden el refinamiento."
+    ]
+  },
+  {
+    "id": "Sabio",
+    "nombre": "Sabio",
+    "skills": ["Arcanos", "Historia"],
+    "toolProf": [],
+    "languages": 2,
+    "equipment": "Botella de tinta, pluma, cuchillo pequeño, carta de un colega fallecido con una pregunta sin responder y 10 po",
+    "feature": "Investigador",
+    "featureDesc": "Cuando no conoces algo, sabes dónde y cómo encontrar la información. Puede llevarte tiempo, pero sabes a quién preguntar.",
+    "desc": "Pasaste años estudiando en una biblioteca, academia o monasterio. El conocimiento es tu mayor herramienta.",
+    "personalityTraits": [
+      "Uso palabras polisílabas para transmitir un aire de profundidad intelectual.",
+      "Cito (o tergiverso) a sabios famosos o textos sagrados a la mínima ocasión."
+    ],
+    "ideals": [
+      "Conocimiento: El camino hacia el poder y la mejora personal es a través del conocimiento. (Neutral)",
+      "Belleza: Lo que es bello apunta hacia lo verdadero. (Good)"
+    ],
+    "bonds": [
+      "He trabajado para hacer accesible al pueblo una colección de conocimiento antiguo y secreto.",
+      "Tengo una pregunta sin respuesta a la que he dedicado mi vida."
+    ],
+    "flaws": [
+      "Me distraigo fácilmente ante la posibilidad de aprender algo nuevo.",
+      "La mayoría de las personas no me resultan interesantes salvo como fuente de información."
+    ]
+  },
+  {
+    "id": "Soldado",
+    "nombre": "Soldado",
+    "skills": ["Atletismo", "Intimidar"],
+    "toolProf": ["1 juego de apuestas (a elección)", "Vehículos terrestres"],
+    "languages": 0,
+    "equipment": "Insignia de rango, trofeo de un enemigo caído, juego de huesos o cartas, conjunto de ropa corriente y 10 po",
+    "feature": "Rango Militar",
+    "featureDesc": "Los soldados leales a tu antigua facción te reconocerán tu rango. Puedes invocar esa autoridad sobre soldados inferiores.",
+    "desc": "Veterano de guerra o guardia experimentado. Conoces la disciplina, la táctica y el peso de la batalla.",
+    "personalityTraits": [
+      "Soy siempre educado y respetuoso.",
+      "He perdido demasiados amigos y no quiero hacer nuevos. Pero tarde o temprano los haré."
+    ],
+    "ideals": [
+      "Mayor Bien: El interés de nuestra unidad importa más que el mío. (Good)",
+      "Tiranía: Los fuertes deben dominar a los débiles. (Evil)"
+    ],
+    "bonds": [
+      "Me importa más la gente que luchó conmigo que cualquier otra cosa.",
+      "Alguien me salvó la vida en el campo de batalla. Nunca lo abandonaré."
+    ],
+    "flaws": [
+      "El monstruo de guerra que soy emerge cuando bebo demasiado.",
+      "Cometí una atrocidad en combate. Intento no pensar en ello pero me despierto a medianoche."
+    ]
+  },
+  {
+    "id": "Granuja",
+    "nombre": "Granuja",
+    "skills": ["Juego de Manos", "Sigilo"],
+    "toolProf": ["Kit de disfraz", "Herramientas de ladrón"],
+    "languages": 0,
+    "equipment": "Cuchillo pequeño, mapa de la ciudad donde creciste, ratón mascota, recuerdo de tus padres, ropa desgastada y 10 po",
+    "feature": "Secretos de la Ciudad",
+    "featureDesc": "Conoces los pasajes secretos, callejones y alcantarillas de las ciudades. Puedes moverte entre dos puntos en la mitad del tiempo sin ser visto.",
+    "desc": "Creciste en las calles sin dinero ni familia. La supervivencia fue tu primera lección; lo demás vino después.",
+    "personalityTraits": [
+      "Me gustan las ciudades ajetreadas. El anonimato me conviene y sé cómo aprovecharme de la multitud.",
+      "Soy increíblemente curioso. Siempre tengo que saber qué hay detrás de cada puerta o cajón."
+    ],
+    "ideals": [
+      "Amigos: El material puede reemplazarse. Los lazos de amistad duran para siempre. (Good)",
+      "Pueblo: Robo a los ricos para ayudar a los necesitados. (Neutral)"
+    ],
+    "bonds": [
+      "Me criaron en la calle mis amigos. Los defendería hasta morir.",
+      "Conozco el nombre del ladrón que mató a mis padres y algún día lo haré pagar."
+    ],
+    "flaws": [
+      "Siempre que descubro una trampa, alguien más tiene que activarla para ver qué pasa.",
+      "Soy terriblemente celoso de los que tienen lo que yo quiero."
+    ]
+  }
+]

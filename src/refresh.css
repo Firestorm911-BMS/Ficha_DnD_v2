@@ -1,0 +1,755 @@
+/* ═══════════════════════════════════════════════
+   FICHA D&D — refresh.css
+   Capa de mejoras visuales (Fase 2 de la auditoría)
+   Se carga DESPUÉS de styles.css y sobreescribe lo
+   necesario sin tocar el resto del CSS legacy.
+
+   1. Estados semánticos de HP (healthy/grazed/wounded/critical/down)
+   2. Marco/cuadro de ficha reactivo al tema de clase
+   3. Tabs reactivas al tema
+   4. Tarjetas (.card) más legibles
+   5. Placeholder elegante para el retrato
+   6. Tipografía: jerarquía y contraste reforzados
+   7. Ornamentos opcionales (filigrana de esquina)
+   ═══════════════════════════════════════════════ */
+
+/* ─── 0. Tokens semánticos extra ─────────────────── */
+:root {
+  --hp-healthy:   #4caf80;
+  --hp-grazed:    var(--gold);
+  --hp-wounded:   #f1a83c;
+  --hp-critical:  #e0573b;
+  --hp-down:      #b13a2a;
+
+  /* Cuadro de la ficha: borde grueso y filigrana, usan --gold */
+  --frame-thick: 1px;
+  --frame-glow:  var(--gold-glow);
+
+  /* Panel: opacidad de fondo más alta por defecto para legibilidad */
+  --panel-opacity: 0.85;
+}
+
+/* ─── 1. HP — barra y estados semánticos ─────────── */
+.hp-bar {
+  background: linear-gradient(90deg,
+    var(--hp-critical) 0%,
+    var(--hp-wounded)  40%,
+    var(--hp-grazed)   65%,
+    var(--hp-healthy)  100%);
+  background-size: 100% 100%;
+  background-position: 0 0 !important;
+  transition: width .35s ease, filter .35s ease, box-shadow .35s ease;
+}
+.hp-bar[data-state="down"]     { background: var(--hp-down); filter: saturate(.5); }
+.hp-bar[data-state="critical"] { box-shadow: 0 0 14px rgba(224,87,59,.55) inset, 0 0 12px rgba(224,87,59,.35); animation: hpPulse 1.4s ease-in-out infinite; }
+.hp-bar[data-state="wounded"]  { filter: saturate(1.1); }
+
+@keyframes hpPulse {
+  0%, 100% { filter: brightness(1) saturate(1.1); }
+  50%      { filter: brightness(1.35) saturate(1.3); }
+}
+
+/* Número grande de HP — se tinta según el estado del padre */
+.hp-display .hp-current {
+  transition: color .3s ease, text-shadow .3s ease;
+}
+.hp-display[data-hp-state="healthy"]  .hp-current { color: var(--hp-healthy); }
+.hp-display[data-hp-state="grazed"]   .hp-current { color: var(--gold-light); }
+.hp-display[data-hp-state="wounded"]  .hp-current { color: var(--hp-wounded); }
+.hp-display[data-hp-state="critical"] .hp-current { color: var(--hp-critical); text-shadow: 0 0 18px rgba(224,87,59,.45); }
+.hp-display[data-hp-state="down"]     .hp-current { color: var(--hp-down);    text-shadow: 0 0 18px rgba(177,58,42,.55); }
+
+/* Sub-label del estado */
+#hpStatus {
+  letter-spacing: 2.5px !important;
+  font-weight: 600;
+}
+#hpStatus[data-state="healthy"]  { color: var(--hp-healthy)  !important; }
+#hpStatus[data-state="grazed"]   { color: var(--gold)        !important; }
+#hpStatus[data-state="wounded"]  { color: var(--hp-wounded)  !important; }
+#hpStatus[data-state="critical"] { color: var(--hp-critical) !important; }
+#hpStatus[data-state="down"]     { color: var(--hp-down)     !important; }
+
+/* Battle Stance: mismo tratamiento */
+.battle-stance .bs-hp[data-hp-state="critical"] .bs-value { color: var(--hp-critical); text-shadow: 0 0 16px rgba(224,87,59,.45); }
+.battle-stance .bs-hp[data-hp-state="wounded"]  .bs-value { color: var(--hp-wounded); }
+.battle-stance .bs-hp[data-hp-state="grazed"]   .bs-value { color: var(--gold-light); }
+.battle-stance .bs-hp[data-hp-state="healthy"]  .bs-value { color: var(--hp-healthy); }
+.battle-stance .bs-hp[data-hp-state="down"]     .bs-value { color: var(--hp-down);    text-shadow: 0 0 16px rgba(177,58,42,.5); }
+
+.bs-hp-bar-fill {
+  background: linear-gradient(90deg, var(--hp-critical) 0%, var(--hp-wounded) 40%, var(--hp-grazed) 65%, var(--hp-healthy) 100%);
+}
+.bs-hp-bar-fill[data-state="down"]     { background: var(--hp-down); }
+.bs-hp-bar-fill[data-state="critical"] { animation: hpPulse 1.4s ease-in-out infinite; }
+
+/* ─── 2. MARCO DE LA FICHA — reactivo al tema ─────── */
+
+/* Borde del HERO con filigrana que usa --gold */
+.hero-banner {
+  position: relative;
+  border: var(--frame-thick) solid var(--border-bright);
+  border-radius: var(--card-radius, 6px);
+  background:
+    linear-gradient(180deg,
+      rgba(var(--panel-rgb), .35) 0%,
+      rgba(var(--panel-rgb), .60) 100%),
+    var(--bg-deep);
+  box-shadow:
+    0 0 0 1px rgba(var(--panel-rgb), .4),
+    0 18px 60px -20px rgba(0,0,0,.85),
+    0 0 50px -10px var(--gold-glow);
+  overflow: hidden;
+}
+
+/* Esquinas ornamentales: 4 líneas en L con CSS puro (sin SVG hardcoded),
+   100 % reactivas a --gold porque se dibujan con currentColor. */
+.hero-banner::before,
+.hero-banner::after {
+  content: '';
+  position: absolute;
+  width: 38px;
+  height: 38px;
+  pointer-events: none;
+  color: var(--gold);
+  opacity: .9;
+  transition: color .4s ease, filter .4s ease;
+  filter: drop-shadow(0 0 6px var(--gold-glow));
+  z-index: 5;
+}
+.hero-banner::before {
+  top: 10px; left: 10px;
+  border-top: 2px solid currentColor;
+  border-left: 2px solid currentColor;
+}
+.hero-banner::after {
+  top: 10px; right: 10px;
+  border-top: 2px solid currentColor;
+  border-right: 2px solid currentColor;
+}
+/* Esquinas inferiores con un wrapper en .hero-grid::before/::after */
+.hero-grid { position: relative; }
+.hero-grid::before,
+.hero-grid::after {
+  content: '';
+  position: absolute;
+  width: 38px; height: 38px;
+  color: var(--gold);
+  pointer-events: none;
+  opacity: .9;
+  filter: drop-shadow(0 0 6px var(--gold-glow));
+  transition: color .4s ease, filter .4s ease;
+  z-index: 5;
+}
+.hero-grid::before { bottom: -8px; left: -8px;  border-bottom: 2px solid currentColor; border-left: 2px solid currentColor; }
+.hero-grid::after  { bottom: -8px; right: -8px; border-bottom: 2px solid currentColor; border-right: 2px solid currentColor; }
+
+/* Hero divider central también reactivo */
+.hero-divider .diamond {
+  color: var(--gold);
+  text-shadow: 0 0 12px var(--gold-glow);
+  transition: color .4s ease, text-shadow .4s ease;
+}
+.hero-divider span {
+  background: linear-gradient(90deg, transparent, var(--gold) 60%, transparent);
+  height: 1px;
+  transition: background .4s ease;
+}
+
+/* Eyebrow y runas reactivos al --gold */
+.hero-eyebrow,
+.hero-rune {
+  color: var(--gold);
+  letter-spacing: 4px;
+  transition: color .4s ease;
+}
+
+/* ─── 3. TABS — reactivas al tema ─────────────────── */
+.tabs-bar {
+  background:
+    linear-gradient(180deg,
+      rgba(var(--panel-rgb), .80) 0%,
+      rgba(var(--panel-rgb), .92) 100%);
+  border: var(--frame-thick) solid var(--border);
+  border-top: 1px solid var(--border-bright);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+.tab-btn { transition: background .25s ease, color .25s ease, box-shadow .25s ease; }
+.tab-btn.active {
+  background: linear-gradient(180deg,
+    rgba(var(--panel-rgb), .4) 0%,
+    transparent 100%);
+  color: var(--gold-light);
+  box-shadow: inset 0 -2px 0 var(--gold), 0 0 22px -4px var(--gold-glow);
+}
+.tab-btn:hover:not(.active) { color: var(--gold); background: rgba(var(--panel-rgb), .35); }
+.tab-btn .tab-icon { color: var(--gold); transition: color .25s ease; filter: drop-shadow(0 0 4px var(--gold-glow)); }
+
+/* ─── 4. CARDS — legibilidad + reactividad ──────── */
+.card {
+  background:
+    linear-gradient(180deg,
+      rgba(var(--panel-rgb), calc(var(--panel-opacity) - .05)) 0%,
+      rgba(var(--panel-rgb), var(--panel-opacity)) 100%);
+  border: var(--card-bwidth, 1px) var(--card-bstyle, solid) var(--border);
+  border-radius: var(--card-radius, 6px);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.025),
+    0 8px 24px -12px rgba(0,0,0,.7);
+  position: relative;
+  transition: border-color .4s ease, box-shadow .4s ease;
+}
+.card:hover { border-color: var(--border-bright); box-shadow: inset 0 1px 0 rgba(255,255,255,.04), 0 12px 36px -14px rgba(0,0,0,.85), 0 0 0 1px var(--gold-glow); }
+
+.card-title {
+  color: var(--gold-light);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 8px;
+  transition: color .4s ease;
+}
+.card-title-icon { color: var(--gold); transition: color .4s ease; filter: drop-shadow(0 0 4px var(--gold-glow)); }
+
+/* ─── 5. PORTRAIT — placeholder elegante ─────────── */
+.hero-portrait-frame {
+  border: 2px solid var(--border-bright);
+  background:
+    radial-gradient(ellipse at 50% 30%,
+      rgba(var(--panel-rgb), .25) 0%,
+      rgba(var(--panel-rgb), .65) 100%);
+  box-shadow:
+    inset 0 0 0 1px rgba(var(--panel-rgb), .5),
+    inset 0 0 40px rgba(0,0,0,.7),
+    0 0 30px -8px var(--gold-glow);
+  position: relative;
+  overflow: hidden;
+  transition: border-color .4s ease, box-shadow .4s ease;
+}
+
+/* Ocultar el <img> cuando es el placeholder transparente (data-empty="true") */
+#portrait-img[data-empty="true"] {
+  visibility: hidden;
+  opacity: 0;
+}
+
+/* Cuando el retrato sí tiene una imagen válida, ocultar el placeholder */
+.hero-portrait-frame:has(img:not([data-empty="true"]))::before,
+.hero-portrait-frame:has(img:not([data-empty="true"]))::after {
+  opacity: 0;
+}
+
+/* Capa de placeholder: silueta + halo, hecha 100% en CSS (sin SVG inline)
+   para evitar problemas de encoding. Reacciona a --gold. */
+.hero-portrait-frame::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    /* halo radial sutil */
+    radial-gradient(circle at 50% 38%, var(--gold-glow) 0%, transparent 55%),
+    /* cabeza */
+    radial-gradient(circle at 50% 34%, var(--gold) 0 12.5%, transparent 13%),
+    /* hombros / busto */
+    radial-gradient(ellipse 40% 24% at 50% 78%, var(--gold) 0 99%, transparent 100%);
+  background-repeat: no-repeat;
+  opacity: .35;
+  transition: opacity .3s ease, background .4s ease;
+}
+
+/* Leyenda "RETRATO" abajo */
+.hero-portrait-frame::after {
+  content: 'RETRATO';
+  position: absolute;
+  left: 0; right: 0;
+  bottom: 12px;
+  text-align: center;
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  letter-spacing: 5px;
+  color: var(--gold);
+  opacity: .55;
+  pointer-events: none;
+  z-index: 0;
+  transition: color .4s ease, opacity .3s ease;
+}
+.hero-portrait-frame::after {
+  content: 'RETRATO';
+  position: absolute;
+  left: 0; right: 0;
+  bottom: 16px;
+  text-align: center;
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  letter-spacing: 4px;
+  color: var(--text-muted);
+  opacity: .55;
+  pointer-events: none;
+  z-index: 0;
+}
+/* (legacy :has rules — superseded by data-empty above) */
+
+#portrait-img { position: relative; z-index: 1; }
+
+.portrait-overlay {
+  background: linear-gradient(180deg, transparent 0%, rgba(var(--panel-rgb), .8) 100%);
+  color: var(--gold-light);
+  letter-spacing: 2px;
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  z-index: 2;
+}
+
+/* Anillo dorado sutil alrededor del marco */
+.hero-portrait-base {
+  background: radial-gradient(ellipse at center,
+    var(--gold-glow) 0%,
+    transparent 60%);
+  filter: blur(6px);
+  opacity: .55;
+}
+
+/* ─── 6. ATRIBUTOS — más contraste y reactividad ──── */
+.attr-box {
+  background: linear-gradient(180deg,
+    rgba(var(--panel-rgb), calc(var(--panel-opacity) + .05)) 0%,
+    rgba(var(--panel-rgb), var(--panel-opacity)) 100%);
+  border: 1px solid var(--border);
+  transition: border-color .25s ease, transform .15s ease;
+}
+.attr-box:hover { border-color: var(--gold); transform: translateY(-1px); }
+.attr-mod { color: var(--gold-light); }
+.attr-name { color: var(--text-muted); letter-spacing: 2px; }
+
+/* ─── 7. HERO PILLS — reactivos ─────────────────── */
+.hero-pill {
+  border: 1px solid var(--border);
+  background: linear-gradient(180deg,
+    rgba(var(--panel-rgb), .55) 0%,
+    rgba(var(--panel-rgb), .35) 100%);
+  transition: border-color .25s ease, background .25s ease;
+}
+.hero-pill:hover { border-color: var(--border-bright); }
+.hero-pill-label { color: var(--gold); letter-spacing: 2px; }
+
+/* Char name — sombra reactiva al tema */
+.char-name {
+  text-shadow:
+    0 0 28px var(--gold-glow),
+    0 2px 0 rgba(0,0,0,.6);
+  transition: text-shadow .4s ease, color .4s ease;
+}
+
+/* ─── 8. Battle Stance — más presente ─────────────── */
+.battle-stance {
+  border: var(--frame-thick) solid var(--border-bright);
+  background:
+    linear-gradient(180deg,
+      rgba(var(--panel-rgb), .85) 0%,
+      rgba(var(--panel-rgb), .65) 100%);
+  box-shadow: 0 0 0 1px rgba(var(--panel-rgb), .5) inset, 0 0 30px -10px var(--gold-glow);
+}
+.battle-stance .bs-icon { color: var(--gold); filter: drop-shadow(0 0 6px var(--gold-glow)); }
+
+/* ─── 9. Botones — más legibles ─────────────────── */
+.btn {
+  font-family: 'Cinzel', serif;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  transition: background .2s, border-color .2s, color .2s, transform .1s;
+}
+.btn:hover { transform: translateY(-1px); }
+.btn-primary {
+  background: linear-gradient(180deg, var(--gold) 0%, var(--gold-dark) 100%);
+  color: var(--bg-deep);
+  border: 1px solid var(--gold-dark);
+  font-weight: 600;
+}
+.btn-primary:hover { background: linear-gradient(180deg, var(--gold-light) 0%, var(--gold) 100%); }
+
+/* ─── 10. Inputs/select más legibles ─────────────── */
+input, select, textarea {
+  font-family: 'IM Fell English', serif;
+}
+.hero-pill-select,
+.align-select {
+  background: var(--bg-dark);
+  border-color: var(--border-bright);
+}
+
+/* ─── 11. SCROLLBAR reactivo ─────────────────────── */
+::-webkit-scrollbar-thumb { background: var(--gold-dark); }
+::-webkit-scrollbar-thumb:hover { background: var(--gold); }
+
+/* ─── 12. Dice FAB & Edit FAB — reactivos ────────── */
+.dice-fab, .edit-fab {
+  background: radial-gradient(circle at 30% 30%, var(--gold-light), var(--gold) 55%, var(--gold-dark));
+  color: var(--bg-deep);
+  border: 1px solid var(--gold-dark);
+  box-shadow: 0 6px 20px -4px rgba(0,0,0,.6), 0 0 24px -6px var(--gold-glow);
+  transition: transform .15s, box-shadow .2s;
+}
+.dice-fab:hover, .edit-fab:hover {
+  transform: scale(1.08);
+  box-shadow: 0 8px 26px -4px rgba(0,0,0,.7), 0 0 36px -4px var(--gold-glow);
+}
+
+/* ─── 13. Pestañas de conditions — más sobrias ────── */
+.conditions-grid .condition-btn {
+  background: rgba(var(--panel-rgb), .55);
+  border: 1px solid var(--border);
+  transition: all .2s;
+}
+.conditions-grid .condition-btn:hover { border-color: var(--gold); }
+.conditions-grid .condition-btn.active {
+  background: linear-gradient(180deg, var(--gold-dark), rgba(var(--panel-rgb), .8));
+  border-color: var(--gold);
+  color: var(--gold-light);
+  box-shadow: 0 0 16px -4px var(--gold-glow);
+}
+
+/* ─── 14. Selección de texto ─────────────────────── */
+::selection { background: var(--gold); color: var(--bg-deep); }
+
+/* ─── 15. Modal box: marco reactivo ──────────────── */
+.spell-modal-box,
+#wizInner,
+.combat-panel,
+.dice-panel,
+.roster-panel {
+  border: 1px solid var(--border-bright) !important;
+  box-shadow: 0 20px 60px -10px rgba(0,0,0,.85), 0 0 40px -10px var(--gold-glow) !important;
+}
+
+/* ─── 16. Tooltips — base ────────────────────────── */
+[data-tip] {
+  position: relative;
+  cursor: help;
+}
+[data-tip]:hover::after {
+  content: attr(data-tip);
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--bg-dark);
+  border: 1px solid var(--border-bright);
+  color: var(--text-secondary);
+  padding: 6px 10px;
+  font-family: 'IM Fell English', serif;
+  font-size: 12px;
+  font-style: italic;
+  white-space: nowrap;
+  border-radius: 4px;
+  z-index: 1000;
+  pointer-events: none;
+  box-shadow: 0 6px 16px rgba(0,0,0,.6);
+}
+
+/* ─── 17. Wizard — paneles claros ────────────────── */
+#wizInner {
+  background: linear-gradient(180deg,
+    rgba(var(--panel-rgb), .92) 0%,
+    rgba(var(--panel-rgb), .97) 100%) !important;
+  backdrop-filter: blur(6px);
+}
+#wizInner select, #wizInner input {
+  font-family: 'Cinzel', serif !important;
+}
+
+/* ─── 18. Notas/Personalidad/Historia — fondos legibles ─ */
+.personality-box {
+  background: rgba(var(--panel-rgb), .65);
+  border: 1px solid var(--border);
+  transition: border-color .25s;
+}
+.personality-box:hover { border-color: var(--border-bright); }
+.personality-label { color: var(--gold); letter-spacing: 2px; }
+
+/* ─── 19. Skill list legibilidad + click-to-roll ── */
+.skill-row {
+  border-bottom: 1px solid rgba(var(--panel-rgb), .3);
+  transition: background .15s, padding-left .2s;
+  cursor: pointer;
+  position: relative;
+  padding-right: 26px !important;
+}
+.skill-row:hover {
+  background: linear-gradient(90deg, rgba(var(--panel-rgb), .35), rgba(var(--panel-rgb), .55));
+  padding-left: 6px;
+}
+.skill-row:active { background: rgba(var(--panel-rgb), .7); }
+/* Glifo de dado que aparece en hover, no en la prof box */
+.skill-row::after {
+  content: '⚄';
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--gold);
+  opacity: 0;
+  font-size: 16px;
+  transition: opacity .2s, transform .2s;
+  pointer-events: none;
+}
+.skill-row:hover::after { opacity: .85; transform: translateY(-50%) translateX(-2px); }
+.skill-mod { color: var(--gold-light); font-weight: 600; }
+/* La prof box NO debe parecer clickeable como la fila */
+.skill-prof { cursor: pointer; }
+
+/* Salvaciones — mismo tratamiento */
+.save-row {
+  cursor: pointer;
+  position: relative;
+  padding-right: 26px !important;
+  transition: background .15s, padding-left .2s;
+}
+.save-row:hover {
+  background: linear-gradient(90deg, rgba(var(--panel-rgb), .35), rgba(var(--panel-rgb), .55));
+  padding-left: 6px;
+}
+.save-row::after {
+  content: '⚄';
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--gold);
+  opacity: 0;
+  font-size: 16px;
+  transition: opacity .2s;
+  pointer-events: none;
+}
+.save-row:hover::after { opacity: .85; }
+.save-prof { cursor: pointer; }
+
+/* Atributos — clickeables sin parecerlo demasiado */
+.attr-box { cursor: pointer; }
+.attr-box::after {
+  content: '⚄';
+  position: absolute;
+  bottom: 4px;
+  right: 6px;
+  color: var(--gold);
+  opacity: 0;
+  font-size: 11px;
+  transition: opacity .2s;
+  pointer-events: none;
+}
+.attr-box { position: relative; }
+.attr-box:hover::after { opacity: .65; }
+/* El input numérico sigue siendo editable, no debe disparar la tirada */
+.attr-box .attr-score { cursor: text; }
+
+/* Hint visible una sola vez al hover sobre la tarjeta de habilidades */
+.card:has(#skillsList)::before,
+.card:has(.saves-list)::before {
+  content: '⚄ tap para tirar';
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  font-family: Cinzel, serif;
+  font-size: 8px;
+  letter-spacing: 2px;
+  color: var(--gold-dark);
+  opacity: .6;
+  pointer-events: none;
+  text-transform: uppercase;
+}
+
+/* ─── 20. Edit indicator más sutil ───────────────── */
+.edit-indicator {
+  background: var(--gold);
+  color: var(--bg-deep);
+  letter-spacing: 3px;
+  font-weight: 600;
+  box-shadow: 0 4px 16px var(--gold-glow);
+}
+
+/* ─── 21. XP bar — animación gold suave ─────────── */
+.xp-bar {
+  background: linear-gradient(90deg, var(--gold-dark) 0%, var(--gold) 60%, var(--gold-light) 100%);
+  transition: width .5s ease;
+}
+.xp-level-badge {
+  background: var(--gold);
+  color: var(--bg-deep);
+  border-radius: 12px;
+  padding: 3px 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+/* ─── 22. Stat-hex (CA/Init/Speed) — más vida ─────── */
+.stat-hex {
+  background: radial-gradient(ellipse at center,
+    rgba(var(--panel-rgb), .85) 0%,
+    rgba(var(--panel-rgb), .55) 100%);
+  border: 1px solid var(--border);
+  transition: border-color .25s, transform .15s;
+}
+.stat-hex:hover { border-color: var(--gold); transform: translateY(-1px); }
+.stat-hex-value { color: var(--gold-light); text-shadow: 0 0 14px var(--gold-glow); }
+.stat-hex-label { color: var(--text-muted); letter-spacing: 2.5px; }
+
+/* ─── 23. Eliminar EVA-01 (botón oculto) ────────── */
+.class-btn:nth-child(13) { display: none !important; }
+
+/* ─── 25. Inventario: Bolsa de Monedas + Encumbrance ─ */
+.inv-extras {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.inv-coins {
+  background: linear-gradient(180deg,
+    rgba(var(--panel-rgb), .55) 0%,
+    rgba(var(--panel-rgb), .35) 100%);
+  border: 1px solid var(--border);
+  border-radius: var(--card-radius, 6px);
+  padding: 10px 12px;
+}
+.inv-coins-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 6px;
+}
+.inv-coins-total {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 18px;
+  color: var(--gold-light);
+  letter-spacing: 0;
+  text-transform: none;
+}
+.inv-coins-total small {
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-left: 2px;
+}
+.inv-coins-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+}
+.inv-coin {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 4px;
+  background: rgba(var(--panel-rgb), .4);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  transition: border-color .2s, transform .15s;
+}
+.inv-coin:hover { border-color: var(--gold-dark); transform: translateY(-1px); }
+.inv-coin-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  box-shadow: 0 0 6px currentColor, inset 0 -2px 4px rgba(0,0,0,.5);
+}
+.inv-coin-meta { text-align: center; line-height: 1.1; }
+.inv-coin-name {
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  letter-spacing: 1.5px;
+  color: var(--gold);
+}
+.inv-coin-label {
+  font-family: 'IM Fell English', serif;
+  font-size: 8px;
+  font-style: italic;
+  color: var(--text-muted);
+}
+.inv-coin-input {
+  width: 100%;
+  background: var(--bg-deep);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  text-align: center;
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 13px;
+  padding: 2px 4px;
+  border-radius: 3px;
+}
+.inv-coin-input:focus { outline: none; border-color: var(--gold); }
+
+@media (max-width: 480px) {
+  .inv-coins-grid { grid-template-columns: repeat(5, 1fr); gap: 3px; }
+  .inv-coin { padding: 4px 2px; }
+  .inv-coin-name { font-size: 8px; }
+  .inv-coin-label { display: none; }
+  .inv-coin-input { font-size: 11px; }
+}
+
+/* Encumbrance */
+.inv-encumbrance {
+  background: rgba(var(--panel-rgb), .4);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 8px 10px;
+}
+.inv-enc-bar-wrap {
+  height: 8px;
+  background: rgba(var(--panel-rgb), .8);
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+  margin-bottom: 6px;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,.6);
+}
+.inv-enc-bar {
+  height: 100%;
+  transition: width .35s ease, background .35s ease;
+  box-shadow: 0 0 8px currentColor;
+}
+.inv-encumbrance[data-state="critical"] .inv-enc-bar { animation: hpPulse 1.4s ease-in-out infinite; }
+.inv-enc-overflow {
+  position: absolute;
+  top: 0; bottom: 0;
+  background: repeating-linear-gradient(45deg,
+    var(--hp-critical) 0 4px,
+    transparent 4px 8px);
+  opacity: .8;
+}
+.inv-enc-detail {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.inv-enc-detail strong {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 14px;
+  letter-spacing: 0;
+  text-transform: none;
+}
+.inv-enc-hint {
+  font-style: italic;
+  text-transform: none;
+  letter-spacing: 0.5px;
+  font-family: 'IM Fell English', serif;
+  font-size: 11px;
+}
+.death-check.success-check.active { background: var(--hp-healthy); border-color: var(--hp-healthy); box-shadow: 0 0 12px rgba(76,175,128,.5); }
+.death-check.failure-check.active { background: var(--hp-critical); border-color: var(--hp-critical); box-shadow: 0 0 12px rgba(224,87,59,.5); }
+.death-label.success { color: var(--hp-healthy); letter-spacing: 2.5px; }
+.death-label.failure { color: var(--hp-critical); letter-spacing: 2.5px; }

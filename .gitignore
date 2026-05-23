@@ -1,0 +1,25 @@
+# Sistema operativo
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor
+.vscode/
+.claude/
+*.swp
+*.swo
+*.code-workspace
+
+# Node (por si se agrega build tool en el futuro)
+node_modules/
+
+# Archivos temporales
+*.log
+*.tmp
+
+# Carpetas de organización local (no necesarias en el repo)
+legacy/
+others/
+
+# PDFs (usar los JSONs en su lugar)
+*.pdf

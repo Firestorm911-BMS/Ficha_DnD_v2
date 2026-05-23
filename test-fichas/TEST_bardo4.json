@@ -1,0 +1,52 @@
+{
+  "version": "2.0",
+  "charName": "TEST Bardo 4",
+  "metaValues": ["Bardo 4", "", "Humano Estándar", "Entretenido"],
+  "hp": { "current": "30", "max": "30", "temp": "0" },
+  "xp": { "current": "2700", "next": "6500" },
+  "statAC": "13",
+  "statInit": "+2",
+  "statSpeed": "9",
+  "profBonus": "+2",
+  "initBonus": 0,
+  "scores": { "STR": "10", "DEX": "14", "CON": "14", "INT": "12", "WIS": "10", "CHA": "18" },
+  "skills": [
+    {"prof":false,"expert":false},{"prof":false,"expert":false},{"prof":false,"expert":false},
+    {"prof":false,"expert":false},{"prof":true,"expert":false},{"prof":false,"expert":false},
+    {"prof":true,"expert":false},{"prof":false,"expert":false},{"prof":false,"expert":false},
+    {"prof":true,"expert":false},{"prof":false,"expert":false},{"prof":false,"expert":false},
+    {"prof":true,"expert":false},{"prof":false,"expert":false},{"prof":false,"expert":false},
+    {"prof":false,"expert":false},{"prof":false,"expert":false},{"prof":false,"expert":false}
+  ],
+  "saveProfs": [false, true, false, false, false, true],
+  "classResource": {
+    "name": "Insp. Bárdica",
+    "icon": "🎵",
+    "maxUses": 4,
+    "recovery": "long",
+    "damageBonus": 0,
+    "physResist": false,
+    "effects": ["Otorgar dado (d6) a aliado como acción bonus", "Se recupera en desc. largo (nivel 4)"]
+  },
+  "rageUsesSpent": 4,
+  "hitDice": [{ "die": "d8", "count": 4, "spent": 0 }],
+  "spells": [
+    {"id":"s1","name":"Palabra de Sanación","level":1,"school":"Evocación","castTime":"1 acción bonus","range":"9m","components":"V","duration":"Instantáneo","concentration":false,"prepared":true,"desc":"Cura 1d4 + mod CAR PG."}
+  ],
+  "spellSlotsState": {
+    "1": {"max": 4, "used": 2},
+    "2": {"max": 3, "used": 1}
+  },
+  "pactSlotsState": {"level": 0, "max": 0, "used": 0},
+  "spellcastingAttr": "CHA",
+  "concentrationSpell": null,
+  "traits": [],
+  "attacks": [],
+  "inventory": [],
+  "activeConditions": [false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],
+  "deathSaves": {"s":0,"f":0},
+  "exhaustion": 0,
+  "rageActive": false,
+  "classThemeIndex": 7,
+  "editables": { "heroEpithet": "Aprendiz Músico", "charPlayerName": "Jugador: Tester" }
+}

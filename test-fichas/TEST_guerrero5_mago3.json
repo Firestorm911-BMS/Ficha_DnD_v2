@@ -1,0 +1,66 @@
+{
+  "version": "2.0",
+  "charName": "TEST Guerrero-Mago",
+  "metaValues": ["Guerrero 5/Mago 3", "", "Elfo Alto", "Soldado"],
+  "hp": { "current": "58", "max": "58", "temp": "0" },
+  "xp": { "current": "33000", "next": "34000" },
+  "statAC": "16",
+  "statInit": "+2",
+  "statSpeed": "9",
+  "profBonus": "+3",
+  "initBonus": 0,
+  "scores": { "STR": "16", "DEX": "14", "CON": "14", "INT": "16", "WIS": "10", "CHA": "10" },
+  "skills": [
+    {"prof":false,"expert":false},{"prof":false,"expert":false},{"prof":true,"expert":false},
+    {"prof":false,"expert":false},{"prof":false,"expert":false},{"prof":false,"expert":false},
+    {"prof":false,"expert":false},{"prof":false,"expert":false},{"prof":true,"expert":false},
+    {"prof":false,"expert":false},{"prof":false,"expert":false},{"prof":false,"expert":false},
+    {"prof":false,"expert":false},{"prof":false,"expert":false},{"prof":false,"expert":false},
+    {"prof":false,"expert":false},{"prof":false,"expert":false},{"prof":false,"expert":false}
+  ],
+  "saveProfs": [true, false, true, false, false, false],
+  "classResource": {
+    "name": "Segundo Aliento",
+    "icon": "💪",
+    "maxUses": 1,
+    "recovery": "short",
+    "damageBonus": 0,
+    "physResist": false,
+    "effects": ["Curar 1d10 + nivel como acción bonus"]
+  },
+  "rageUsesSpent": 0,
+  "hitDice": [
+    { "die": "d10", "count": 5, "spent": 0 },
+    { "die": "d6", "count": 3, "spent": 0 }
+  ],
+  "spells": [
+    {"id":"s1","name":"Proyectil Mágico","level":1,"school":"Evocación","castTime":"1 acción","range":"36m","components":"V, S","duration":"Instantáneo","concentration":false,"prepared":true,"desc":"3 dardos que impactan automáticamente, 1d4+1 de daño de fuerza cada uno."},
+    {"id":"s2","name":"Escudo","level":1,"school":"Abjuración","castTime":"1 reacción","range":"Personal","components":"V, S","duration":"1 turno","concentration":false,"prepared":true,"desc":"+5 CA hasta el inicio de tu siguiente turno."},
+    {"id":"s3","name":"Misil Llameante","level":2,"school":"Evocación","castTime":"1 acción","range":"36m","components":"V, S","duration":"Instantáneo","concentration":false,"prepared":true,"desc":"3 misiles de fuego, 2d6 cada uno. Pueden dirigirse a distintos objetivos."}
+  ],
+  "spellSlotsState": {
+    "1": {"max": 4, "used": 1},
+    "2": {"max": 2, "used": 0}
+  },
+  "pactSlotsState": {"level": 0, "max": 0, "used": 0},
+  "spellcastingAttr": "INT",
+  "concentrationSpell": null,
+  "traits": [
+    {"name":"Acción Adicional","desc":"Puedes atacar dos veces en lugar de una cuando realizas la acción de Atacar.","maxUses":0,"usesLeft":0,"restType":"none"},
+    {"name":"Segundo Aliento","desc":"Como acción bonus, recuperas 1d10 + nivel del guerrero PG.","maxUses":1,"usesLeft":1,"restType":"short"}
+  ],
+  "attacks": [
+    {"id":"a1","name":"Espada Larga","ability":"STR","proficient":true,"attackBonus":0,"damage":"1d8","damageType":"cortante","crit":"2d8","notes":"Versátil: 1d10 a dos manos"}
+  ],
+  "inventory": [
+    {"icon":"⚔","name":"Espada Larga","qty":1,"type":"weapon","equipped":true,"acBonus":0,"acBase":null},
+    {"icon":"🛡","name":"Cota de Malla","qty":1,"type":"armor","equipped":true,"acBonus":0,"acBase":16},
+    {"icon":"📖","name":"Libro de Conjuros","qty":1,"type":"gear","equipped":false,"acBonus":0,"acBase":null}
+  ],
+  "activeConditions": [false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],
+  "deathSaves": {"s":0,"f":0},
+  "exhaustion": 0,
+  "rageActive": false,
+  "classThemeIndex": 3,
+  "editables": { "heroEpithet": "Soldado Arcano", "charPlayerName": "Jugador: Tester" }
+}

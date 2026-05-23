@@ -1,0 +1,51 @@
+{
+  "version": "2.0",
+  "charName": "TEST Alerta",
+  "metaValues": ["Explorador 4", "", "Humano Variante", "Forastero"],
+  "hp": { "current": "36", "max": "36", "temp": "0" },
+  "xp": { "current": "2700", "next": "6500" },
+  "statAC": "15",
+  "statInit": "+7",
+  "statSpeed": "9",
+  "profBonus": "+2",
+  "initBonus": 5,
+  "scores": { "STR": "12", "DEX": "16", "CON": "14", "INT": "10", "WIS": "14", "CHA": "10" },
+  "skills": [
+    {"prof":false,"expert":false},{"prof":true,"expert":false},{"prof":false,"expert":false},
+    {"prof":false,"expert":false},{"prof":false,"expert":false},{"prof":false,"expert":false},
+    {"prof":false,"expert":false},{"prof":false,"expert":false},{"prof":false,"expert":false},
+    {"prof":true,"expert":false},{"prof":false,"expert":false},{"prof":false,"expert":false},
+    {"prof":false,"expert":false},{"prof":true,"expert":false},{"prof":false,"expert":false},
+    {"prof":false,"expert":false},{"prof":false,"expert":false},{"prof":true,"expert":false}
+  ],
+  "saveProfs": [true, true, false, false, false, false],
+  "classResource": {
+    "name": "Enemigo Predilecto",
+    "icon": "🎯",
+    "maxUses": 0,
+    "recovery": "none",
+    "damageBonus": 0,
+    "physResist": false,
+    "effects": ["Ventaja en PER/SUP contra Humanoides"]
+  },
+  "rageUsesSpent": 0,
+  "hitDice": [{ "die": "d10", "count": 4, "spent": 0 }],
+  "spells": [],
+  "spellSlotsState": {},
+  "pactSlotsState": {"level": 0, "max": 0, "used": 0},
+  "spellcastingAttr": "",
+  "concentrationSpell": null,
+  "traits": [
+    {"name":"Alerta","desc":"+5 a la iniciativa. No puedes ser sorprendido estando consciente. Los atacantes ocultos no tienen ventaja contra ti.","maxUses":0,"usesLeft":0,"restType":"none"}
+  ],
+  "attacks": [
+    {"id":"a1","name":"Arco Largo","ability":"DEX","proficient":true,"attackBonus":0,"damage":"1d8","damageType":"perforante","crit":"2d8","notes":"Rango 45m/180m"}
+  ],
+  "inventory": [],
+  "activeConditions": [false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],
+  "deathSaves": {"s":0,"f":0},
+  "exhaustion": 0,
+  "rageActive": false,
+  "classThemeIndex": 8,
+  "editables": { "heroEpithet": "Vigilante del Alba", "charPlayerName": "Jugador: Tester" }
+}

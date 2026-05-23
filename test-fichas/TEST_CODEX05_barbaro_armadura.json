@@ -1,0 +1,59 @@
+{
+  "_info": "CODEX-05: Barbaro nivel 5 con armadura equipada. DEX 18 (+4), CON 20 (+5). Formula Barbaro: 10+4+5 = 19. Pero lleva Cota de Malla (CA 16). RAW PHB p.48: si lleva armadura NO usa Defensa sin Armadura, usa la armadura. CA CORRECTA = 16 (cota de malla). BUG PREVIO: CA = 19 (formula Barbaro ganaba el Math.max aunque llevara armadura). Verificar: CA debe mostrar 16 y el detalle debe decir 'Armadura 16'.",
+  "version": "2.0",
+  "charName": "TEST Barbaro+Armadura (CODEX-05)",
+  "metaValues": ["Barbaro 5", "", "Semi-Orco", "Soldado"],
+  "hp": { "current": "65", "max": "65", "temp": "0" },
+  "xp": { "current": "6500", "next": "14000" },
+  "statAC": "16",
+  "statInit": "+4",
+  "statSpeed": "9",
+  "profBonus": "+3",
+  "initBonus": 0,
+  "scores": { "STR": "18", "DEX": "18", "CON": "20", "INT": "8", "WIS": "10", "CHA": "10" },
+  "skills": [
+    {"prof":true,"expert":false},{"prof":false,"expert":false},{"prof":false,"expert":false},
+    {"prof":false,"expert":false},{"prof":false,"expert":false},{"prof":false,"expert":false},
+    {"prof":false,"expert":false},{"prof":false,"expert":false},{"prof":false,"expert":false},
+    {"prof":false,"expert":false},{"prof":false,"expert":false},{"prof":false,"expert":false},
+    {"prof":false,"expert":false},{"prof":true,"expert":false},{"prof":false,"expert":false},
+    {"prof":false,"expert":false},{"prof":true,"expert":false},{"prof":false,"expert":false}
+  ],
+  "saveProfs": [true, false, true, false, false, false],
+  "classResource": {
+    "name": "Furia",
+    "icon": "🔥",
+    "maxUses": 3,
+    "recovery": "long",
+    "damageBonus": 2,
+    "physResist": true,
+    "effects": ["Ventaja en FUE", "+2 dano CaC", "Resistencia a dano fisico"]
+  },
+  "rageUsesSpent": 0,
+  "hitDice": [{ "die": "d12", "count": 5, "spent": 0 }],
+  "spells": [],
+  "spellSlotsState": {},
+  "pactSlotsState": {"level": 0, "max": 0, "used": 0},
+  "spellcastingAttr": "",
+  "concentrationSpell": null,
+  "traits": [
+    {"name":"Movimiento Acelerado","desc":"Velocidad +3m sin armadura.","maxUses":0,"usesLeft":0,"restType":"none"}
+  ],
+  "attacks": [
+    {"id":"a1","name":"Hacha Grande","ability":"STR","proficient":true,"attackBonus":0,"damage":"1d12","damageType":"cortante","crit":"2d12","notes":"","melee":true,"rage":true}
+  ],
+  "inventory": [
+    {"icon":"⚔","name":"Hacha Grande","qty":1,"type":"weapon","equipped":true,"acBonus":0,"acBase":null},
+    {"icon":"🛡","name":"Cota de Malla (test CODEX-05: debe ganar a formula Barbaro)","qty":1,"type":"armor","equipped":true,"acBonus":0,"acBase":16,"dexLimit":0}
+  ],
+  "activeConditions": [false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],
+  "deathSaves": {"s":0,"f":0},
+  "exhaustion": 0,
+  "rageActive": false,
+  "classThemeIndex": 0,
+  "unarmedDefFormula": "barbarian",
+  "editables": {
+    "heroEpithet": "Barbaro Acorazado (BUG TEST)",
+    "charPlayerName": "TEST CODEX-05 — CA deberia ser 16, NO 19"
+  }
+}

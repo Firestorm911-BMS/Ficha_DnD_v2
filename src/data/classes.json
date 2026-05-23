@@ -1,0 +1,473 @@
+[
+  {
+    "id": "Bárbaro",
+    "hitDie": "d12",
+    "savingThrows": ["STR", "CON"],
+    "primaryAttr": ["STR"],
+    "armorProf": ["Ligera", "Media", "Escudos"],
+    "weaponProf": ["Simples", "Marciales"],
+    "toolProf": [],
+    "skills": {
+      "choose": 2,
+      "options": ["Atletismo", "Intimidar", "Naturaleza", "Percepción", "Supervivencia", "Trato con Animales"]
+    },
+    "startingGold": "2d4x10",
+    "multiclassReqs": {
+      "display": "FUE 13",
+      "check": [{ "STR": 13 }],
+      "logic": "and"
+    },
+    "multiclassGains": {
+      "armorProf": ["Escudos"],
+      "weaponProf": ["Simples", "Marciales"],
+      "toolProf": []
+    },
+    "casterType": null,
+    "spellcastingAttr": null,
+    "resource": { "name": "Furia", "icon": "🔥", "recovery": "long" },
+    "equipment": [
+      "Hacha grande o cualquier arma marcial cuerpo a cuerpo",
+      "Dos hachas de mano o cualquier arma simple",
+      "Paquete de explorador y cuatro jabalinas"
+    ],
+    "desc": "Guerrero feroz que canaliza la rabia salvaje. Sin armadura usa 10+DES+CON de CA. Resistencia física en furia.",
+    "subclasses": [
+      { "id": "berserker", "nombre": "Senda del Berserker", "nivel": 3, "desc": "Frenesí: un ataque extra como acción bonus en furia (1 nivel de agotamiento al terminar). Presencia Intimidante: asusta a una criatura visible." },
+      { "id": "totém-guerrero", "nombre": "Senda del Tótem Guerrero", "nivel": 3, "desc": "Elige tótem: Oso (resistencia a todo daño no psíquico en furia), Águila (nadie puede tener ataques de oportunidad contra ti en furia), Lobo (aliados tienen ventaja en ataques contra enemigos adyacentes a ti)." }
+    ]
+  },
+  {
+    "id": "Bardo",
+    "hitDie": "d8",
+    "savingThrows": ["DEX", "CHA"],
+    "primaryAttr": ["CHA"],
+    "armorProf": ["Ligera"],
+    "weaponProf": ["Simples", "Ballesta de mano", "Espada larga", "Estoque", "Espada corta"],
+    "toolProf": ["3 instrumentos musicales (a elección)"],
+    "skills": {
+      "choose": 3,
+      "options": ["Acrobacias", "Arcanos", "Atletismo", "Engañar", "Historia", "Interpretación", "Intimidar", "Investigación", "Medicina", "Naturaleza", "Percepción", "Perspicacia", "Persuasión", "Religión", "Sigilo", "Supervivencia", "Trato con Animales", "Juego de Manos"]
+    },
+    "startingGold": "5d4x10",
+    "multiclassReqs": {
+      "display": "CAR 13",
+      "check": [{ "CHA": 13 }],
+      "logic": "and"
+    },
+    "multiclassGains": {
+      "armorProf": ["Ligera"],
+      "weaponProf": [],
+      "toolProf": ["1 instrumento musical"],
+      "skills": 1
+    },
+    "casterType": "full",
+    "spellcastingAttr": "CHA",
+    "resource": { "name": "Inspiración Bárdica", "icon": "🎵", "recovery": "long" },
+    "equipment": [
+      "Estoque, espada larga o cualquier arma simple",
+      "Paquete de diplomático o paquete de artista",
+      "Laúd u otro instrumento musical",
+      "Armadura de cuero y una daga"
+    ],
+    "desc": "Maestro del arte y la música. Lanzador arcano que inspira a sus aliados y domina múltiples habilidades.",
+    "subclasses": [
+      { "id": "conocimiento", "nombre": "Colegio del Conocimiento", "nivel": 3, "desc": "Competencias adicionales (3 habilidades de cualquier clase). Palabras de Crítica: usa un dado de Inspiración Bárdica en la tirada de un enemigo (lo resta)." },
+      { "id": "valor", "nombre": "Colegio del Valor", "nivel": 3, "desc": "Competencias de combate (armadura media, escudos, armas marciales). Inspiración Marcial: el aliado puede añadir el dado a la tirada de daño o a su CA contra un ataque." }
+    ]
+  },
+  {
+    "id": "Clérigo",
+    "hitDie": "d8",
+    "savingThrows": ["WIS", "CHA"],
+    "primaryAttr": ["WIS"],
+    "armorProf": ["Ligera", "Media", "Escudos"],
+    "weaponProf": ["Simples"],
+    "toolProf": [],
+    "skills": {
+      "choose": 2,
+      "options": ["Historia", "Medicina", "Percepción", "Persuasión", "Perspicacia", "Religión"]
+    },
+    "startingGold": "5d4x10",
+    "multiclassReqs": {
+      "display": "SAB 13",
+      "check": [{ "WIS": 13 }],
+      "logic": "and"
+    },
+    "multiclassGains": {
+      "armorProf": ["Ligera", "Media", "Escudos"],
+      "weaponProf": [],
+      "toolProf": []
+    },
+    "casterType": "full",
+    "spellcastingAttr": "WIS",
+    "resource": { "name": "Canal Divinidad", "icon": "✨", "recovery": "short" },
+    "equipment": [
+      "Maza o martillo de guerra (si tiene competencia)",
+      "Armadura de escamas, armadura de cuero o cota de malla (si tiene competencia)",
+      "Ballesta ligera y 20 virotes o cualquier arma simple",
+      "Paquete de sacerdote o paquete de explorador",
+      "Escudo y símbolo sagrado"
+    ],
+    "desc": "Emisario de los dioses. Canaliza poder divino para curar, proteger o destruir. Las proficiencias de armadura dependen del dominio.",
+    "subclasses": [
+      { "id": "vida", "nombre": "Dominio de la Vida", "nivel": 1, "desc": "Discípulo de la Vida: curación +2d6+nivel. Preservar Vida: restaura 5×nivel de PG entre varias criaturas. Golpe Divino (nv7): +1d8 radiante. Armadura pesada competente." },
+      { "id": "luz", "nombre": "Dominio de la Luz", "nivel": 1, "desc": "Destello Radiante (reacción): impone desventaja en el ataque de un enemigo. Columna de Luz (nv6): conjuros de luz destellan a criaturas fallidas. Armadura pesada competente." },
+      { "id": "naturaleza", "nombre": "Dominio de la Naturaleza", "nivel": 1, "desc": "Acólito de la Naturaleza: un truco druídico + competencia en Naturaleza o Trato con Animales. Señor de la Naturaleza (nv6): inmunizan al daño de conjuros elementales aliados." },
+      { "id": "tempestad", "nombre": "Dominio de la Tempestad", "nivel": 1, "desc": "Cólera de la Tormenta (reacción): cuando eres golpeado, infliges mod.SAB daño de relámpago al atacante (TS DES mitad). Armadura pesada y armas marciales competentes." },
+      { "id": "engaño", "nombre": "Dominio del Engaño", "nivel": 1, "desc": "Bendición del Engañador: impone desventaja en TS contra tus conjuros de encantamiento e ilusión. Impostor (nv2): Canal Divinidad para crear duplicado ilusorio." },
+      { "id": "conocimiento-clerig", "nombre": "Dominio del Conocimiento", "nivel": 1, "desc": "Saberes Místicos: 2 habilidades adicionales de cualquier lista. Conocimiento de las Edades (Canal Divinidad): competencia con cualquier habilidad o herramienta durante 10 min." },
+      { "id": "guerra", "nombre": "Dominio de la Guerra", "nivel": 1, "desc": "Sacerdote de Marte: ataque adicional como acción bonus (nv1 usa Canal Divinidad). Golpe Divino (nv7): +1d8 fuego o radiante. Armadura pesada y armas marciales competentes." }
+    ]
+  },
+  {
+    "id": "Druida",
+    "hitDie": "d8",
+    "savingThrows": ["INT", "WIS"],
+    "primaryAttr": ["WIS"],
+    "armorProf": ["Ligera", "Media", "Escudos (no metal)"],
+    "weaponProf": ["Porras", "Dagas", "Dardos", "Jabalinas", "Mazas", "Cuarterstaff", "Cimitarras", "Hoces", "Hondas", "Lanzas"],
+    "toolProf": ["Kit de herboristería"],
+    "skills": {
+      "choose": 2,
+      "options": ["Arcanos", "Trato con Animales", "Perspicacia", "Medicina", "Naturaleza", "Percepción", "Religión", "Supervivencia"]
+    },
+    "startingGold": "2d4x10",
+    "multiclassReqs": {
+      "display": "SAB 13",
+      "check": [{ "WIS": 13 }],
+      "logic": "and"
+    },
+    "multiclassGains": {
+      "armorProf": ["Ligera", "Media", "Escudos (no metal)"],
+      "weaponProf": [],
+      "toolProf": []
+    },
+    "casterType": "full",
+    "spellcastingAttr": "WIS",
+    "resource": { "name": "Forma Salvaje", "icon": "🐺", "recovery": "short" },
+    "equipment": [
+      "Escudo de madera o cualquier arma simple",
+      "Cimitarra o cualquier arma simple cuerpo a cuerpo",
+      "Armadura de cuero, paquete de explorador y foco druídico"
+    ],
+    "desc": "Guardián de la naturaleza. Se transforma en animales y lanza conjuros de la tierra. No usa metal.",
+    "subclasses": [
+      { "id": "tierra", "nombre": "Círculo de la Tierra", "nivel": 2, "desc": "Recuperación Natural: recuperar ranuras de conjuro igual a ½ nivel (redondeo arriba) en descanso corto, 1/long rest. Conjuros del Círculo adicionales según terreno (ártico, costa, desierto, bosque, pradera, montaña, ciénega, subterráneo)." },
+      { "id": "luna", "nombre": "Círculo de la Luna", "nivel": 2, "desc": "Forma Salvaje de Combate: CR hasta 1 desde nv2. Forma elemental (nv10): CR hasta 6, incluyendo elementales de agua/tierra/fuego/aire. Puedes transformarte como acción bonus." }
+    ]
+  },
+  {
+    "id": "Guerrero",
+    "hitDie": "d10",
+    "savingThrows": ["STR", "CON"],
+    "primaryAttr": ["STR", "DEX"],
+    "armorProf": ["Todas las armaduras", "Escudos"],
+    "weaponProf": ["Simples", "Marciales"],
+    "toolProf": [],
+    "skills": {
+      "choose": 2,
+      "options": ["Acrobacias", "Trato con Animales", "Atletismo", "Historia", "Perspicacia", "Intimidar", "Percepción", "Supervivencia"]
+    },
+    "startingGold": "5d4x10",
+    "multiclassReqs": {
+      "display": "FUE 13 o DES 13",
+      "check": [{ "STR": 13 }, { "DEX": 13 }],
+      "logic": "or"
+    },
+    "multiclassGains": {
+      "armorProf": ["Ligera", "Media", "Escudos"],
+      "weaponProf": ["Simples", "Marciales"],
+      "toolProf": []
+    },
+    "casterType": null,
+    "spellcastingAttr": null,
+    "resource": { "name": "Segundo Aliento", "icon": "💪", "recovery": "short" },
+    "equipment": [
+      "Cota de malla o armadura de cuero, arco largo y 20 flechas",
+      "Arma marcial y escudo o dos armas marciales",
+      "Ballesta ligera y 20 virotes o dos hachas de mano",
+      "Paquete de dungeonero o paquete de explorador"
+    ],
+    "desc": "Maestro del combate con todo tipo de armas y armaduras. El más versátil y durable en el campo de batalla.",
+    "subclasses": [
+      { "id": "campeón", "nombre": "Campeón", "nivel": 3, "desc": "Crítico Mejorado: crítico con 19-20 desde nv3 (18-20 a nv15). Atleta Extraordinario: añade ½ PB a chequeos de FUE/DES/CON sin competencia. Estilo de Combate adicional a nv10." },
+      { "id": "maestro-batalla", "nombre": "Maestro de Batalla", "nivel": 3, "desc": "4 Maniobras de combate (Derribar, Empujar, Atacar Certero, Amenaza, Maniobrar, etc.) usando Dados de Superioridad d8. Estudiante de la Guerra: herramienta de artesano." },
+      { "id": "caballero-eldritch", "nombre": "Caballero Eldritch", "nivel": 3, "desc": "Conjuros arcanos de abjuración y evocación usando INT. Vínculo con Arma: invocar arma vinculada como acción bonus, regresa si la sueltas. Golpe Arcano (nv7): desventaja en TS contra tu siguiente conjuro." }
+    ]
+  },
+  {
+    "id": "Monje",
+    "hitDie": "d8",
+    "savingThrows": ["STR", "DEX"],
+    "primaryAttr": ["DEX", "WIS"],
+    "armorProf": [],
+    "weaponProf": ["Simples", "Espadas cortas"],
+    "toolProf": ["1 herramienta de artesano o instrumento musical (a elección)"],
+    "skills": {
+      "choose": 2,
+      "options": ["Acrobacias", "Atletismo", "Historia", "Perspicacia", "Religión", "Sigilo"]
+    },
+    "startingGold": "5d4",
+    "multiclassReqs": {
+      "display": "DES 13 y SAB 13",
+      "check": [{ "DEX": 13 }, { "WIS": 13 }],
+      "logic": "and"
+    },
+    "multiclassGains": {
+      "armorProf": [],
+      "weaponProf": [],
+      "toolProf": []
+    },
+    "casterType": null,
+    "spellcastingAttr": null,
+    "resource": { "name": "Puntos de Ki", "icon": "🌀", "recovery": "short" },
+    "equipment": [
+      "Espada corta o cualquier arma simple",
+      "Paquete de dungeonero o paquete de explorador",
+      "10 dardos"
+    ],
+    "desc": "Artista marcial que canaliza el ki. Sin armadura usa 10+DES+SAB de CA. Los ataques sin armas escalan con el nivel.",
+    "subclasses": [
+      { "id": "puno-abierto", "nombre": "Camino del Puño Abierto", "nivel": 3, "desc": "Técnica del Puño Abierto: con Flurry of Blows puedes derribar (TS DES), empujar 4.5m (TS FUE) o negar reacciones hasta su próximo turno. Tranquilidad (nv6): curar ki. Plenitud del Cuerpo (nv11): curar 3×nivel PG 1/long rest." },
+      { "id": "sombra", "nombre": "Camino de la Sombra", "nivel": 3, "desc": "Artes de la Sombra: conjurar Oscuridad, Silencio, Paso sin Rastro o Protección Bien/Mal usando puntos de ki. Sigiloso como Sombra: desaparecer en oscuridad/penumbra como acción bonus." },
+      { "id": "cuatro-elementos", "nombre": "Camino de los Cuatro Elementos", "nivel": 3, "desc": "Disciplinas Elementales: aprende 2 disciplinas (Puño de la Tierra, Torrent of Water, Rush of the Gale Spirits, etc.) que usa gastando ki. Más disciplinas a nv6/11/17." }
+    ]
+  },
+  {
+    "id": "Paladín",
+    "hitDie": "d10",
+    "savingThrows": ["WIS", "CHA"],
+    "primaryAttr": ["STR", "CHA"],
+    "armorProf": ["Todas las armaduras", "Escudos"],
+    "weaponProf": ["Simples", "Marciales"],
+    "toolProf": [],
+    "skills": {
+      "choose": 2,
+      "options": ["Atletismo", "Perspicacia", "Intimidar", "Medicina", "Persuasión", "Religión"]
+    },
+    "startingGold": "5d4x10",
+    "multiclassReqs": {
+      "display": "FUE 13 y CAR 13",
+      "check": [{ "STR": 13 }, { "CHA": 13 }],
+      "logic": "and"
+    },
+    "multiclassGains": {
+      "armorProf": ["Ligera", "Media", "Escudos"],
+      "weaponProf": ["Simples", "Marciales"],
+      "toolProf": []
+    },
+    "casterType": "half",
+    "spellcastingAttr": "CHA",
+    "resource": { "name": "Manos Curadoras", "icon": "🤲", "recovery": "long" },
+    "equipment": [
+      "Arma marcial y escudo o dos armas marciales",
+      "Cinco jabalinas o cualquier arma simple cuerpo a cuerpo",
+      "Paquete de sacerdote o paquete de aventurero",
+      "Cota de malla y símbolo sagrado"
+    ],
+    "desc": "Guerrero sagrado bajo un juramento. Magia divina de media progresión. Aura protectora desde nivel 6.",
+    "subclasses": [
+      { "id": "devoción", "nombre": "Juramento de Devoción", "nivel": 3, "desc": "Canal Divinidad: Arma Sagrada (+CAR al ataque por 1 min) o Turno de los Impíos (abysmales/muertos vivientes huyen). Aura de Devoción (nv7): inmunidad a encantamientos en ti y aliados a 3m." },
+      { "id": "ancestros", "nombre": "Juramento de los Ancestros", "nivel": 3, "desc": "Canal Divinidad: Resplandor de los Bosques (luz mágica, restringe movimiento fey/sombras), Encadenamiento Espiritual (resistencia al primer daño recibido por aliado). Aura de Valor (nv7)." },
+      { "id": "venganza", "nombre": "Juramento de Venganza", "nivel": 3, "desc": "Canal Divinidad: Acusación de la Caza (ventaja en ataques al objetivo por 1 min) o Miseria Sobrenatural (objetivo no puede ser curado). Aura de Odio (nv7): +CAR al daño de armas." }
+    ]
+  },
+  {
+    "id": "Explorador",
+    "hitDie": "d10",
+    "savingThrows": ["STR", "DEX"],
+    "primaryAttr": ["DEX", "WIS"],
+    "armorProf": ["Ligera", "Media", "Escudos"],
+    "weaponProf": ["Simples", "Marciales"],
+    "toolProf": [],
+    "skills": {
+      "choose": 3,
+      "options": ["Trato con Animales", "Atletismo", "Perspicacia", "Investigación", "Naturaleza", "Percepción", "Sigilo", "Supervivencia"]
+    },
+    "startingGold": "5d4x10",
+    "multiclassReqs": {
+      "display": "DES 13 y SAB 13",
+      "check": [{ "DEX": 13 }, { "WIS": 13 }],
+      "logic": "and"
+    },
+    "multiclassGains": {
+      "armorProf": ["Ligera", "Media", "Escudos"],
+      "weaponProf": ["Simples", "Marciales"],
+      "toolProf": []
+    },
+    "casterType": "half",
+    "spellcastingAttr": "WIS",
+    "resource": { "name": "Enemigo Predilecto", "icon": "🎯", "recovery": "none" },
+    "equipment": [
+      "Armadura de escamas o armadura de cuero",
+      "Dos espadas cortas o dos armas simples cuerpo a cuerpo",
+      "Paquete de dungeonero o paquete de explorador",
+      "Arco largo y un carcaj con 20 flechas"
+    ],
+    "desc": "Maestro del entorno natural. Rastreador y cazador. Magia de explorador de media progresión desde nivel 2.",
+    "subclasses": [
+      { "id": "cazador", "nombre": "El Cazador", "nivel": 3, "desc": "Presa del Cazador (elige): Matador de Colosos (+1d8 daño a criaturas grandes+), Trampa del Cazador (TS DES o velocidad 0 y daño 1d6/turno), Matar Gigantes (ataque extra al reducir a una criatura grande+). Defensa del Cazador (nv7)." },
+      { "id": "señor-bestias", "nombre": "El Señor de las Bestias", "nivel": 3, "desc": "Compañero Animal: un animal hasta CR ¼ como compañero. Puede atacar como tu acción bonus. Se recupera PG al gastarte un dado de golpe (desc. corto) o completamente en desc. largo." }
+    ]
+  },
+  {
+    "id": "Pícaro",
+    "hitDie": "d8",
+    "savingThrows": ["DEX", "INT"],
+    "primaryAttr": ["DEX"],
+    "armorProf": ["Ligera"],
+    "weaponProf": ["Simples", "Ballesta de mano", "Espada larga", "Estoque", "Espada corta"],
+    "toolProf": ["Herramientas de ladrón"],
+    "skills": {
+      "choose": 4,
+      "options": ["Acrobacias", "Atletismo", "Engañar", "Perspicacia", "Intimidar", "Investigación", "Percepción", "Interpretación", "Persuasión", "Juego de Manos", "Sigilo"]
+    },
+    "startingGold": "4d4x10",
+    "multiclassReqs": {
+      "display": "DES 13",
+      "check": [{ "DEX": 13 }],
+      "logic": "and"
+    },
+    "multiclassGains": {
+      "armorProf": ["Ligera"],
+      "weaponProf": [],
+      "toolProf": ["Herramientas de ladrón"]
+    },
+    "casterType": null,
+    "spellcastingAttr": null,
+    "resource": { "name": "Ataque Furtivo", "icon": "🗡", "recovery": "turn" },
+    "equipment": [
+      "Estoque o espada corta",
+      "Arco corto y carcaj con 20 flechas o espada corta",
+      "Paquete de ladrón, paquete de dungeonero o paquete de explorador",
+      "Armadura de cuero, dos dagas y herramientas de ladrón"
+    ],
+    "desc": "Experto en habilidades y Ataque Furtivo. Puede ignorar candados, trampas y se mueve en silencio.",
+    "subclasses": [
+      { "id": "ladrón", "nombre": "El Ladrón", "nivel": 3, "desc": "Manos Rápidas: Juego de Manos, forzar cerradura o desactivar trampa como acción bonus. Escalador Experto: trepar sin penalización de velocidad. Uso de Objeto Supremo (nv13): usar cualquier objeto mágico ignorando clase/alineamiento." },
+      { "id": "asesino", "nombre": "El Asesino", "nivel": 3, "desc": "Asesino Nato: ventaja en ataques contra criaturas que no han actuado aún (además del Ataque Furtivo normal). Crítico automático en combate sorpresa. Impostor (nv9): duplicar la identidad de alguien perfectamente." },
+      { "id": "embaucador-arcano", "nombre": "El Embaucador Arcano", "nivel": 3, "desc": "Magia Arcana: aprende 3 trucos de mago + 3 conjuros (Encantamiento e Ilusión preferentemente), usando INT. Mano de Mago mejorada como acción bonus. Robo Mágico (nv9): robar concentración ajena." }
+    ]
+  },
+  {
+    "id": "Hechicero",
+    "hitDie": "d6",
+    "savingThrows": ["CON", "CHA"],
+    "primaryAttr": ["CHA"],
+    "armorProf": [],
+    "weaponProf": ["Dagas", "Dardos", "Hondas", "Cuarterstaff", "Ballesta ligera"],
+    "toolProf": [],
+    "skills": {
+      "choose": 2,
+      "options": ["Arcanos", "Engañar", "Perspicacia", "Intimidar", "Persuasión", "Religión"]
+    },
+    "startingGold": "3d4x10",
+    "multiclassReqs": {
+      "display": "CAR 13",
+      "check": [{ "CHA": 13 }],
+      "logic": "and"
+    },
+    "multiclassGains": {
+      "armorProf": [],
+      "weaponProf": [],
+      "toolProf": []
+    },
+    "casterType": "full",
+    "spellcastingAttr": "CHA",
+    "resource": { "name": "Puntos de Sorcería", "icon": "✦", "recovery": "long" },
+    "equipment": [
+      "Ballesta ligera y 20 virotes o cualquier arma simple",
+      "Bolsa de componentes o foco arcano",
+      "Paquete de dungeonero o paquete de explorador",
+      "Dos dagas"
+    ],
+    "desc": "Magia innata por linaje draconico, salvaje o similar. Puede metamagiar hechizos con Puntos de Sorcería.",
+    "subclasses": [
+      { "id": "linaje-dracónico", "nombre": "Linaje Dracónico", "nivel": 1, "desc": "Ancestro Dracónico: elige un tipo de dragón (fuego, frío, relámpago, etc.); competencia en idioma dracónico y resistencia a ese daño. Resiliencia Dracónica: CA 13+DES sin armadura, +1 PG máximo por nivel." },
+      { "id": "alma-salvaje", "nombre": "Alma Salvaje", "nivel": 1, "desc": "Magia Caótica: al lanzar un conjuro de nv1+, tira d20; con 1 lanza efecto aleatorio de la tabla Magia Caótica. Sobrecarga Mágica (nv2): gasta 2 pts de sorcería para lanzar un conjuro de nv1-2 sin gastar ranura, 1/long rest." }
+    ]
+  },
+  {
+    "id": "Brujo",
+    "hitDie": "d8",
+    "savingThrows": ["WIS", "CHA"],
+    "primaryAttr": ["CHA"],
+    "armorProf": ["Ligera"],
+    "weaponProf": ["Simples"],
+    "toolProf": [],
+    "skills": {
+      "choose": 2,
+      "options": ["Arcanos", "Engañar", "Historia", "Intimidar", "Investigación", "Naturaleza", "Religión"]
+    },
+    "startingGold": "4d4x10",
+    "multiclassReqs": {
+      "display": "CAR 13",
+      "check": [{ "CHA": 13 }],
+      "logic": "and"
+    },
+    "multiclassGains": {
+      "armorProf": ["Ligera"],
+      "weaponProf": ["Simples"],
+      "toolProf": []
+    },
+    "casterType": "warlock",
+    "spellcastingAttr": "CHA",
+    "resource": { "name": "Espacios de Pacto", "icon": "🌑", "recovery": "short" },
+    "equipment": [
+      "Ballesta ligera y 20 virotes o cualquier arma simple",
+      "Bolsa de componentes o foco arcano",
+      "Paquete de estudioso o paquete de dungeonero",
+      "Armadura de cuero, cualquier arma simple y dos dagas"
+    ],
+    "desc": "Poder obtenido de un pacto con un ser sobrenatural. Pocos espacios de conjuro, pero se recuperan en descanso corto.",
+    "subclasses": [
+      { "id": "archidemonio", "nombre": "El Archidemonio", "nivel": 1, "desc": "Maldición de Fuego: cuando reduces a 0 PG a una criatura, explota infligiendo 7d8 fuego en un radio de 3m (nv14). Conjuros de pacto ampliados: Manos Ardientes, Polimorfar, etc." },
+      { "id": "gran-antiguo", "nombre": "El Gran Antiguo", "nivel": 1, "desc": "Despertar de la Mente: telepatía 9m (comprende cualquier idioma). Comunicación Aumentada (nv6): transmitir mensajes telepáticamente en cualquier idioma. Entropía Cósmica (nv10)." },
+      { "id": "señor-féerico", "nombre": "El Señor de los Feéricos", "nivel": 1, "desc": "Presencia Feérica: como acción, criaturas en cubo de 3m hacen TS CAR o quedan encantadas o asustadas (1 min). Escape Feérico (nv6): teletransportarse 9m + invisibilidad hasta inicio del siguiente turno." }
+    ]
+  },
+  {
+    "id": "Mago",
+    "hitDie": "d6",
+    "savingThrows": ["INT", "WIS"],
+    "primaryAttr": ["INT"],
+    "armorProf": [],
+    "weaponProf": ["Dagas", "Dardos", "Hondas", "Cuarterstaff", "Ballesta ligera"],
+    "toolProf": [],
+    "skills": {
+      "choose": 2,
+      "options": ["Arcanos", "Historia", "Perspicacia", "Investigación", "Medicina", "Religión"]
+    },
+    "startingGold": "4d4x10",
+    "multiclassReqs": {
+      "display": "INT 13",
+      "check": [{ "INT": 13 }],
+      "logic": "and"
+    },
+    "multiclassGains": {
+      "armorProf": [],
+      "weaponProf": [],
+      "toolProf": []
+    },
+    "casterType": "full",
+    "spellcastingAttr": "INT",
+    "resource": { "name": "Recuperación Arcana", "icon": "📖", "recovery": "long" },
+    "equipment": [
+      "Cuarterstaff o daga",
+      "Bolsa de componentes o foco arcano",
+      "Paquete de estudioso o paquete de explorador",
+      "Libro de conjuros"
+    ],
+    "desc": "El mayor repertorio arcano. Aprende conjuros de pergaminos y libros. Recupera espacios de conjuro en descanso largo.",
+    "subclasses": [
+      { "id": "abjuración", "nombre": "Escuela de Abjuración", "nivel": 2, "desc": "Abjurador Arcano: escudo de energía mágica que absorbe daño (2+doble nivel de conjuro PG). Proyección de Resistencia (nv6): dar resistencia a un aliado a 9m." },
+      { "id": "conjuración", "nombre": "Escuela de Conjuración", "nivel": 2, "desc": "Conjurador Experto: los conjuros de conjuración que usas de forma gratuita (Mano de Mago, Nube de Dagas, etc.) tienen ventajas. Desplazamiento Menor (nv6): teleportación de criatura 9m como acción bonus." },
+      { "id": "adivinación", "nombre": "Escuela de Adivinación", "nivel": 2, "desc": "Presciencia: al terminar descanso largo, tiras 2d20 y guardas los resultados. Puedes usar uno de esos resultados en lugar de cualquier tirada (tuya o de otro). Se renuevan en cada desc. largo." },
+      { "id": "encantamiento", "nombre": "Escuela de Encantamiento", "nivel": 2, "desc": "Mente Hipnótica: cuando lanzas un conjuro de encantamiento, puedes hacer que no note que fue hechizado (TS INT). Mente Acaparadora (nv6): un encantamiento que falla puede redirigirse a otro objetivo." },
+      { "id": "evocación", "nombre": "Escuela de Evocación", "nivel": 2, "desc": "Esculpir Conjuros: cuando lanzas un conjuro de evocación en área, hasta INT aliados dentro son inmunes al daño (guardan automáticamente y no reciben daño, ni la mitad). Potenciación Mágica (nv10)." },
+      { "id": "ilusión", "nombre": "Escuela de Ilusión", "nivel": 2, "desc": "Ilusionista Experto: puedes crear ilusiones menores (sonido o imagen de objeto pequeño) de forma gratuita. Ilusión Maleable (nv6): cambiar ilusión activa como acción bonus." },
+      { "id": "nigromancia", "nombre": "Escuela de Nigromancia", "nivel": 2, "desc": "Segador Fúnebre: cuando lanzas un truco que inflige daño necrótico, añade +INT al daño a una criatura. Perturbador No-Muerto (nv6): no-muertos animados por ti son más resistentes (+PG)." },
+      { "id": "transmutación", "nombre": "Escuela de Transmutación", "nivel": 2, "desc": "Alquimia Menor: transmuta el material de un objeto no mágico (madera↔hueso, hierro↔cobre, etc.) durante 1 hora. Maestro Alquimista (nv10): transmutaciones permanentes en objetos pequeños." }
+    ]
+  }
+]

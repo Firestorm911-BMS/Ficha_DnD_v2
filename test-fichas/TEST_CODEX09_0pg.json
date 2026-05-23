@@ -1,0 +1,56 @@
+{
+  "_info": "CODEX-09: Personaje a 0 PG actuales. Pasos para verificar: 1) importar JSON, 2) confirmar que PG actuales = 0 y death saves = 0 exitos / 0 fallos, 3) usar la barra de dano para aplicar 5 de dano — el contador de FALLOS debe subir a 1, 4) aplicar 5 mas de dano — fallos sube a 2, 5) Aplicar 51 de dano (= PG max 51) — debe mostrar 3 fallos y log 'Muerte instantanea'. BUG PREVIO: aplicar dano a 0 PG no modificaba death saves.",
+  "version": "2.0",
+  "charName": "TEST 0 PG Death Saves (CODEX-09)",
+  "metaValues": ["Guerrero 5", "", "Humano", "Soldado"],
+  "hp": { "current": "0", "max": "51", "temp": "0" },
+  "xp": { "current": "6500", "next": "14000" },
+  "statAC": "16",
+  "statInit": "+1",
+  "statSpeed": "9",
+  "profBonus": "+3",
+  "initBonus": 0,
+  "scores": { "STR": "16", "DEX": "12", "CON": "16", "INT": "10", "WIS": "10", "CHA": "10" },
+  "skills": [
+    {"prof":false,"expert":false},{"prof":false,"expert":false},{"prof":true,"expert":false},
+    {"prof":false,"expert":false},{"prof":false,"expert":false},{"prof":false,"expert":false},
+    {"prof":false,"expert":false},{"prof":false,"expert":false},{"prof":false,"expert":false},
+    {"prof":false,"expert":false},{"prof":false,"expert":false},{"prof":false,"expert":false},
+    {"prof":false,"expert":false},{"prof":false,"expert":false},{"prof":false,"expert":false},
+    {"prof":false,"expert":false},{"prof":false,"expert":false},{"prof":false,"expert":false}
+  ],
+  "saveProfs": [true, false, true, false, false, false],
+  "classResource": {
+    "name": "Segundo Aliento",
+    "icon": "💪",
+    "maxUses": 1,
+    "recovery": "short",
+    "damageBonus": 0,
+    "physResist": false,
+    "effects": ["Curar 1d10 + nivel como accion bonus"]
+  },
+  "rageUsesSpent": 0,
+  "hitDice": [{ "die": "d10", "count": 5, "spent": 3 }],
+  "spells": [],
+  "spellSlotsState": {},
+  "pactSlotsState": {"level": 0, "max": 0, "used": 0},
+  "spellcastingAttr": "",
+  "concentrationSpell": null,
+  "traits": [],
+  "attacks": [
+    {"id":"a1","name":"Espada Larga","ability":"STR","proficient":true,"attackBonus":0,"damage":"1d8","damageType":"cortante","crit":"2d8","notes":"","melee":true,"rage":false}
+  ],
+  "inventory": [
+    {"icon":"🛡","name":"Cota de Malla","qty":1,"type":"armor","equipped":true,"acBonus":0,"acBase":16,"dexLimit":0}
+  ],
+  "activeConditions": [false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],
+  "deathSaves": {"s":0,"f":0},
+  "exhaustion": 0,
+  "rageActive": false,
+  "classThemeIndex": 3,
+  "unarmedDefFormula": "standard",
+  "editables": {
+    "heroEpithet": "Al Borde de la Muerte",
+    "charPlayerName": "TEST CODEX-09 — aplicar dano debe sumar fallos de muerte"
+  }
+}

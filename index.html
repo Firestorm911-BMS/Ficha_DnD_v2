@@ -1,0 +1,1223 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ficha de Personaje — D&D 5e</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Cinzel+Decorative:wght@400;700&family=IM+Fell+English:ital@0;1&family=Uncial+Antiqua&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="src/styles.css">
+  <link rel="stylesheet" href="src/refresh.css">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <meta name="theme-color" content="#c9a84c">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="D&D Ficha">
+</head>
+<body>
+<!-- Background & Texture -->
+<div id="bg-layer"></div>
+<div class="edit-indicator">✦ Modo Edición Activo</div>
+<div class="toast" id="toast">Guardado</div>
+
+<!-- Combat Overlay -->
+<div class="combat-overlay" id="combatOverlay">
+  <div class="combat-panel">
+    <div class="combat-panel-title">⚔ Modo Combate</div>
+
+    <!-- HP + stats secundarios -->
+    <div class="combat-hud-top">
+      <div class="combat-hp-big">
+        <div id="combatHpNum" class="combat-hp-num" style="color: var(--green-light);">35</div>
+        <div style="font-family:'Cinzel',serif;font-size:10px;letter-spacing:2px;color:var(--text-muted);text-transform:uppercase;margin-top:4px;">Puntos de Golpe</div>
+        <div class="hp-bar-wrap" style="margin:10px 0 0;">
+          <div class="hp-bar" id="combatHpBar" style="width:100%;background-position:right center;"></div>
+        </div>
+      </div>
+      <div class="combat-side-stats">
+        <div class="combat-stat-pill">
+          <div class="combat-stat-value" id="overlayAC">—</div>
+          <div class="combat-stat-label">CA</div>
+        </div>
+        <div class="combat-stat-pill">
+          <div class="combat-stat-value" id="overlaySpeed">—</div>
+          <div class="combat-stat-label">Vel.</div>
+        </div>
+        <div class="combat-stat-pill" id="overlayTempPill" style="display:none;">
+          <div class="combat-stat-value" id="overlayTemp" style="color:var(--green-light);">0</div>
+          <div class="combat-stat-label">Temp.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Daño / Curación -->
+    <div class="combat-controls">
+      <div>
+        <div style="font-family:'Cinzel',serif;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:#e74c3c;margin-bottom:6px;">⚔ Daño</div>
+        <input class="combat-input" id="damageInput" type="number" placeholder="0" min="0">
+        <label class="combat-check"><input id="damagePhysical" type="checkbox" checked> físico</label>
+        <button class="btn btn-danger" style="width:100%;margin-top:6px;clip-path:none;" onclick="applyDamage()">Aplicar Daño</button>
+      </div>
+      <div>
+        <div style="font-family:'Cinzel',serif;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--green-light);margin-bottom:6px;">✦ Curación</div>
+        <input class="combat-input" id="healInput" type="number" placeholder="0" min="0">
+        <button class="btn btn-primary" style="width:100%;margin-top:6px;clip-path:none;" onclick="applyHeal()">Curar</button>
+      </div>
+    </div>
+    <div style="text-align:right;margin-top:4px;">
+      <button class="btn btn-sm" onclick="undoHP()" title="Deshacer último cambio de PG" style="opacity:0.6;font-size:11px;padding:2px 8px;">↩ Deshacer PG</button>
+    </div>
+
+    <!-- Furia: pips + botón -->
+    <div class="combat-rage-strip" id="overlayRageStrip">
+      <div class="combat-rage-pips" id="overlayRagePips"></div>
+      <button class="btn btn-sm" id="overlayRageBtn" onclick="toggleRage()">⚡ Recurso</button>
+    </div>
+
+    <!-- Salvaciones de Muerte (visible solo con HP = 0) -->
+    <div class="combat-death-section" id="overlayDeathSection" style="display:none;">
+      <div class="combat-death-title">💀 Salvaciones de Muerte</div>
+      <div class="death-row" style="justify-content:center;gap:10px;">
+        <span class="death-label success">Éxitos</span>
+        <div class="death-check success-check" onclick="toggleDeath(this)"></div>
+        <div class="death-check success-check" onclick="toggleDeath(this)"></div>
+        <div class="death-check success-check" onclick="toggleDeath(this)"></div>
+        <span class="death-label failure">Fallos</span>
+        <div class="death-check failure-check" onclick="toggleDeath(this)"></div>
+        <div class="death-check failure-check" onclick="toggleDeath(this)"></div>
+        <div class="death-check failure-check" onclick="toggleDeath(this)"></div>
+      </div>
+    </div>
+
+    <!-- Acciones -->
+    <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:14px;">
+      <button class="btn btn-sm" onclick="rollInitiative()">🎲 Iniciativa</button>
+      <button class="btn btn-sm" onclick="spendHitDie()" title="Gastar un dado de golpe durante descanso corto">☾ Dado de golpe</button>
+      <button class="btn btn-sm btn-danger" onclick="document.getElementById('combatOverlay').classList.remove('open')">✕ Cerrar</button>
+    </div>
+
+    <!-- Log de combate -->
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;margin-bottom:2px;">
+      <span style="font-family:'Cinzel',serif;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-muted);">Historial</span>
+      <button class="btn btn-sm" onclick="clearCombatLog()" style="opacity:0.55;font-size:10px;padding:1px 6px;">✕ Limpiar</button>
+    </div>
+    <div id="combatLog" style="max-height:140px;overflow-y:auto;font-family:'IM Fell English',serif;font-size:12px;color:var(--text-muted);font-style:italic;"></div>
+  </div>
+</div>
+
+<!-- Dice Roller FAB -->
+<div class="dice-roller">
+  <button class="dice-fab" id="diceFab" onclick="handleDiceFab()" title="Lanzar dados">⚄</button>
+  <div class="dice-panel dice-panel-v15" id="dicePanel">
+    <div class="dice-panel-title">⚄ Cofre de Dados</div>
+
+    <div class="dice-controls">
+      <div class="dc-row">
+        <div class="dc-label">Cantidad</div>
+        <div class="dc-stepper">
+          <button type="button" data-step="-1">−</button>
+          <input id="numDice" type="number" min="1" max="20" value="1">
+          <button type="button" data-step="1">+</button>
+        </div>
+      </div>
+      <div class="dc-row">
+        <div class="dc-label">Modificador</div>
+        <div class="dc-stepper">
+          <button type="button" data-modstep="-1">−</button>
+          <input id="dieBonus" type="number" value="0">
+          <button type="button" data-modstep="1">+</button>
+        </div>
+      </div>
+      <div class="dc-row dc-adv">
+        <div class="dc-label">Tipo</div>
+        <div class="dc-segmented">
+          <button type="button" class="active" data-adv="normal">Normal</button>
+          <button type="button" data-adv="adv">Ventaja</button>
+          <button type="button" data-adv="dis">Desventaja</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="dice-tray-divider"><span></span><span class="dtd-mark">◈</span><span></span></div>
+
+    <div class="dice-tray" id="diceTray">
+      <button class="dice-shape" data-sides="4"  title="d4 — Tetraedro">
+        <svg viewBox="0 0 60 60"><polygon points="30,6 54,52 6,52" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><line x1="30" y1="6" x2="30" y2="52" stroke="currentColor" stroke-width="0.8" opacity="0.5"/></svg>
+        <span class="ds-label">d4</span>
+      </button>
+      <button class="dice-shape" data-sides="6"  title="d6 — Cubo">
+        <svg viewBox="0 0 60 60"><polygon points="14,18 30,8 46,18 46,46 30,56 14,46" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><line x1="14" y1="18" x2="46" y2="18" stroke="currentColor" stroke-width="0.8" opacity="0.5"/><line x1="30" y1="8" x2="30" y2="56" stroke="currentColor" stroke-width="0.8" opacity="0.5"/></svg>
+        <span class="ds-label">d6</span>
+      </button>
+      <button class="dice-shape" data-sides="8"  title="d8 — Octaedro">
+        <svg viewBox="0 0 60 60"><polygon points="30,4 56,30 30,56 4,30" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><line x1="4" y1="30" x2="56" y2="30" stroke="currentColor" stroke-width="0.8" opacity="0.5"/><line x1="30" y1="4" x2="30" y2="56" stroke="currentColor" stroke-width="0.8" opacity="0.5"/></svg>
+        <span class="ds-label">d8</span>
+      </button>
+      <button class="dice-shape" data-sides="10" title="d10 — Trapezoedro">
+        <svg viewBox="0 0 60 60"><polygon points="30,4 54,22 46,46 30,56 14,46 6,22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><line x1="30" y1="4" x2="30" y2="56" stroke="currentColor" stroke-width="0.8" opacity="0.5"/><line x1="6" y1="22" x2="54" y2="22" stroke="currentColor" stroke-width="0.8" opacity="0.5"/></svg>
+        <span class="ds-label">d10</span>
+      </button>
+      <button class="dice-shape" data-sides="12" title="d12 — Dodecaedro">
+        <svg viewBox="0 0 60 60"><polygon points="30,4 50,16 56,38 42,54 18,54 4,38 10,16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><polygon points="30,18 42,26 38,40 22,40 18,26" fill="none" stroke="currentColor" stroke-width="0.8" opacity="0.5"/></svg>
+        <span class="ds-label">d12</span>
+      </button>
+      <button class="dice-shape featured" data-sides="20" title="d20 — Icosaedro">
+        <svg viewBox="0 0 60 60"><polygon points="30,3 56,18 56,42 30,57 4,42 4,18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><polygon points="30,3 30,57 4,18 56,18" fill="none" stroke="currentColor" stroke-width="0.6" opacity="0.4"/><polygon points="30,3 30,57 4,42 56,42" fill="none" stroke="currentColor" stroke-width="0.6" opacity="0.4"/></svg>
+        <span class="ds-label">d20</span>
+      </button>
+      <button class="dice-shape" data-sides="100" title="d100 — Porcentaje">
+        <svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="25" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="30" cy="30" r="14" fill="none" stroke="currentColor" stroke-width="0.8" opacity="0.5"/><line x1="14" y1="40" x2="46" y2="20" stroke="currentColor" stroke-width="0.8" opacity="0.5"/></svg>
+        <span class="ds-label">d100</span>
+      </button>
+    </div>
+
+    <button class="dice-roll-go" id="diceRollGo">⚄ Lanzar último</button>
+
+    <div class="dice-result" id="diceResult">—</div>
+    <div class="dice-result-label" id="diceLabel">Pulsa un dado o «Lanzar»</div>
+    <input id="dieSides" type="hidden" value="20">
+  </div>
+</div>
+
+<!-- ══════════════ MAIN APP ══════════════ -->
+<div id="app">
+
+  <!-- HERO BANNER (v14) -->
+  <div class="hero-banner">
+    <div class="hero-bg"></div>
+    <div class="hero-vignette"></div>
+
+    <div class="hero-grid">
+      <!-- Left column: name + epithet + meta -->
+      <div class="hero-info">
+        <div class="hero-eyebrow">
+          <span class="hero-rune">◈</span>
+          <span>Bitácora del Héroe</span>
+          <span class="hero-rune">◈</span>
+        </div>
+        <h1 class="char-name" contenteditable="false" spellcheck="false" id="charName">Nombre del Personaje</h1>
+        <div class="hero-epithet" id="heroEpithet" contenteditable="false" spellcheck="false">Epiteto o subtítulo</div>
+        <div id="charOptionals" style="display:flex;gap:20px;justify-content:center;flex-wrap:wrap;margin-top:5px;min-height:0;">
+          <span class="char-optional-field" id="charPlayerName" contenteditable="false" spellcheck="false" data-placeholder="Jugador: nombre..."></span>
+          <span class="char-optional-field" id="charDeity" contenteditable="false" spellcheck="false" data-placeholder="Fe / Deidad..."></span>
+        </div>
+
+        <div class="hero-divider">
+          <span></span><span class="diamond">◆</span><span></span>
+        </div>
+
+        <div class="hero-pills">
+          <div class="hero-pill" data-field="class">
+            <span class="hero-pill-label">Clase</span>
+            <span class="hero-pill-value meta-value" contenteditable="false">Clase 1</span>
+            <div class="class-select-group">
+              <div class="class-select-row">
+                <select class="hero-pill-select" id="classSelect1">
+                  <option value="">— Clase principal —</option>
+                  <option>Bárbaro</option><option>Bardo</option><option>Brujo</option>
+                  <option>Clérigo</option><option>Druida</option><option>Explorador</option>
+                  <option>Guerrero</option><option>Hechicero</option><option>Mago</option>
+                  <option>Monje</option><option>Paladín</option><option>Pícaro</option>
+                </select>
+                <input type="number" class="class-level-input" id="classLevel1" min="1" max="20" value="1">
+              </div>
+              <div class="class-select-row">
+                <select class="hero-pill-select" id="classSelect2">
+                  <option value="">— Multiclase (opcional) —</option>
+                  <option>Bárbaro</option><option>Bardo</option><option>Brujo</option>
+                  <option>Clérigo</option><option>Druida</option><option>Explorador</option>
+                  <option>Guerrero</option><option>Hechicero</option><option>Mago</option>
+                  <option>Monje</option><option>Paladín</option><option>Pícaro</option>
+                </select>
+                <input type="number" class="class-level-input" id="classLevel2" min="1" max="20" value="1">
+              </div>
+            </div>
+          </div>
+          <div class="hero-pill" id="subclassPill" style="display:none;">
+            <span class="hero-pill-label">Arquetipo</span>
+            <span class="hero-pill-value" id="charSubclass" contenteditable="false" spellcheck="false">—</span>
+          </div>
+          <div class="hero-pill">
+            <span class="hero-pill-label">Trasfondo</span>
+            <span class="hero-pill-value meta-value" contenteditable="false">Trasfondo</span>
+          </div>
+          <div class="hero-pill" data-field="species">
+            <span class="hero-pill-label">Especie</span>
+            <span class="hero-pill-value meta-value" contenteditable="false">Humano</span>
+            <select class="hero-pill-select" id="speciesSelect">
+              <option value="">— Ver info de especie —</option>
+              <option>Enano de Colinas</option>
+              <option>Enano de Montañas</option>
+              <option>Elfo Alto</option>
+              <option>Elfo de los Bosques</option>
+              <option>Drow (Elfo Oscuro)</option>
+              <option>Mediano Pie Ligero</option>
+              <option>Mediano Robusto</option>
+              <option>Humano Estándar</option>
+              <option>Humano Variante</option>
+              <option>Dracónido</option>
+              <option>Gnomo de las Rocas</option>
+              <option>Gnomo de los Bosques</option>
+              <option>Semi-Elfo</option>
+              <option>Semi-Orco</option>
+              <option>Tiefling</option>
+              <option>Personalizado</option>
+            </select>
+          </div>
+          <div class="hero-pill" data-field="alignment">
+            <span class="hero-pill-label">Alineamiento</span>
+            <span class="hero-pill-value meta-value" contenteditable="false">Neutral</span>
+            <select class="align-select" id="alignSelect">
+              <option>Legal Bueno</option>
+              <option>Neutral Bueno</option>
+              <option>Caótico Bueno</option>
+              <option>Legal Neutral</option>
+              <option>Neutral</option>
+              <option>Caótico Neutral</option>
+              <option>Legal Malvado</option>
+              <option>Neutral Malvado</option>
+              <option>Caótico Malvado</option>
+              <option>Sin alineamiento</option>
+            </select>
+          </div>
+        </div>
+        <!-- Info strip: aparece al elegir clase o especie en modo edición -->
+        <div class="hero-info-strip" id="heroInfoStrip" style="display:none;"></div>
+      </div>
+
+      <!-- Right column: portrait, framed -->
+      <div class="hero-portrait portrait-container" onclick="document.getElementById('portrait-upload').click()" title="Cambiar imagen">
+        <div class="hero-portrait-frame">
+          <img id="portrait-img" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" alt="Retrato" data-empty="true">
+          <div class="portrait-overlay">📷 Cambiar</div>
+        </div>
+        <div class="hero-portrait-base"></div>
+      </div>
+    </div>
+
+    <input type="file" id="portrait-upload" accept="image/*" onchange="loadPortrait(event)" style="display:none;">
+    <input type="file" id="bg-upload" accept="image/*" onchange="loadBg(event)" style="display:none;">
+  </div>
+
+  <div class="header-divider"></div>
+
+  <!-- TABS -->
+  <div class="tabs-bar">
+    <button class="tab-btn active" onclick="switchTab('principal', this)">
+      <span class="tab-icon">⚔</span>Principal
+    </button>
+    <button class="tab-btn" onclick="switchTab('combate', this)">
+      <span class="tab-icon">🛡</span>Combate
+    </button>
+    <button class="tab-btn" onclick="switchTab('magia', this)">
+      <span class="tab-icon">✦</span>Magia
+    </button>
+    <button class="tab-btn" onclick="switchTab('rasgos', this)">
+      <span class="tab-icon">📜</span>Rasgos
+    </button>
+    <button class="tab-btn" onclick="switchTab('notas', this)">
+      <span class="tab-icon">📖</span>Notas
+    </button>
+    <button class="tab-btn tab-btn-config" onclick="switchTab('config', this)">
+      <span class="tab-icon">⚙</span>
+    </button>
+  </div>
+
+  <!-- ════════════════════════════
+       TAB: PRINCIPAL
+  ════════════════════════════ -->
+  <div class="tab-content active" id="tab-principal">
+    
+    <!-- XP Bar -->
+    <div class="xp-section" style="margin-bottom:14px;">
+      <div class="xp-header">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span class="xp-title">✦ Experiencia</span>
+          <span class="xp-level-badge" id="xpLevelBadge">Nv 1</span>
+        </div>
+        <div style="display:flex;gap:6px;align-items:center;">
+          <span contenteditable="false" class="xp-value" id="xpCurrent" oninput="updateXP()">0</span>
+          <span style="color:var(--text-muted);font-family:'Cinzel',serif;font-size:12px;">/</span>
+          <span contenteditable="false" class="xp-value" id="xpNext" oninput="updateXP()">300</span>
+        </div>
+      </div>
+      <div class="xp-bar-wrap">
+        <div class="xp-bar" id="xpBar" style="width:0%"></div>
+      </div>
+      <div class="xp-next" id="xpNextLabel">300 XP necesarios para el siguiente nivel</div>
+      <div class="xp-controls">
+        <input class="xp-input" id="xpAddAmt" type="number" min="0" placeholder="+ XP ganados">
+        <button class="btn btn-sm btn-primary" onclick="addXP()">✦ Añadir</button>
+      </div>
+      <div class="xp-controls edit-only" style="margin-top:6px;">
+        <input class="xp-input" id="levelDirectInput" type="number" min="1" max="20" placeholder="Nv directo (1-20)">
+        <button class="btn btn-sm" onclick="setLevelDirect(document.getElementById('levelDirectInput').value)">Fijar Nv</button>
+      </div>
+    </div>
+
+    <div class="main-grid">
+
+      <!-- LEFT COLUMN -->
+      <div class="col">
+
+        <!-- Attributes -->
+        <div class="card">
+          <div class="card-title"><span class="card-title-icon">⚡</span>Atributos</div>
+          <div class="attributes-grid">
+            <div class="attr-box" data-attr="STR">
+              <div class="attr-name">Fuerza</div>
+              <div class="attr-mod" contenteditable="false" id="mod-STR">0</div>
+              <input class="attr-score" id="score-STR" type="number" value="10" oninput="calcMod('STR')">
+            </div>
+            <div class="attr-box" data-attr="DEX">
+              <div class="attr-name">Destreza</div>
+              <div class="attr-mod" contenteditable="false" id="mod-DEX">0</div>
+              <input class="attr-score" id="score-DEX" type="number" value="10" oninput="calcMod('DEX')">
+            </div>
+            <div class="attr-box" data-attr="CON">
+              <div class="attr-name">Const.</div>
+              <div class="attr-mod" contenteditable="false" id="mod-CON">0</div>
+              <input class="attr-score" id="score-CON" type="number" value="10" oninput="calcMod('CON')">
+            </div>
+            <div class="attr-box" data-attr="INT">
+              <div class="attr-name">Intelig.</div>
+              <div class="attr-mod" contenteditable="false" id="mod-INT">0</div>
+              <input class="attr-score" id="score-INT" type="number" value="10" oninput="calcMod('INT')">
+            </div>
+            <div class="attr-box" data-attr="WIS">
+              <div class="attr-name">Sabi.</div>
+              <div class="attr-mod" contenteditable="false" id="mod-WIS">0</div>
+              <input class="attr-score" id="score-WIS" type="number" value="10" oninput="calcMod('WIS')">
+            </div>
+            <div class="attr-box" data-attr="CHA">
+              <div class="attr-name">Carisma</div>
+              <div class="attr-mod" contenteditable="false" id="mod-CHA">0</div>
+              <input class="attr-score" id="score-CHA" type="number" value="10" oninput="calcMod('CHA')">
+            </div>
+          </div>
+        </div>
+
+        <!-- Prof bonus + Inspiration -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+          <div class="prof-bonus-display">
+            <span class="prof-bonus-val" contenteditable="false" id="profBonus">+2</span>
+            <span class="prof-bonus-lbl">Bonif. Comp.</span>
+          </div>
+          <div class="inspiration-box" id="inspirationBox" onclick="toggleInspiration()">
+            <div class="inspiration-gem" id="inspirationGem"></div>
+            <div class="inspiration-lbl">Inspiración</div>
+          </div>
+        </div>
+
+        <!-- Saving Throws -->
+        <div class="card">
+          <div class="card-title"><span class="card-title-icon">🛡</span>Tiradas de Salvación</div>
+          <div class="saves-list">
+            <div class="save-row">
+              <div class="save-prof" onclick="toggleSaveProf(this)"></div>
+              <span class="save-name">Fuerza</span>
+              <span class="save-bonus">0</span>
+            </div>
+            <div class="save-row">
+              <div class="save-prof" onclick="toggleSaveProf(this)"></div>
+              <span class="save-name">Destreza</span>
+              <span class="save-bonus">0</span>
+            </div>
+            <div class="save-row">
+              <div class="save-prof" onclick="toggleSaveProf(this)"></div>
+              <span class="save-name">Constitución</span>
+              <span class="save-bonus">0</span>
+            </div>
+            <div class="save-row">
+              <div class="save-prof" onclick="toggleSaveProf(this)"></div>
+              <span class="save-name">Inteligencia</span>
+              <span class="save-bonus">0</span>
+            </div>
+            <div class="save-row">
+              <div class="save-prof" onclick="toggleSaveProf(this)"></div>
+              <span class="save-name">Sabiduría</span>
+              <span class="save-bonus">0</span>
+            </div>
+            <div class="save-row">
+              <div class="save-prof" onclick="toggleSaveProf(this)"></div>
+              <span class="save-name">Carisma</span>
+              <span class="save-bonus">0</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Passive Stats -->
+        <div class="passive-box">
+          <div class="passive-num" id="passivePerception">10</div>
+          <div>
+            <div class="passive-label">Sabiduría (Percepción)</div>
+            <div class="passive-label" style="margin-top:2px;font-style:italic;font-family:'IM Fell English',serif;font-size:11px;color:var(--text-muted);">Percepción pasiva</div>
+          </div>
+        </div>
+        <div class="passive-box">
+          <div class="passive-num" id="passiveInvestigation">10</div>
+          <div>
+            <div class="passive-label">Inteligencia (Investigación)</div>
+            <div class="passive-label" style="margin-top:2px;font-style:italic;font-family:'IM Fell English',serif;font-size:11px;color:var(--text-muted);">Investigación pasiva</div>
+          </div>
+        </div>
+        <div class="passive-box">
+          <div class="passive-num" id="passiveInsight">10</div>
+          <div>
+            <div class="passive-label">Sabiduría (Perspicacia)</div>
+            <div class="passive-label" style="margin-top:2px;font-style:italic;font-family:'IM Fell English',serif;font-size:11px;color:var(--text-muted);">Intuición pasiva</div>
+          </div>
+        </div>
+
+        <!-- Languages -->
+        <div class="card">
+          <div class="card-title"><span class="card-title-icon">🌐</span>Idiomas & Competencias</div>
+          <div id="langComp" contenteditable="false" style="font-family:'IM Fell English',serif;font-size:13px;color:var(--text-secondary);line-height:1.6;" spellcheck="false">
+            <strong style="color:var(--gold-dark);font-family:'Cinzel',serif;font-size:10px;letter-spacing:1px;">IDIOMAS:</strong><br>
+            Común<br><br>
+            <strong style="color:var(--gold-dark);font-family:'Cinzel',serif;font-size:10px;letter-spacing:1px;">ARMADURAS:</strong><br>
+            —<br><br>
+            <strong style="color:var(--gold-dark);font-family:'Cinzel',serif;font-size:10px;letter-spacing:1px;">ARMAS:</strong><br>
+            —<br><br>
+            <strong style="color:var(--gold-dark);font-family:'Cinzel',serif;font-size:10px;letter-spacing:1px;">OTROS:</strong><br>
+            —
+          </div>
+        </div>
+
+      </div>
+
+      <!-- CENTER COLUMN -->
+      <div class="col">
+
+        <!-- Combat stats -->
+        <div class="card">
+          <div class="card-title"><span class="card-title-icon">⚔</span>Estadísticas de Combate</div>
+          <div class="combat-stats-row">
+            <div class="stat-hex">
+              <span class="stat-hex-value" contenteditable="false" id="statAC">13</span>
+              <div class="stat-hex-label">Clase Armadura</div>
+              <div class="stat-hex-detail" id="armorCalcDetail">Defensa sin armadura 14</div>
+              <select class="unarmed-def-select edit-only" id="unarmedDefSelect" onchange="updateArmorClass(); saveToLocal();" title="Fórmula de defensa sin armadura">
+                <option value="standard" selected>Estándar: 10+DES</option>
+                <option value="barbarian">Bárbaro: 10+DES+CON</option>
+                <option value="monk">Monje: 10+DES+SAB</option>
+              </select>
+            </div>
+            <div class="stat-hex">
+              <span class="stat-hex-value" contenteditable="false" id="statInit">+2</span>
+              <div class="stat-hex-label">Iniciativa</div>
+            </div>
+            <div class="stat-hex">
+              <span class="stat-hex-value" contenteditable="false" id="statSpeed">9</span>
+              <div class="stat-hex-label">Velocidad (m)</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- HP -->
+        <div class="card">
+          <div class="card-title"><span class="card-title-icon">❤</span>Puntos de Golpe</div>
+          <div class="hp-display">
+            <div class="hp-current-wrap">
+              <span class="hp-current" contenteditable="false" id="hpCurrent" oninput="updateHP()">10</span>
+              <span class="hp-sep">/</span>
+              <span class="hp-max" contenteditable="false" id="hpMax" oninput="updateHP()">10</span>
+            </div>
+            <div style="flex:1;min-width:100px;">
+              <div class="hp-bar-wrap">
+                <div class="hp-bar" id="hpBar" style="width:100%;"></div>
+              </div>
+              <div style="font-family:'Cinzel',serif;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-muted);margin-top:4px;" id="hpStatus">Ileso</div>
+            </div>
+          </div>
+          <div class="hp-controls">
+            <input class="hp-input" id="hpChangeAmt" type="number" placeholder="±0">
+            <button class="btn btn-sm btn-danger" onclick="changeHP(-1)">⚔ Daño</button>
+            <button class="btn btn-sm btn-primary" onclick="changeHP(1)">✦ Curar</button>
+            <button class="btn btn-sm" onclick="undoHP()" title="Deshacer último cambio de PG" style="opacity:0.75;font-size:13px;">↩</button>
+          </div>
+
+          <!-- Temp HP -->
+          <hr class="section-divider">
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+            <span class="hp-temp-label">PG Temporales:</span>
+            <span contenteditable="false" id="hpTemp" style="font-family:'Cinzel Decorative',serif;font-size:20px;color:var(--blue-light);cursor:text;min-width:30px;" oninput="saveToLocal()">0</span>
+          </div>
+
+          <!-- Hit dice -->
+          <hr class="section-divider">
+          <div id="hitDiceSection" style="display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap;"></div>
+
+          <!-- Death Saves -->
+          <hr class="section-divider">
+          <div class="card-title" style="margin-bottom:10px;"><span class="card-title-icon">💀</span>Salvaciones de Muerte</div>
+          <div class="death-saves">
+            <div class="death-row">
+              <span class="death-label success">Éxitos</span>
+              <div class="death-check success-check" onclick="toggleDeath(this)"></div>
+              <div class="death-check success-check" onclick="toggleDeath(this)"></div>
+              <div class="death-check success-check" onclick="toggleDeath(this)"></div>
+            </div>
+            <div class="death-row">
+              <span class="death-label failure">Fallos</span>
+              <div class="death-check failure-check" onclick="toggleDeath(this)"></div>
+              <div class="death-check failure-check" onclick="toggleDeath(this)"></div>
+              <div class="death-check failure-check" onclick="toggleDeath(this)"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Skills -->
+        <div class="card">
+          <div class="card-title"><span class="card-title-icon">★</span>Habilidades</div>
+          <div class="skills-list" id="skillsList">
+            <!-- Generated by JS -->
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT COLUMN -->
+      <div class="col col-right">
+
+        <!-- Resources -->
+        <div class="card">
+          <div class="card-title"><span class="card-title-icon">⚡</span>Recursos Especiales</div>
+          <div class="resources-grid">
+            <div class="resource-box">
+              <div class="resource-name">🔥 Furia</div>
+              <div class="resource-pips" id="resourcePipsMain"></div>
+              <div class="resource-label"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Equipment -->
+        <div class="card">
+          <div class="card-title"><span class="card-title-icon">🎒</span>Equipo
+            <button class="btn btn-sm" style="margin-left:auto;" onclick="addInventoryItem()">+ Añadir</button>
+          </div>
+          <div class="inventory-list" id="inventoryList">
+            <!-- Generated by JS -->
+          </div>
+        </div>
+
+        <!-- Personality -->
+        <div class="card">
+          <div class="card-title"><span class="card-title-icon">🌀</span>Personalidad</div>
+          <div class="personality-grid">
+            <div class="personality-box">
+              <div class="personality-label">⚡ Rasgos <button class="personality-reroll" onclick="reshufflePersonality('personalityTraits')" title="Sugerir rasgo del trasfondo">🎲</button></div>
+              <div class="personality-text" id="personalityTraits" contenteditable="false" spellcheck="false">Describe los rasgos de personalidad de tu personaje...</div>
+            </div>
+            <div class="personality-box">
+              <div class="personality-label">⚖ Ideales <button class="personality-reroll" onclick="reshufflePersonality('personalityIdeals')" title="Sugerir ideal del trasfondo">🎲</button></div>
+              <div class="personality-text" id="personalityIdeals" contenteditable="false" spellcheck="false">¿Qué principios o creencias guían a tu personaje?</div>
+            </div>
+            <div class="personality-box">
+              <div class="personality-label">❤ Vínculos <button class="personality-reroll" onclick="reshufflePersonality('personalityBonds')" title="Sugerir vínculo del trasfondo">🎲</button></div>
+              <div class="personality-text" id="personalityBonds" contenteditable="false" spellcheck="false">¿Qué personas, lugares o cosas son más importantes para tu personaje?</div>
+            </div>
+            <div class="personality-box">
+              <div class="personality-label">⚠ Defectos <button class="personality-reroll" onclick="reshufflePersonality('personalityFlaws')" title="Sugerir defecto del trasfondo">🎲</button></div>
+              <div class="personality-text" id="personalityFlaws" contenteditable="false" spellcheck="false">¿Cuáles son las debilidades o vicios de tu personaje?</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════
+       TAB: COMBATE
+  ════════════════════════════ -->
+  <div class="tab-content" id="tab-combate">
+
+    <!-- ══════════ BATTLE STANCE BANNER ══════════ -->
+    <div class="battle-stance" id="battleStance">
+      <div class="bs-stat bs-hp" id="bsHp" onclick="document.querySelector('.tab-btn').click(); setTimeout(() => document.getElementById('hpCurrent')?.scrollIntoView({block:'center'}), 100);" title="Ver HP en Principal">
+        <div class="bs-icon">❤</div>
+        <div class="bs-value"><span id="bsHpCur">35</span><span style="opacity:.4;font-size:20px;">/</span><span id="bsHpMax">35</span></div>
+        <div class="bs-label">Puntos de Golpe</div>
+        <div class="bs-hp-bar"><div class="bs-hp-bar-fill" id="bsHpBar" style="width:100%;"></div></div>
+      </div>
+      <div class="bs-stat" title="Clase de Armadura">
+        <div class="bs-icon">🛡</div>
+        <div class="bs-value" id="bsAc">14</div>
+        <div class="bs-label">Clase de Armadura</div>
+      </div>
+      <div class="bs-stat" onclick="rollInitiative && rollInitiative()" title="Tirar iniciativa">
+        <div class="bs-icon">⚡</div>
+        <div class="bs-value" id="bsInit">+2</div>
+        <div class="bs-label">Iniciativa</div>
+      </div>
+      <div class="bs-stat" title="Velocidad">
+        <div class="bs-icon">👣</div>
+        <div class="bs-value" id="bsSpeed">9</div>
+        <div class="bs-label">Velocidad (m)</div>
+      </div>
+    </div>
+    <div class="combat-quick-actions">
+      <button class="btn btn-primary btn-combat-main" onclick="openCombatOverlay()">⚔ Modo Combate</button>
+      <button class="btn btn-combat-main" onclick="openDiceRoller()" style="background:transparent;border-color:var(--gold-dark);">🎲 Dados</button>
+    </div>
+
+    <div class="combat-grid">
+
+      <div class="col">
+        <!-- Attacks -->
+        <div class="card">
+          <div class="card-title"><span class="card-title-icon">⚔</span>Ataques
+            <button class="btn btn-sm" style="margin-left:auto;" onclick="addAttack()">+ Añadir</button>
+          </div>
+          <table class="attacks-table" id="attacksTable">
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Bonif.</th>
+                <th>Daño / Tipo</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="attacksList">
+              <!-- Generated by JS -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Conditions -->
+        <div class="card">
+          <div class="card-title"><span class="card-title-icon">⚡</span>Condiciones</div>
+          <div id="exhaustionTracker"></div>
+          <div class="conditions-grid" id="conditionsGrid">
+            <!-- Generated by JS -->
+          </div>
+        </div>
+
+        <!-- Combat notes -->
+        <div class="card">
+          <div class="card-title"><span class="card-title-icon">📜</span>Notas de Combate</div>
+          <div id="combatNotesCE" contenteditable="false" spellcheck="false" style="font-family:'IM Fell English',serif;font-size:14px;color:var(--text-secondary);line-height:1.7;min-height:80px;" oninput="saveToLocal()">
+            Añade aquí notas de combate: CA, recursos, condiciones especiales...
+          </div>
+        </div>
+      </div>
+
+      <div class="col">
+        <!-- Initiative Tracker -->
+        <div class="card">
+          <div class="card-title"><span class="card-title-icon">🎯</span>Rastreador de Iniciativa
+            <button class="btn btn-sm" style="margin-left:auto;" onclick="addInitEntry()">+ Añadir</button>
+          </div>
+          <div class="init-tracker" id="initTracker">
+            <div class="init-entry current-turn" id="initPlayer">
+              <div class="init-num" contenteditable="false">0</div>
+              <div class="init-name" contenteditable="false">Personaje</div>
+              <button class="init-del" onclick="this.closest('.init-entry').remove()">✕</button>
+            </div>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;">
+            <button class="btn btn-sm btn-primary" onclick="nextTurn()">▶ Siguiente turno</button>
+            <button class="btn btn-sm" onclick="sortInit()">↑ Ordenar</button>
+            <button class="btn btn-sm" onclick="rollInitiativeAll()">🎲 Tirar iniciativa</button>
+          </div>
+          <div style="font-family:'Cinzel',serif;font-size:9px;letter-spacing:1.5px;color:var(--text-muted);text-transform:uppercase;margin-top:8px;">
+            Ronda: <span id="roundCounter" style="color:var(--gold);">1</span>
+            <button class="btn btn-sm" style="margin-left:8px;" onclick="incrementRound()">+1</button>
+          </div>
+        </div>
+
+        <!-- Death Saves large -->
+        <div class="card">
+          <div class="card-title"><span class="card-title-icon">💀</span>Salvaciones de Muerte</div>
+          <div class="death-saves">
+            <div class="death-row">
+              <span class="death-label success">Éxitos</span>
+              <div class="death-check success-check" onclick="toggleDeath(this)"></div>
+              <div class="death-check success-check" onclick="toggleDeath(this)"></div>
+              <div class="death-check success-check" onclick="toggleDeath(this)"></div>
+            </div>
+            <div class="death-row">
+              <span class="death-label failure">Fallos</span>
+              <div class="death-check failure-check" onclick="toggleDeath(this)"></div>
+              <div class="death-check failure-check" onclick="toggleDeath(this)"></div>
+              <div class="death-check failure-check" onclick="toggleDeath(this)"></div>
+            </div>
+          </div>
+          <div style="margin-top:12px;display:flex;gap:8px;">
+            <button class="btn btn-sm btn-danger" onclick="rollDeathSave()">🎲 Tirada de muerte</button>
+            <button class="btn btn-sm" onclick="resetDeathSaves()">↺ Resetear</button>
+          </div>
+        </div>
+
+        <!-- Rage overlay quick access -->
+        <div class="card" id="rageCard">
+          <div class="card-title"><span class="card-title-icon">🔥</span>Estado de Furia</div>
+          <div style="text-align:center;padding:12px;">
+            <button class="btn btn-primary" id="rageBtn" style="font-size:14px;padding:12px 24px;" onclick="toggleRage()">
+              🔥 Activar recurso
+            </button>
+            <div id="rageStatus" style="margin-top:12px;font-family:'IM Fell English',serif;font-style:italic;color:var(--text-muted);font-size:13px;"></div>
+            <div class="resource-pips" id="resourcePipsCombat" style="display:flex;gap:8px;justify-content:center;margin-top:10px;"></div>
+          </div>
+          <div id="rageEffects" style="display:none;margin-top:8px;padding:10px;background:rgba(192,57,43,0.1);border:1px solid var(--red-dark);">
+            <div style="font-family:'Cinzel',serif;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:#e74c3c;margin-bottom:6px;">Efectos:</div>
+            <ul style="font-family:'IM Fell English',serif;font-size:13px;color:var(--text-secondary);list-style:none;padding-left:10px;line-height:1.8;"></ul>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title"><span class="card-title-icon">☾</span>Descansos</div>
+          <div class="rest-controls">
+            <button class="btn btn-sm" onclick="spendHitDie()">Gastar dado de golpe</button>
+            <button class="btn btn-sm" onclick="shortRest()">Descanso corto</button>
+            <button class="btn btn-sm btn-primary" onclick="longRest()">Descanso largo</button>
+          </div>
+          <div class="rest-note" id="restNote">Los dados de golpe curan 1d[N] + CON. El descanso largo restaura PG, recursos de clase, conjuros y salvaciones.</div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════
+       TAB: MAGIA
+  ════════════════════════════ -->
+  <div class="tab-content" id="tab-magia">
+    <div class="combat-grid">
+      <div class="col">
+        <div class="card">
+          <div class="card-title"><span class="card-title-icon">✦</span>Estadísticas Mágicas</div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;text-align:center;">
+            <div style="background:var(--bg-card2);border:1px solid var(--border);padding:12px;">
+              <div id="magicAttrCE" style="font-family:'Cinzel Decorative',serif;font-size:22px;color:var(--gold);">—</div>
+              <div style="font-family:'Cinzel',serif;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-muted);margin-top:4px;">Atributo</div>
+            </div>
+            <div style="background:var(--bg-card2);border:1px solid var(--border);padding:12px;">
+              <div id="magicDCCE" style="font-family:'Cinzel Decorative',serif;font-size:22px;color:var(--gold);">—</div>
+              <div style="font-family:'Cinzel',serif;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-muted);margin-top:4px;">CD Conjuros</div>
+            </div>
+            <div style="background:var(--bg-card2);border:1px solid var(--border);padding:12px;">
+              <div id="magicBonusCE" style="font-family:'Cinzel Decorative',serif;font-size:22px;color:var(--gold);">—</div>
+              <div style="font-family:'Cinzel',serif;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-muted);margin-top:4px;">Bonif. Ataque</div>
+            </div>
+          </div>
+          <div class="edit-only" style="margin-top:10px;display:flex;align-items:center;gap:8px;">
+            <span style="font-family:'Cinzel',serif;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);">Atrib. lanzamiento:</span>
+            <select id="spellAttrSelect" onchange="setSpellcastingAttr(this.value)" style="background:var(--bg-deep);border:1px solid var(--border);color:var(--text-primary);padding:4px 8px;border-radius:4px;font-family:'Cinzel',serif;font-size:11px;">
+              <option value="">— Ninguno —</option>
+              <option value="INT">INT (Mago, Artífice)</option>
+              <option value="WIS">WIS (Clérigo, Druida, Explorador)</option>
+              <option value="CHA">CHA (Bardo, Hechicero, Paladín, Brujo)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Spell Slots -->
+        <div class="card">
+          <div class="card-title"><span class="card-title-icon">💠</span>Ranuras de Conjuro</div>
+          <div id="concentrationBanner" class="concentration-banner" style="display:none;"></div>
+          <div id="spellSlotsList"></div>
+          <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;">
+            <button class="btn btn-sm" onclick="restorePactSlots()">☾ Descanso corto</button>
+            <button class="btn btn-sm" onclick="restoreAllSlots()">↺ Descanso largo</button>
+          </div>
+        </div>
+
+        <!-- Cargar plantilla -->
+        <div class="card edit-only">
+          <div class="card-title"><span class="card-title-icon">📋</span>Plantilla de Clase</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;">
+            <select id="spellPresetSelect" style="background:var(--bg-deep);border:1px solid var(--border);color:var(--text-primary);padding:5px 8px;border-radius:4px;font-family:'Cinzel',serif;font-size:11px;flex:1;">
+              <option value="">— Selecciona clase —</option>
+              <option>Bardo</option><option>Clérigo</option><option>Druida</option>
+              <option>Explorador</option><option>Hechicero</option><option>Mago</option>
+              <option>Paladín</option><option>Brujo</option>
+              <option>Bárbaro</option><option>Guerrero</option><option>Monje</option><option>Pícaro</option>
+            </select>
+            <button class="btn btn-sm btn-primary" onclick="loadSpellPreset(document.getElementById('spellPresetSelect').value)">Cargar</button>
+            <button class="btn btn-sm" style="background:var(--bg-card);border:1px solid var(--border);" onclick="loadSpellPreset(document.getElementById('spellPresetSelect').value, true)" title="Añade conjuros de una segunda clase sin reemplazar los actuales">＋ 2ª clase</button>
+          </div>
+          <div style="font-size:11px;color:var(--text-muted);font-family:'IM Fell English',serif;font-style:italic;margin-top:6px;">«Cargar» reemplaza todo. «＋ 2ª clase» añade sin borrar los conjuros existentes.</div>
+        </div>
+
+      </div>
+
+      <div class="col">
+        <!-- Spell list -->
+        <div class="card">
+          <div class="card-title"><span class="card-title-icon">📖</span>Conjuros
+            <span id="spellPreparedCounter" style="font-size:10px;font-family:'IM Fell English',serif;font-weight:normal;margin-left:5px;opacity:0.65;"></span>
+            <button id="spellFilterBtn" class="btn btn-sm" style="margin-left:auto;" onclick="toggleSpellFilter()" title="Alternar entre todos los conjuros y solo los preparados">Todos</button>
+            <button class="btn btn-sm" style="margin-left:4px;" onclick="addSpell()">+ Añadir</button>
+          </div>
+          <div id="spellBookList"></div>
+        </div>
+
+        <!-- Cantrips -->
+        <div class="card">
+          <div class="card-title"><span class="card-title-icon">🌟</span>Trucos / Cantrips
+            <button class="btn btn-sm" style="margin-left:auto;" onclick="addCantrip()">+ Añadir</button>
+          </div>
+          <div id="cantripList"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════
+       TAB: RASGOS
+  ════════════════════════════ -->
+  <div class="tab-content" id="tab-rasgos">
+    <div class="combat-grid">
+      <div class="col">
+        <!-- Apariencia física -->
+        <div class="card">
+          <div class="card-title"><span class="card-title-icon">🪞</span>Apariencia Física</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px 16px;">
+            <div class="appear-field"><span class="appear-label">Género</span><span id="appearGender" class="appear-val" contenteditable="false" spellcheck="false" data-placeholder="—"></span></div>
+            <div class="appear-field"><span class="appear-label">Edad</span><span id="appearAge" class="appear-val" contenteditable="false" spellcheck="false" data-placeholder="—"></span></div>
+            <div class="appear-field"><span class="appear-label">Tamaño</span><span id="appearSize" class="appear-val" contenteditable="false" spellcheck="false" data-placeholder="Mediano"></span></div>
+            <div class="appear-field"><span class="appear-label">Altura</span><span id="appearHeight" class="appear-val" contenteditable="false" spellcheck="false" data-placeholder="—"></span></div>
+            <div class="appear-field"><span class="appear-label">Peso</span><span id="appearWeight" class="appear-val" contenteditable="false" spellcheck="false" data-placeholder="—"></span></div>
+            <div class="appear-field"><span class="appear-label">Piel</span><span id="appearSkin" class="appear-val" contenteditable="false" spellcheck="false" data-placeholder="—"></span></div>
+            <div class="appear-field"><span class="appear-label">Ojos</span><span id="appearEyes" class="appear-val" contenteditable="false" spellcheck="false" data-placeholder="—"></span></div>
+            <div class="appear-field"><span class="appear-label">Cabello</span><span id="appearHair" class="appear-val" contenteditable="false" spellcheck="false" data-placeholder="—"></span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col">
+        <div class="card">
+          <div class="card-title"><span class="card-title-icon">📜</span>Historia del Personaje</div>
+          <div id="charHistoryCE" contenteditable="false" spellcheck="false" style="font-family:'IM Fell English',serif;font-size:14px;color:var(--text-secondary);line-height:1.8;min-height:200px;" oninput="saveToLocal()">Escribe aquí la historia de tu personaje...</div>
+        </div>
+
+        <!-- Invocaciones / Metamagia (edit only) -->
+        <div class="card edit-only">
+          <div class="card-title"><span class="card-title-icon">🔮</span>Invocaciones / Metamagia / Dotes</div>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
+              <span style="font-family:'Cinzel',serif;font-size:10px;letter-spacing:1px;color:var(--text-muted);min-width:80px;">BRUJO</span>
+              <select id="invocationSelect" style="background:var(--bg-deep);border:1px solid var(--border);color:var(--text-primary);padding:4px 6px;border-radius:4px;font-size:11px;flex:1;">
+                <option value="">— Invocación —</option>
+              </select>
+              <button class="btn btn-sm btn-primary" onclick="addClassAbility('invocation','invocationSelect')">+ Añadir</button>
+            </div>
+            <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
+              <span style="font-family:'Cinzel',serif;font-size:10px;letter-spacing:1px;color:var(--text-muted);min-width:80px;">HECHICERO</span>
+              <select id="metamagicSelect" style="background:var(--bg-deep);border:1px solid var(--border);color:var(--text-primary);padding:4px 6px;border-radius:4px;font-size:11px;flex:1;">
+                <option value="">— Metamagia —</option>
+              </select>
+              <button class="btn btn-sm btn-primary" onclick="addClassAbility('metamagic','metamagicSelect')">+ Añadir</button>
+            </div>
+            <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
+              <span style="font-family:'Cinzel',serif;font-size:10px;letter-spacing:1px;color:var(--text-muted);min-width:80px;">DOTES</span>
+              <select id="featSelect" style="background:var(--bg-deep);border:1px solid var(--border);color:var(--text-primary);padding:4px 6px;border-radius:4px;font-size:11px;flex:1;">
+                <option value="">— Dote —</option>
+              </select>
+              <button class="btn btn-sm btn-primary" onclick="addClassAbility('feat','featSelect')">+ Añadir</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title"><span class="card-title-icon">✦</span>Rasgos Adicionales
+            <button class="btn btn-sm" style="margin-left:auto;" onclick="addTrait()">+ Añadir</button>
+          </div>
+          <div id="traitsExtra">
+            <div style="font-family:'IM Fell English',serif;font-style:italic;color:var(--text-muted);font-size:13px;text-align:center;padding:12px 0;">
+              Añade rasgos, dotes o habilidades especiales aquí
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════
+       TAB: NOTAS
+  ════════════════════════════ -->
+  <div class="tab-content" id="tab-notas">
+    <div style="display:flex;gap:10px;align-items:center;margin-bottom:16px;flex-wrap:wrap;">
+      <button class="btn btn-primary" onclick="addJournalEntry()">+ Nueva sesión</button>
+      <span style="font-family:'Cinzel',serif;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-muted);">Diario de campaña</span>
+    </div>
+    <div id="journalContainer">
+      <!-- Entries injected by JS -->
+    </div>
+    <!-- General notes -->
+    <div class="card" style="margin-top:14px;">
+      <div class="card-title"><span class="card-title-icon">📝</span>Notas Generales</div>
+      <div contenteditable="false" spellcheck="false" id="generalNotes" style="font-family:'IM Fell English',serif;font-size:14px;color:var(--text-secondary);line-height:1.8;min-height:120px;" oninput="saveToLocal()">
+        Escribe aquí tus notas de campaña, recordatorios, NPCs importantes...
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════
+       TAB: CONFIG
+  ════════════════════════════ -->
+  <!-- ══════════ TAB: CONFIGURACIÓN — Cámara de Estética ══════════ -->
+  <div class="tab-content" id="tab-config">
+    <div class="combat-grid">
+      <div class="col">
+
+        <!-- ── Temas de Clase ────────────────────────────
+             13 clases D&D + EVA-01 + Manual.
+             Cada botón llama a applyClassTheme(i) que
+             inyecta --bg-deep, --gold, --border y --font-main
+             en el :root sin recargar la página.
+        ─────────────────────────────────────────────── -->
+        <div class="card">
+          <div class="card-title"><span class="card-title-icon">⚔</span>Temas de Clase</div>
+          <div class="class-themes-grid" id="classGrid">
+            <button class="class-btn active" onclick="applyClassTheme(0)"><span class="class-btn-icon">🗡</span><span class="class-btn-name">Bárbaro</span></button>
+            <button class="class-btn" onclick="applyClassTheme(1)"><span class="class-btn-icon">🎵</span><span class="class-btn-name">Bardo</span></button>
+            <button class="class-btn" onclick="applyClassTheme(2)"><span class="class-btn-icon">☀</span><span class="class-btn-name">Clérigo</span></button>
+            <button class="class-btn" onclick="applyClassTheme(3)"><span class="class-btn-icon">🌿</span><span class="class-btn-name">Druida</span></button>
+            <button class="class-btn" onclick="applyClassTheme(4)"><span class="class-btn-icon">⚔</span><span class="class-btn-name">Guerrero</span></button>
+            <button class="class-btn" onclick="applyClassTheme(5)"><span class="class-btn-icon">👊</span><span class="class-btn-name">Monje</span></button>
+            <button class="class-btn" onclick="applyClassTheme(6)"><span class="class-btn-icon">🛡</span><span class="class-btn-name">Paladín</span></button>
+            <button class="class-btn" onclick="applyClassTheme(7)"><span class="class-btn-icon">🏹</span><span class="class-btn-name">Explorador</span></button>
+            <button class="class-btn" onclick="applyClassTheme(8)"><span class="class-btn-icon">🗡</span><span class="class-btn-name">Pícaro</span></button>
+            <button class="class-btn" onclick="applyClassTheme(9)"><span class="class-btn-icon">🔥</span><span class="class-btn-name">Hechicero</span></button>
+            <button class="class-btn" onclick="applyClassTheme(10)"><span class="class-btn-icon">⭐</span><span class="class-btn-name">Brujo</span></button>
+            <button class="class-btn" onclick="applyClassTheme(11)"><span class="class-btn-icon">✦</span><span class="class-btn-name">Mago</span></button>
+            <button class="class-btn" onclick="applyClassTheme(12)"><span class="class-btn-icon">⟁</span><span class="class-btn-name">EVA-01</span></button>
+            <button class="class-btn" onclick="applyClassTheme(13)"><span class="class-btn-icon">✏</span><span class="class-btn-name">Manual</span></button>
+          </div>
+        </div>
+
+        <!-- ── Personalizado ─────────────────────────────
+             Solo activo cuando se elige el perfil "Manual".
+             Lee los 3 inputs de color y el select de fuente:
+               #customBg    → --bg-deep  (fondo oscuro)
+               #customGold  → --gold     (color de acento)
+               #customBorderClr → --border (color de bordes)
+             El select #customFont lee el value como string
+             CSS (ej. "'Cinzel', serif") y lo aplica a --font-main.
+        ─────────────────────────────────────────────── -->
+        <div class="card" id="custom-section" style="opacity:0.4;pointer-events:none;transition:opacity 0.3s;">
+          <div class="card-title"><span class="card-title-icon">✏</span>Personalizado</div>
+          <div class="cust-grid">
+            <div class="ci">
+              <label>Fondo</label>
+              <input type="color" id="customBg" value="#070e07" oninput="applyCustomThemeFull()">
+            </div>
+            <div class="ci">
+              <label>Acento</label>
+              <input type="color" id="customGold" value="#c9a84c" oninput="applyCustomThemeFull()">
+            </div>
+            <div class="ci">
+              <label>Bordes</label>
+              <input type="color" id="customBorderClr" value="#8a6b2a" oninput="applyCustomThemeFull()">
+            </div>
+          </div>
+          <div style="margin-top:10px;">
+            <label style="font-family:'Cinzel',serif;font-size:8px;color:var(--text-muted);letter-spacing:1px;display:block;margin-bottom:4px;">Fuente principal</label>
+            <select id="customFont" onchange="applyCustomThemeFull()" style="width:100%;background:var(--bg-dark);border:1px solid var(--border);color:var(--text-primary);padding:6px;font-family:'Cinzel',serif;font-size:10px;">
+              <option value="'IM Fell English', serif">IM Fell English</option>
+              <option value="'Cinzel', serif">Cinzel</option>
+              <option value="'Uncial Antiqua', serif">Uncial Antiqua</option>
+              <option value="'Courier New', monospace">Courier New (técnica)</option>
+            </select>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="col">
+
+        <!-- ── Accesibilidad — v10 ───────────────────────────
+             --font-scale controla html { font-size: calc(base * scale) }
+             → todos los rem escalan automáticamente.
+             --panel-opacity controla la transparencia de .card
+             → rgba(var(--panel-rgb), var(--panel-opacity))
+        ─────────────────────────────────────────────── -->
+        <div class="card">
+          <div class="card-title"><span class="card-title-icon">♿</span>Accesibilidad</div>
+          <div style="display:flex;flex-direction:column;gap:14px;">
+
+            <div>
+              <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+                <span style="font-family:'Cinzel',serif;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);">Escala de fuente</span>
+                <span id="fontSizeLabel" style="font-family:'Cinzel',serif;font-size:9px;color:var(--gold);">100%</span>
+              </div>
+              <input type="range" id="fontSizeSlider" min="0.75" max="1.5" step="0.05" value="1"
+                style="width:100%;accent-color:var(--gold);"
+                oninput="applyFontScale(this.value)">
+              <div style="display:flex;justify-content:space-between;margin-top:4px;">
+                <span style="font-family:'Cinzel',serif;font-size:8px;color:var(--text-muted);">75%</span>
+                <span style="font-family:'Cinzel',serif;font-size:8px;color:var(--text-muted);">150%</span>
+              </div>
+            </div>
+
+            <div>
+              <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+                <span style="font-family:'Cinzel',serif;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);">Opacidad de paneles</span>
+                <span id="panelOpacityLabel" style="font-family:'Cinzel',serif;font-size:9px;color:var(--gold);">70%</span>
+              </div>
+              <input type="range" id="panelOpacitySlider" min="0.1" max="1" step="0.05" value="0.7"
+                style="width:100%;accent-color:var(--gold);"
+                oninput="applyPanelOpacity(this.value)">
+              <div style="display:flex;justify-content:space-between;margin-top:4px;">
+                <span style="font-family:'Cinzel',serif;font-size:8px;color:var(--text-muted);">10% (traslúcido)</span>
+                <span style="font-family:'Cinzel',serif;font-size:8px;color:var(--text-muted);">100% (sólido)</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title"><span class="card-title-icon">🖼</span>Imágenes</div>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <button class="btn" onclick="document.getElementById('portrait-upload').click()">📷 Cambiar Retrato</button>
+            <button class="btn" onclick="document.getElementById('bg-upload').click()">🖼 Cambiar Fondo</button>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <span style="font-family:'Cinzel',serif;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);">Opacidad fondo:</span>
+              <input type="range" id="bgOpacity" min="0" max="30" value="8" style="flex:1;" oninput="document.getElementById('bg-layer').style.opacity=this.value/100;saveToLocal()">
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title"><span class="card-title-icon">💾</span>Datos</div>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <button class="btn btn-primary" onclick="saveToLocal()">💾 Guardar en navegador</button>
+            <button class="btn" onclick="exportJSON()">⬇ Exportar JSON</button>
+            <button class="btn" onclick="importJSON()">⬆ Importar JSON</button>
+            <button class="btn" onclick="openRoster(true)">👥 Cambiar personaje</button>
+            <button class="btn" onclick="newSheet()">📋 Nueva Ficha en blanco</button>
+            <button class="btn" onclick="printSheet()">🖨 Imprimir / exportar PDF</button>
+            <button class="btn btn-danger" onclick="if(confirm('¿Borrar todos los datos guardados?'))clearSave()">🗑 Borrar datos</button>
+            <input type="file" id="jsonImport" accept=".json" onchange="doImportJSON(event)" style="display:none;">
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title"><span class="card-title-icon">ℹ</span>Ficha</div>
+          <div style="font-family:'IM Fell English',serif;font-size:13px;color:var(--text-secondary);line-height:1.8;">
+            <strong style="color:var(--gold-dark);font-family:'Cinzel',serif;font-size:9px;letter-spacing:1px;text-transform:uppercase;">Sistema:</strong> D&D 5e<br>
+            <strong style="color:var(--gold-dark);font-family:'Cinzel',serif;font-size:9px;letter-spacing:1px;text-transform:uppercase;">Versión:</strong> 1.2.0<br>
+            <strong style="color:var(--gold-dark);font-family:'Cinzel',serif;font-size:9px;letter-spacing:1px;text-transform:uppercase;">Guardado:</strong> <span id="lastSaved">Nunca</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end #app -->
+
+<!-- ══════════════ EDIT FAB ══════════════ -->
+<!-- Botón flotante de editar: ✎ → Editar / ✓ → Guardar -->
+<button class="edit-fab" id="editFab" onclick="toggleEditMode()" title="Editar ficha">✎</button>
+
+<!-- ══════════════ SPELL MODAL ══════════════ -->
+<div id="spellModal" onclick="if(event.target===this)closeSpellModal()">
+  <div class="spell-modal-box">
+    <h3>✦ Añadir / Editar Conjuro</h3>
+    <div class="form-row">
+      <div style="flex:2;"><label>Nombre</label><input id="smName" placeholder="Nombre del conjuro"></div>
+      <div style="flex:1;"><label>Nivel (0=truco)</label>
+        <select id="smLevel"><option value="0">Truco</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option></select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div style="flex:1;"><label>Escuela</label><input id="smSchool" placeholder="Evocación, Abjuración…"></div>
+      <div style="flex:1;"><label>Tiempo de lanzamiento</label><input id="smCastTime" placeholder="1 acción"></div>
+    </div>
+    <div class="form-row">
+      <div style="flex:1;"><label>Alcance</label><input id="smRange" placeholder="9m, Personal, Toque…"></div>
+      <div style="flex:1;"><label>Componentes</label><input id="smComponents" placeholder="V, S, M"></div>
+    </div>
+    <div class="form-row">
+      <div style="flex:1;"><label>Duración</label><input id="smDuration" placeholder="Instantáneo, 1 min…"></div>
+      <div style="flex:1;">
+        <label>Tirada de salvación</label>
+        <select id="smSave"><option value="">— Ninguna —</option><option>STR</option><option>DEX</option><option>CON</option><option>INT</option><option>WIS</option><option>CHA</option></select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div style="flex:1;">
+        <label>Ataque de conjuro</label>
+        <select id="smAttack"><option value="">— Ninguno —</option><option value="ranged">🎯 A distancia</option><option value="melee">⚔ CaC</option></select>
+      </div>
+      <div style="flex:1;">
+        <label>Atrib. de lanzamiento</label>
+        <select id="smCastAttr"><option value="">— Global —</option><option>STR</option><option>DEX</option><option>CON</option><option>INT</option><option>WIS</option><option>CHA</option></select>
+      </div>
+      <div style="flex:1;display:flex;align-items:center;gap:8px;padding-top:18px;">
+        <input type="checkbox" id="smConc" style="width:auto;accent-color:var(--gold);">
+        <label style="margin:0;letter-spacing:0;font-size:12px;text-transform:none;">⚡ Concentración</label>
+      </div>
+    </div>
+    <label>Descripción</label>
+    <textarea id="smDesc" placeholder="Efecto, daño, TS, tirada de ataque…"></textarea>
+    <div class="modal-actions">
+      <button class="btn btn-sm" onclick="closeSpellModal()">Cancelar</button>
+      <button class="btn btn-sm btn-primary" onclick="saveSpellModal()">✓ Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ CHARACTER ROSTER ══════════════ -->
+<div id="rosterOverlay" class="roster-overlay">
+  <div class="roster-panel">
+    <div class="roster-title">⚔ Seleccionar Personaje</div>
+    <div class="roster-subtitle">Elige un personaje o crea uno nuevo</div>
+    <div class="roster-cards" id="rosterCards">
+      <div class="roster-loading">Cargando personajes…</div>
+    </div>
+    <div class="roster-actions">
+      <button class="btn" onclick="closeRoster();openCreationWizard()">📋 Nueva Ficha</button>
+      <button class="btn" onclick="closeRoster();importJSON()">⬆ Importar JSON</button>
+      <button class="btn" id="rosterCloseBtn" onclick="closeRoster()" style="display:none;">✕ Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ CREATION WIZARD ══════════════ -->
+<div id="creationWizard" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:9999;align-items:center;justify-content:center;backdrop-filter:blur(4px);overflow-y:auto;padding:16px;">
+  <div id="wizInner" style="background:var(--bg-card);border:1px solid var(--gold-dark);border-radius:12px;padding:0;max-width:580px;width:100%;box-shadow:0 0 80px rgba(201,168,76,0.2);font-family:'IM Fell English',serif;position:relative;">
+
+    <!-- Header fijo -->
+    <div style="padding:20px 28px 0;border-bottom:1px solid var(--border);margin-bottom:0;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+        <div style="font-family:'Cinzel Decorative',serif;font-size:18px;color:var(--gold);letter-spacing:2px;">⚔ Nueva Ficha</div>
+        <button onclick="closeCreationWizard()" style="background:none;border:none;color:var(--text-muted);font-size:18px;cursor:pointer;padding:0 4px;line-height:1;" title="Cerrar">✕</button>
+      </div>
+      <!-- Indicador de pasos -->
+      <div id="wizStepBar" style="display:flex;align-items:center;gap:0;margin-bottom:16px;"></div>
+    </div>
+
+    <!-- Contenido del paso (dinámico) -->
+    <div id="wizBody" style="padding:22px 28px;min-height:260px;max-height:calc(100vh - 240px);overflow-y:auto;"></div>
+
+    <!-- Navegación fija -->
+    <div style="padding:14px 28px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:space-between;align-items:center;">
+      <button id="wizBtnBack" class="btn btn-sm" onclick="_wizBack()" style="color:var(--text-muted);min-width:80px;">← Atrás</button>
+      <div id="wizStepLabel" style="font-family:'Cinzel',serif;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-muted);"></div>
+      <button id="wizBtnNext" class="btn btn-sm btn-primary" onclick="_wizNext()" style="min-width:100px;">Siguiente →</button>
+    </div>
+
+  </div>
+</div>
+
+<script type="module" src="src/app.js"></script>
+<script type="module" src="src/wizard.js"></script>
+<script type="module" src="src/character_context.js"></script>
+<script type="module" src="src/inventory_extras.js"></script>
+<script type="module" src="src/extra_resources.js"></script>
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./sw.js');
+  }
+</script>
+</body>
+</html>

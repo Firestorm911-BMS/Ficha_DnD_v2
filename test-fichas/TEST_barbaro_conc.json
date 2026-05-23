@@ -1,0 +1,55 @@
+{
+  "version": "2.0",
+  "charName": "TEST Bárbaro Conc",
+  "metaValues": ["Bárbaro 5", "", "Semi-Orco", "Forastero"],
+  "hp": { "current": "52", "max": "52", "temp": "0" },
+  "xp": { "current": "6500", "next": "14000" },
+  "statAC": "15",
+  "statInit": "+2",
+  "statSpeed": "9",
+  "profBonus": "+3",
+  "initBonus": 0,
+  "scores": { "STR": "18", "DEX": "14", "CON": "18", "INT": "8", "WIS": "12", "CHA": "10" },
+  "skills": [
+    {"prof":true,"expert":false},{"prof":false,"expert":false},{"prof":false,"expert":false},
+    {"prof":false,"expert":false},{"prof":false,"expert":false},{"prof":false,"expert":false},
+    {"prof":false,"expert":false},{"prof":false,"expert":false},{"prof":false,"expert":false},
+    {"prof":false,"expert":false},{"prof":false,"expert":false},{"prof":false,"expert":false},
+    {"prof":false,"expert":false},{"prof":true,"expert":false},{"prof":false,"expert":false},
+    {"prof":false,"expert":false},{"prof":false,"expert":false},{"prof":false,"expert":false}
+  ],
+  "saveProfs": [true, false, true, false, false, false],
+  "classResource": {
+    "name": "Furia",
+    "icon": "🔥",
+    "maxUses": 3,
+    "recovery": "long",
+    "damageBonus": 2,
+    "physResist": true,
+    "effects": ["Ventaja en FUE", "+2 daño CaC", "Resistencia física"]
+  },
+  "rageUsesSpent": 0,
+  "hitDice": [{ "die": "d12", "count": 5, "spent": 2 }],
+  "spells": [
+    {"id":"s1","name":"Invisibilidad","level":2,"school":"Ilusión","castTime":"1 acción","range":"Toque","components":"V, S, M","duration":"1 hora","concentration":true,"prepared":true,"desc":"Una criatura se vuelve invisible hasta que ataque o lance un conjuro."}
+  ],
+  "spellSlotsState": {},
+  "pactSlotsState": {"level": 0, "max": 0, "used": 0},
+  "spellcastingAttr": "",
+  "concentrationSpell": {"id":"s1","name":"Invisibilidad"},
+  "traits": [
+    {"name":"Golpe Brutal","desc":"Al hacer un crítico con arma cuerpo a cuerpo, tira un dado de daño adicional.","maxUses":0,"usesLeft":0,"restType":"none"}
+  ],
+  "attacks": [
+    {"id":"a1","name":"Hacha Grande","ability":"STR","proficient":true,"attackBonus":0,"damage":"1d12","damageType":"cortante","crit":"2d12","notes":"A dos manos"}
+  ],
+  "inventory": [
+    {"icon":"⚔","name":"Hacha Grande","qty":1,"type":"weapon","equipped":true,"acBonus":0,"acBase":null}
+  ],
+  "activeConditions": [false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],
+  "deathSaves": {"s":0,"f":0},
+  "exhaustion": 0,
+  "rageActive": false,
+  "classThemeIndex": 0,
+  "editables": { "heroEpithet": "Berserker de las Montañas", "charPlayerName": "Jugador: Tester" }
+}
