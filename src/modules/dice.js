@@ -385,6 +385,45 @@ function rollAttackDamage(i, isCrit = false) {
 
   function rollD20() { return Math.ceil(Math.random() * 20); }
 
+  // ── Condition disadvantage hints ─────────────
+  const CONDITION_DISADVANTAGE = {
+    'Envenenado': ['ataque', 'habilidad'],
+    'Asustado':   ['ataque', 'habilidad'],
+    'Contenido':  ['ataque'],
+    'Cegado':     ['ataque'],
+    'Derribado':  ['ataque'],
+  };
+
+  function _getActiveCondNames() {
+    return Array.from(document.querySelectorAll('.condition-tag.active')).map(el => {
+      const icon = el.querySelector('.cond-icon');
+      return el.textContent.slice(icon ? icon.textContent.length : 0).trim();
+    });
+  }
+
+  function _rollType(label) {
+    if (/^[⚔🎯]/.test(label)) return 'ataque';
+    if (label.startsWith('Salv.') || label === 'Salvación de Muerte') return 'salvacion';
+    return 'habilidad';
+  }
+
+  function _warnConditions(label, mode) {
+    if (mode !== 'normal') return;
+    const type  = _rollType(label);
+    const names = _getActiveCondNames();
+    const why   = names.filter(n => (CONDITION_DISADVANTAGE[n] || []).includes(type));
+    const exh   = state.CHARACTER_STATE.exhaustion || 0;
+    if (exh >= 1 && type === 'habilidad') why.push(`Agotamiento Nv.${exh}`);
+    if (exh >= 3 && (type === 'ataque' || type === 'salvacion')) why.push(`Agotamiento Nv.${exh}`);
+    if (!why.length) return;
+    showToast(`⚠ ${why.join(' · ')} → desventaja sugerida`);
+    const disBtn = advChip.querySelector('[data-mode="dis"]');
+    if (disBtn) {
+      Object.assign(disBtn.style, { background: 'rgba(231,76,60,0.25)', borderColor: '#e74c3c', color: '#e74c3c' });
+      setTimeout(() => Object.assign(disBtn.style, { background: '', borderColor: '', color: '' }), 3000);
+    }
+  }
+
   // ── Master cinematic roll ─────────────────────
   window.LL_cinematicRoll = function(opts) {
     opts = opts || {};
@@ -393,6 +432,8 @@ function rollAttackDamage(i, isCrit = false) {
     const label = opts.label || 'Tirada';
     const critOk = opts.critOk !== false;
     const onComplete = opts.onComplete || null;
+
+    _warnConditions(label, mode);
 
     let r1 = rollD20(), r2 = null, chosen = r1;
     let detail = `d20(${r1})`;

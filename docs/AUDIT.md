@@ -632,15 +632,16 @@ Bajo. El cambio es de organización; la lógica no cambia. Los imports de `app.j
 ## FEAT-01 — Condiciones → desventaja automática en tiradas de dado
 
 **Archivos**: `src/modules/conditions.js`, `src/modules/dice.js`
-**Estado**: `[ ]` — pendiente
+**Estado**: `[x]` — 2026-05-23
 
 ### Descripción
-PHB 5e: las condiciones `Asustado`, `Envenenado`, `Restringido` y otras imponen desventaja en categorías específicas de tiradas. Actualmente las condiciones son solo etiquetas visuales (verificado como correcto en CODEX-06: el usuario activa desventaja manualmente).
+PHB 5e: las condiciones `Asustado`, `Envenenado`, `Restringido` y otras imponen desventaja en categorías específicas de tiradas.
 
-### Implementación sugerida
-- `conditions.js` exporta `getActiveConditions()` — ya existe como `state.CHARACTER_STATE.conditions[]`.
-- `dice.js`: en `LL_cinematicRoll`, antes de lanzar, llamar a `getActiveConditions()`. Si hay condiciones que imponen desventaja para el tipo de tirada actual (según mapa de condición→tiradas), mostrar badge de advertencia y sugerir (sin forzar) desventaja.
-- Mapa inicial: `Envenenado` → todas las tiradas de ataque y de habilidad; `Asustado` → ataques y tiradas de habilidad con visión del origen del miedo; `Restringido` → ataques a distancia.
+### Implementación aplicada
+- `conditions.js`: nueva función `getActiveConditions()` exportada — lee `.condition-tag.active` del DOM y devuelve array de nombres.
+- `dice.js` IIFE: `CONDITION_DISADVANTAGE` map (5 condiciones PHB), `_rollType(label)` (ataque/salvacion/habilidad por patrón de label), `_getActiveCondNames()` (DOM query), `_warnConditions(label, mode)` (evalúa condiciones + agotamiento). `LL_cinematicRoll` llama `_warnConditions(label, mode)` antes de tirar.
+- Comportamiento: si el modo es `'normal'` y hay condiciones relevantes → toast "⚠ Envenenado · → desventaja sugerida" + botón "Desv." del advChip pulsea 3 s en rojo. Sin forzar — el usuario elige.
+- Agotamiento: Nv.1+ → desventaja sugerida en habilidad. Nv.3+ → en ataque y salvación.
 
 ---
 
@@ -884,6 +885,7 @@ Codex reportó que el wrapper de `LL_cinematicRoll` aplicaba desventaja automát
 | 2026-05-23 | Auditoría post-FASE-9 | BUG-20, BUG-21, DEUDA-01/02, FEAT-01–04 | Identificados 2 bugs XSS residuales (notas ricas y campos de conjuro sin escapar), 2 deudas técnicas (split persistence.js, split spells.js) y 4 features pendientes del roadmap. Documentados en AUDIT.md. |
 | 2026-05-23 | DEUDA-01 | Split persistence.js | persistence.js 754→392 líneas. roster.js (121 lín.) con funciones de roster + clearSave + newSheet. share.js (255 lín.) con export/import/URL. Clave SAVE_KEY mutable via getSaveKey/setSaveKey. app.js actualizado con 3 imports. |
 | 2026-05-23 | DEUDA-02 | Split spells.js | spells.js 587→522 líneas. spell-modal.js (71 lín.) con openSpellModal/saveSpellModal/closeSpellModal/addSpell/addCantrip. Sin dep. circular: saveSpellModal usa window.renderSpellBook?(). app.js: import side-effect de spell-modal.js. |
+| 2026-05-23 | FEAT-01 | Condiciones → desventaja sugerida | dice.js IIFE: CONDITION_DISADVANTAGE map + _warnConditions(). conditions.js: getActiveConditions() exportada. LL_cinematicRoll: toast + pulso "Desv." si hay condiciones activas con desventaja para el tipo de tirada. Agotamiento Nv.1/3+ incluido. |
 
 ---
 

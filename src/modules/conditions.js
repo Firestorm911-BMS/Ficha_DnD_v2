@@ -116,6 +116,13 @@ export function renderConditions() {
   });
 }
 
+export function getActiveConditions() {
+  return Array.from(document.querySelectorAll('.condition-tag.active')).map(el => {
+    const icon = el.querySelector('.cond-icon');
+    return el.textContent.slice(icon ? icon.textContent.length : 0).trim();
+  });
+}
+
 // ── Window bridge ──────────────────────────────────────────────────────────
 window.renderConditions = renderConditions;
 window.renderExhaustion = renderExhaustion;
