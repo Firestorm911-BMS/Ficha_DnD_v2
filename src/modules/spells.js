@@ -454,11 +454,11 @@ function buildSpellCard(spell) {
       <div class="spell-prepared-dot ${spell.prepared!==false?'active':''}" onclick="event.stopPropagation();toggleSpellPrepared('${spell.id}')"></div>
       <span class="spell-card-name">${escapeAttr(spell.name)}</span>
       <span class="spell-card-level">${lvlLabel}</span>
-      <span class="spell-card-school">${spell.school||''}</span>
+      <span class="spell-card-school">${escapeAttr(spell.school||'')}</span>
       ${tags}
     </div>
     <div class="spell-card-details" style="display:none;">
-      <div class="spell-card-meta">${[spell.castTime,spell.range,spell.components,spell.duration].filter(Boolean).join(' · ')}</div>
+      <div class="spell-card-meta">${[spell.castTime,spell.range,spell.components,spell.duration].filter(Boolean).map(escapeAttr).join(' · ')}</div>
       <div class="spell-card-desc">${escapeAttr(spell.desc||'')}</div>
       <div class="spell-card-actions">
         ${spell.attack ? `<button class="btn btn-sm" onclick="rollSpellAttack('${spell.id}')">${spell.attack==='ranged'?'🎯':'⚔'} Tirar ataque</button>` : ''}

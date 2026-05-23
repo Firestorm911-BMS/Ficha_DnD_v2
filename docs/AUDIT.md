@@ -542,6 +542,138 @@ Los campos de texto libre (`heroEpithet`, `charDeity`, `charPlayerName`, `person
 
 ---
 
+## BUG-20 — ALTO · Campos de notas ricas no pasan por `sanitizeRichText` al cargar JSON
+
+**Archivo**: `src/modules/persistence.js`
+**Línea**: 349–354
+**Estado**: `[x]` — 2026-05-23
+
+### Descripción
+Los campos `combatNotesCE`, `charHistoryCE` y `generalNotes` se restauran con `el.innerHTML = val` sin sanitizar. Un JSON importado de fuente externa con `"combatNotesCE": "<img src=x onerror='alert(1)'>"` ejecuta el payload al cargar el personaje.
+
+`sanitizeRichText` ya estaba importado en `persistence.js` desde la FASE 9.1 y se usaba para `journalHTML` y `traitsHTML` — faltaba aplicarlo a estos tres campos.
+
+### Fix
+```js
+// Antes:
+if (el) el.innerHTML = val;
+// Después:
+if (el) el.innerHTML = sanitizeRichText(val);
+```
+
+### Cómo verificar
+1. Crear JSON con `"combatNotesCE": "<img src=x onerror='alert(1)'>"`.
+2. Importar → el campo muestra texto literal / imagen rota, sin ejecutar alert.
+
+---
+
+## BUG-21 — ALTO · Campos de conjuro sin escapar en `buildSpellCard()` — XSS en import
+
+**Archivo**: `src/modules/spells.js`
+**Línea**: 461
+**Estado**: `[x]` — 2026-05-23
+
+### Descripción
+En `buildSpellCard()`, los campos `spell.school`, `spell.castTime`, `spell.range`, `spell.components` y `spell.duration` se interpolan directamente en `innerHTML` sin pasar por `escapeAttr()`. Un JSON importado con `"school": "<img src=x onerror='alert(1)'>"` ejecuta el payload al renderizar el libro de conjuros.
+
+`spell.name` y `spell.desc` ya usaban `escapeAttr()` — faltaba aplicarlo a la fila de metadatos.
+
+### Fix
+```js
+// Antes:
+<div class="spell-card-meta">${[spell.castTime, spell.range, spell.components, spell.duration].filter(Boolean).join(' · ')}</div>
+// Después:
+<div class="spell-card-meta">${[spell.castTime, spell.range, spell.components, spell.duration].filter(Boolean).map(escapeAttr).join(' · ')}</div>
+```
+Y en el badge de `spell.school`:
+```js
+// Antes:
+<span class="spell-card-school">${spell.school||''}</span>
+// Después:
+<span class="spell-card-school">${escapeAttr(spell.school||'')}</span>
+```
+
+### Cómo verificar
+1. Añadir conjuro con `school: "<img src=x onerror='alert(1)'>"` vía JSON import.
+2. Abrir pestaña de Magia → sin alert, texto literal visible.
+
+---
+
+## DEUDA-01 — `persistence.js` excede límite de 600 líneas
+
+**Archivo**: `src/modules/persistence.js`
+**Tamaño actual**: 754 líneas / 29 KB
+**Estado**: `[ ]` — pendiente
+
+### Descripción
+El módulo mezcla tres responsabilidades distintas: persistencia local (save/load/migrate), roster (abrir/cerrar/cargar/borrar personajes) y compartir (exportJSON, importJSON, shareViaURL, checkShareHash). Es el módulo más grande y más tocado.
+
+### Split propuesto
+- `persistence.js` → solo `saveState`, `saveToLocal`, `loadState`, `loadFromLocal`, `autoSave`, `migrateState`, hooks (`registerBeforeSave`, `registerAfterLoad`). ~300 líneas.
+- `roster.js` → `openRoster`, `closeRoster`, `loadRosterCharacter`, `deleteRosterCharacter`, `_rosterChars`, `_renderRosterCards`, `newSheet`, `clearSave`. ~200 líneas.
+- `share.js` → `exportJSON`, `importJSON`, `doImportJSON`, `showJSONReview`, `confirmJSONImport`, `exportHTML`, `shareViaURL`, `checkShareHash`. ~280 líneas.
+
+### Impacto
+Bajo. El cambio es de organización; la lógica no cambia. Los imports de `app.js` se actualizan. Los hooks de `extra_resources.js`, `inventory_extras.js` y `character_context.js` apuntan a `persistence.js` — seguirían apuntando al mismo módulo.
+
+---
+
+## DEUDA-02 — `spells.js` concentra renderización + modal + lógica de conjuros (~586 líneas)
+
+**Archivo**: `src/modules/spells.js`
+**Tamaño actual**: 586 líneas / 90 KB
+**Estado**: `[ ]` — pendiente
+
+### Split propuesto
+- `spells.js` → lógica de estado (`addSpell`, `deleteSpell`, `setConcentration`, `breakConcentration`, `loadSpellPreset`, `rollSpellAttack`, `renderConcentration`, `renderSpellBook`). ~300 líneas.
+- `spell-modal.js` → `openSpellModal`, `closeSpellModal`, `saveSpellFromModal`, `buildSpellCard`. ~290 líneas.
+
+---
+
+## FEAT-01 — Condiciones → desventaja automática en tiradas de dado
+
+**Archivos**: `src/modules/conditions.js`, `src/modules/dice.js`
+**Estado**: `[ ]` — pendiente
+
+### Descripción
+PHB 5e: las condiciones `Asustado`, `Envenenado`, `Restringido` y otras imponen desventaja en categorías específicas de tiradas. Actualmente las condiciones son solo etiquetas visuales (verificado como correcto en CODEX-06: el usuario activa desventaja manualmente).
+
+### Implementación sugerida
+- `conditions.js` exporta `getActiveConditions()` — ya existe como `state.CHARACTER_STATE.conditions[]`.
+- `dice.js`: en `LL_cinematicRoll`, antes de lanzar, llamar a `getActiveConditions()`. Si hay condiciones que imponen desventaja para el tipo de tirada actual (según mapa de condición→tiradas), mostrar badge de advertencia y sugerir (sin forzar) desventaja.
+- Mapa inicial: `Envenenado` → todas las tiradas de ataque y de habilidad; `Asustado` → ataques y tiradas de habilidad con visión del origen del miedo; `Restringido` → ataques a distancia.
+
+---
+
+## FEAT-02 — Sync multi-dispositivo
+
+**Archivos**: `src/modules/persistence.js`
+**Estado**: `[ ]` — pendiente · bajo prioridad
+
+### Tier 1 — QR desde URL comprimida
+Exponer `shareViaURL()` como QR generado en cliente (ej. librería `qrcodejs` ~10KB, sin servidor).
+
+### Tier 2 — GitHub Gist como backend
+Añadir `syncToGist(token)` / `loadFromGist(id)` en `persistence.js`. Token en `localStorage`, nunca en código.
+
+---
+
+## FEAT-03 — Companion sheet (familiar, montura, mascota)
+
+**Estado**: `[ ]` — pendiente · baja prioridad
+
+Nuevo módulo `companion.js` con `companionState` en `state.js`. UI colapsable. Reutiliza estructura de `attacks` y `hp` existentes.
+
+---
+
+## FEAT-04 — Multiclase con 3+ clases
+
+**Estado**: `[ ]` — pendiente · baja prioridad
+
+La hero-pill actualmente tiene dos selectores fijos. Requiere refactor de UI a lista dinámica y ajuste del parser de texto de clase en `level-up.js` y `xp.js`.
+
+---
+
 ---
 
 ## CODEX-01 — CRÍTICO · Brujo nuevo no inicializa Espacios de Pacto
@@ -750,6 +882,7 @@ Codex reportó que el wrapper de `LL_cinematicRoll` aplicaba desventaja automát
 | 2026-05-23 | CODEX-08 | spells.js + index.html | Campo `castingAttr` por conjuro en modal y en `rollSpellAttack()`. Badge visible en tarjeta. Retrocompatible. |
 | 2026-05-23 | Mejora calidad 9/10 | 4 cambios transversales | (A) `migrateState()` en persistence.js: migración schema v1→v2 con defaults para 9 campos. (B) Wizard: fetch individual con toast en error de carga JSON (antes: Promise.all silencioso). (C) `parseEquipmentLine()` extraída como función pura testeable en wizard.js. (D) 20 tests automáticos nuevos: migrateState (5), shortRest selectivo (4), parseEquipmentLine (4), PROF_BONUS_TABLE (5); total: 49 tests. |
 | 2026-05-23 | Modularización wizard.js | IIFE → ES module | wizard.js convertido de IIFE de 1586 líneas a ES module. 5 commits (FASE A-E): quitar wrapper IIFE, imports state.js + toast-log.js, CHARACTER_STATE→state.*, inventory/skillsState/traits/concentrationSpell→state.*, todos los typeof guards eliminados → window.X?.(). index.html: defer→type=module. |
+| 2026-05-23 | Auditoría post-FASE-9 | BUG-20, BUG-21, DEUDA-01/02, FEAT-01–04 | Identificados 2 bugs XSS residuales (notas ricas y campos de conjuro sin escapar), 2 deudas técnicas (split persistence.js, split spells.js) y 4 features pendientes del roadmap. Documentados en AUDIT.md. |
 
 ---
 

@@ -350,7 +350,7 @@ export function loadState(directData) {
       const val = data[id] ?? data.editables?.[id];
       if (val != null) {
         const el = g(id);
-        if (el) el.innerHTML = val;
+        if (el) el.innerHTML = sanitizeRichText(val);
       }
     });
 
