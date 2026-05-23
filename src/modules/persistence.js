@@ -336,7 +336,7 @@ export function loadState(directData) {
 
     // CODEX-10: campos de texto plano usan textContent para evitar XSS al importar JSON externo
     [
-      'heroEpithet', 'charDeity', 'charPlayerName', 'langComp',
+      'heroEpithet', 'charDeity', 'charPlayerName',
       'personalityTraits', 'personalityIdeals', 'personalityBonds', 'personalityFlaws'
     ].forEach(id => {
       const val = data[id] ?? data.editables?.[id];
@@ -345,7 +345,8 @@ export function loadState(directData) {
         if (el) el.textContent = val;
       }
     });
-    ['combatNotesCE', 'charHistoryCE', 'generalNotes'].forEach(id => {
+    // langComp almacena HTML estructurado generado por el wizard — necesita innerHTML
+    ['combatNotesCE', 'charHistoryCE', 'generalNotes', 'langComp'].forEach(id => {
       const val = data[id] ?? data.editables?.[id];
       if (val != null) {
         const el = g(id);
