@@ -21,7 +21,9 @@ import { setTheme, lightenColor, applyCustomColor, adjustHex, hexToRgba, hexToRg
 import { XP_TABLE, getCurrentLevel, updateXP, addXP, setLevelDirect } from './modules/xp.js';
 import { openLevelUpAssistant, selectLevelUpClass, rollLevelUpHP, takeLevelUpHPAvg, applyLevelUpHP, applyClassTemplate, getSlotTableForLevel, _confirmMulticlassLevelUp } from './modules/level-up.js';
 import { toggleDicePanel, rollCustom, parseDamageString, configureDiceForDamage, rollAllDiceGroups, openDiceRoller, rollFreeDice } from './modules/dice.js';
-import { saveState, saveToLocal, loadState, loadFromLocal, autoSave, checkShareHash, getSaveKey } from './modules/persistence.js';
+import { saveState, saveToLocal, loadState, loadFromLocal, autoSave, getSaveKey } from './modules/persistence.js';
+import { openRoster, closeRoster, loadRosterCharacter, deleteRosterCharacter, clearSave, newSheet } from './modules/roster.js';
+import { exportHTML, exportJSON, importJSON, doImportJSON, confirmJSONImport, shareViaURL, checkShareHash } from './modules/share.js';
 
 // ═══════════════════════════════════════════════
 //  DATA
@@ -615,7 +617,7 @@ window.toggleMulticlass     = toggleMulticlass;
 window.syncInitPlayerName   = syncInitPlayerName;
 window._updateOptionalFields = _updateOptionalFields;
 
-// saveState, saveToLocal, loadState, loadFromLocal, roster, export/import, shareViaURL, checkShareHash → modules/persistence.js
+// saveState/loadState → persistence.js · roster → roster.js · export/import/share → share.js
 
 // Guarda sincrónicamente antes de cerrar la pestaña o cambiar de app (mobile/PWA)
 window.addEventListener('beforeunload', () => _saveStateFn());

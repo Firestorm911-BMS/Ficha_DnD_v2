@@ -601,9 +601,8 @@ Y en el badge de `spell.school`:
 
 ## DEUDA-01 — `persistence.js` excede límite de 600 líneas
 
-**Archivo**: `src/modules/persistence.js`
-**Tamaño actual**: 754 líneas / 29 KB
-**Estado**: `[ ]` — pendiente
+**Archivos**: `src/modules/persistence.js`, `src/modules/roster.js` (nuevo), `src/modules/share.js` (nuevo)
+**Tamaño original**: 754 líneas / 29 KB → **Estado**: `[x]` — 2026-05-23
 
 ### Descripción
 El módulo mezcla tres responsabilidades distintas: persistencia local (save/load/migrate), roster (abrir/cerrar/cargar/borrar personajes) y compartir (exportJSON, importJSON, shareViaURL, checkShareHash). Es el módulo más grande y más tocado.
@@ -883,6 +882,7 @@ Codex reportó que el wrapper de `LL_cinematicRoll` aplicaba desventaja automát
 | 2026-05-23 | Mejora calidad 9/10 | 4 cambios transversales | (A) `migrateState()` en persistence.js: migración schema v1→v2 con defaults para 9 campos. (B) Wizard: fetch individual con toast en error de carga JSON (antes: Promise.all silencioso). (C) `parseEquipmentLine()` extraída como función pura testeable en wizard.js. (D) 20 tests automáticos nuevos: migrateState (5), shortRest selectivo (4), parseEquipmentLine (4), PROF_BONUS_TABLE (5); total: 49 tests. |
 | 2026-05-23 | Modularización wizard.js | IIFE → ES module | wizard.js convertido de IIFE de 1586 líneas a ES module. 5 commits (FASE A-E): quitar wrapper IIFE, imports state.js + toast-log.js, CHARACTER_STATE→state.*, inventory/skillsState/traits/concentrationSpell→state.*, todos los typeof guards eliminados → window.X?.(). index.html: defer→type=module. |
 | 2026-05-23 | Auditoría post-FASE-9 | BUG-20, BUG-21, DEUDA-01/02, FEAT-01–04 | Identificados 2 bugs XSS residuales (notas ricas y campos de conjuro sin escapar), 2 deudas técnicas (split persistence.js, split spells.js) y 4 features pendientes del roadmap. Documentados en AUDIT.md. |
+| 2026-05-23 | DEUDA-01 | Split persistence.js | persistence.js 754→392 líneas. roster.js (121 lín.) con funciones de roster + clearSave + newSheet. share.js (255 lín.) con export/import/URL. Clave SAVE_KEY mutable via getSaveKey/setSaveKey. app.js actualizado con 3 imports. |
 
 ---
 
