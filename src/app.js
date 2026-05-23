@@ -24,6 +24,7 @@ import { toggleDicePanel, rollCustom, parseDamageString, configureDiceForDamage,
 import { saveState, saveToLocal, loadState, loadFromLocal, autoSave, getSaveKey } from './modules/persistence.js';
 import { openRoster, closeRoster, loadRosterCharacter, deleteRosterCharacter, clearSave, newSheet } from './modules/roster.js';
 import { exportHTML, exportJSON, importJSON, doImportJSON, confirmJSONImport, shareViaURL, checkShareHash } from './modules/share.js';
+import './modules/spell-modal.js';
 
 // ═══════════════════════════════════════════════
 //  DATA

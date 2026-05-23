@@ -619,13 +619,13 @@ Bajo. El cambio es de organización; la lógica no cambia. Los imports de `app.j
 
 ## DEUDA-02 — `spells.js` concentra renderización + modal + lógica de conjuros (~586 líneas)
 
-**Archivo**: `src/modules/spells.js`
-**Tamaño actual**: 586 líneas / 90 KB
-**Estado**: `[ ]` — pendiente
+**Archivos**: `src/modules/spells.js`, `src/modules/spell-modal.js` (nuevo)
+**Tamaño original**: 587 líneas → **Estado**: `[x]` — 2026-05-23
 
-### Split propuesto
-- `spells.js` → lógica de estado (`addSpell`, `deleteSpell`, `setConcentration`, `breakConcentration`, `loadSpellPreset`, `rollSpellAttack`, `renderConcentration`, `renderSpellBook`). ~300 líneas.
-- `spell-modal.js` → `openSpellModal`, `closeSpellModal`, `saveSpellFromModal`, `buildSpellCard`. ~290 líneas.
+### Split aplicado
+- `spells.js` → lógica de estado + render (587→522 líneas): `SPELL_PRESETS`, `loadSpellPreset`, `renderSpellBook`, `buildSpellCard`, `toggleSpellFilter`, `rollSpellAttack`, `setConcentration`, `breakConcentration`, `renderConcentration`, `toggleSpellPrepared`, `deleteSpell`.
+- `spell-modal.js` (71 líneas, nuevo): `openSpellModal`, `saveSpellModal`, `closeSpellModal`, `addSpell`, `addCantrip`. Sin dep. circular: `saveSpellModal` llama `window.renderSpellBook?.()`.
+- `app.js`: import side-effect `import './modules/spell-modal.js'` añadido.
 
 ---
 
@@ -883,6 +883,7 @@ Codex reportó que el wrapper de `LL_cinematicRoll` aplicaba desventaja automát
 | 2026-05-23 | Modularización wizard.js | IIFE → ES module | wizard.js convertido de IIFE de 1586 líneas a ES module. 5 commits (FASE A-E): quitar wrapper IIFE, imports state.js + toast-log.js, CHARACTER_STATE→state.*, inventory/skillsState/traits/concentrationSpell→state.*, todos los typeof guards eliminados → window.X?.(). index.html: defer→type=module. |
 | 2026-05-23 | Auditoría post-FASE-9 | BUG-20, BUG-21, DEUDA-01/02, FEAT-01–04 | Identificados 2 bugs XSS residuales (notas ricas y campos de conjuro sin escapar), 2 deudas técnicas (split persistence.js, split spells.js) y 4 features pendientes del roadmap. Documentados en AUDIT.md. |
 | 2026-05-23 | DEUDA-01 | Split persistence.js | persistence.js 754→392 líneas. roster.js (121 lín.) con funciones de roster + clearSave + newSheet. share.js (255 lín.) con export/import/URL. Clave SAVE_KEY mutable via getSaveKey/setSaveKey. app.js actualizado con 3 imports. |
+| 2026-05-23 | DEUDA-02 | Split spells.js | spells.js 587→522 líneas. spell-modal.js (71 lín.) con openSpellModal/saveSpellModal/closeSpellModal/addSpell/addCantrip. Sin dep. circular: saveSpellModal usa window.renderSpellBook?(). app.js: import side-effect de spell-modal.js. |
 
 ---
 
