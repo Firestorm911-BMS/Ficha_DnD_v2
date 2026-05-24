@@ -350,8 +350,11 @@ export function loadState(directData) {
       if (raw != null) {
         const el = g(id);
         if (el) {
-          const plain = String(raw)
-            .replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&')
+          // Decodificar entidades iterativamente — el dato puede haber pasado por N ciclos
+          // de save/load corrupto acumulando &amp;lt; → &lt; → < en cada vuelta
+          let _s = String(raw), _prev;
+          do { _prev = _s; _s = _s.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>'); } while (_s !== _prev);
+          const plain = _s
             .replace(/<br\s*\/?>/gi, '\n')
             .replace(/<\/div>/gi, '\n')
             .replace(/<[^>]+>/g, '')
