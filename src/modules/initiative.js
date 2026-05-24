@@ -267,16 +267,105 @@ export function rollInitiativeAll() {
   addCombatLog(`🎲 Iniciativa tirada — tú: ${playerRoll}`);
 }
 
+// ── Aplicar daño a objetivo del tracker ──────────────────────────────────────
+
+function _applyToEntry(id, dmg) {
+  const entry = state.trackerEntries.find(e => e.id === id);
+  if (!entry) return;
+  entry.hp = Math.max(0, entry.hp - dmg);
+  const hpStr = entry.hpMax > 0 ? `${entry.hp}/${entry.hpMax}` : entry.hp;
+  addCombatLog(
+    `🩸 ${dmg} daño a <strong>${entry.name}</strong> → ${hpStr} PG${entry.hp === 0 ? ' 💀' : ''}`
+  );
+  renderTracker();
+  saveToLocal();
+}
+
+function _showTargetPicker(dmg, anchorBtn) {
+  document.getElementById('_trackPickerBox')?.remove();
+  const box = document.createElement('div');
+  box.id = '_trackPickerBox';
+  Object.assign(box.style, {
+    position:      'fixed', zIndex: '9999',
+    right:         '16px',  bottom: '76px',
+    background:    'var(--bg-card)',
+    border:        '1px solid var(--gold-dark)',
+    padding:       '8px',   display: 'flex',
+    flexDirection: 'column', gap: '4px',
+    minWidth:      '190px',
+    boxShadow:     '0 4px 20px rgba(0,0,0,.8)',
+  });
+
+  const title = document.createElement('div');
+  Object.assign(title.style, {
+    fontFamily:    "'Cinzel',serif", fontSize: '9px',
+    color:         'var(--text-muted)', letterSpacing: '1.5px',
+    textTransform: 'uppercase',        marginBottom:   '6px',
+  });
+  title.textContent = `Aplicar ${dmg} daño a:`;
+  box.appendChild(title);
+
+  state.trackerEntries.filter(e => e.type !== 'player').forEach(entry => {
+    const b = document.createElement('button');
+    b.className = 'btn btn-sm';
+    b.style.textAlign = 'left';
+    const icon = entry.type === 'ally' ? '🔵' : '🔴';
+    const hpStr = entry.hpMax > 0 ? `${entry.hp}/${entry.hpMax}` : '—';
+    b.textContent = `${icon} ${entry.name}  (${hpStr})`;
+    b.addEventListener('click', () => {
+      _applyToEntry(entry.id, dmg);
+      box.remove();
+      anchorBtn?.remove();
+    });
+    box.appendChild(b);
+  });
+
+  document.body.appendChild(box);
+  setTimeout(() => {
+    const dismiss = e => { if (!box.contains(e.target)) { box.remove(); document.removeEventListener('click', dismiss); } };
+    document.addEventListener('click', dismiss);
+  }, 100);
+}
+
+/**
+ * Aplica el daño de un ataque al objetivo apropiado del tracker.
+ * – 0 no-player entries → aviso en log (no daña al jugador)
+ * – 1 entry  → aplica directamente
+ * – 2+ entries → muestra selector flotante
+ */
+export function applyTrackerDamage(amount, options = {}, anchorBtn = null) {
+  const dmg = Math.max(0, parseInt(amount) || 0);
+  if (!dmg) return;
+
+  const targets = state.trackerEntries.filter(e => e.type !== 'player');
+
+  if (!targets.length) {
+    addCombatLog('⚠ Sin objetivos en el tracker — añade enemigos para registrar el daño');
+    anchorBtn?.remove();
+    return;
+  }
+
+  if (targets.length === 1) {
+    _applyToEntry(targets[0].id, dmg);
+    anchorBtn?.remove();
+    return;
+  }
+
+  // Múltiples objetivos → selector
+  _showTargetPicker(dmg, anchorBtn);
+}
+
 // ── Window bridges ──────────────────────────────────────────────────────────
 // window bridge — eliminar cuando se migre el HTML
-window.addInitEntry      = addInitEntry;
-window.addPlayerEntry    = addPlayerEntry;
-window.nextTurn          = nextTurn;
-window.incrementRound    = incrementRound;
-window.sortInit          = sortInit;
-window.clearCombat       = clearCombat;
-window.rollInitiativeAll = rollInitiativeAll;
-window.renderTracker     = renderTracker;
+window.addInitEntry         = addInitEntry;
+window.addPlayerEntry       = addPlayerEntry;
+window.nextTurn             = nextTurn;
+window.incrementRound       = incrementRound;
+window.sortInit             = sortInit;
+window.clearCombat          = clearCombat;
+window.rollInitiativeAll    = rollInitiativeAll;
+window.renderTracker        = renderTracker;
+window.applyTrackerDamage   = applyTrackerDamage;
 
 // ── Init (ES modules corren diferidos — DOM ya está listo) ──────────────────
 const _trackerEl = document.getElementById('initTracker');

@@ -268,7 +268,7 @@ function rollAttackDamage(i, isCrit = false) {
   addCombatLog(
     `⚔ Daño <em>${escapeAttr(atk.name)}</em>${isCrit ? ' ✦ CRÍTICO' : ''}: ${detail} = ` +
     `<strong style="color:var(--gold);font-size:15px;">${total}</strong> · ` +
-    `<button class="log-apply-btn" onclick="applyDamageAmount(${total},{physical:${atk.melee !== false}});this.parentElement.querySelector('.log-apply-btn').remove()">← Aplicar</button>`
+    `<button class="log-apply-btn" onclick="window.applyTrackerDamage(${total},{physical:${atk.melee !== false}},this)">→ Aplicar al objetivo</button>`
   );
   showToast(`${isCrit ? '✦ CRÍTICO · ' : ''}Daño: ${total}`);
 }
@@ -519,7 +519,7 @@ function rollAttackDamage(i, isCrit = false) {
       addCombatLog(
         `⚔ Daño <em>${escapeAttr(atk.name)}</em>${isCrit ? ' ✦ CRÍTICO' : ''}: ${detail} = ` +
         `<strong style="color:var(--gold);font-size:15px;">${totalDmg}</strong> · ` +
-        `<button class="log-apply-btn" onclick="applyDamageAmount(${totalDmg},{physical:${atk.melee !== false}});this.parentElement.querySelector('.log-apply-btn').remove()">← Aplicar</button>`
+        `<button class="log-apply-btn" onclick="window.applyTrackerDamage(${totalDmg},{physical:${atk.melee !== false}},this)">→ Aplicar al objetivo</button>`
       );
       showToast(`${isCrit ? '✦ CRÍTICO · ' : ''}Daño: ${totalDmg}`);
     }, 800);
