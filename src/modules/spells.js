@@ -2,7 +2,7 @@
 import { getMod, getProfBonus, renderSpellStats } from './attributes.js';
 import { showToast, addCombatLog } from './toast-log.js';
 import { escapeAttr } from './utils.js';
-import { computeSpellSlots, _syncPactSlots, renderSpellSlots } from './spell-slots.js';
+import { computeSpellSlots, computePactSlots, _syncPactSlots, renderSpellSlots } from './spell-slots.js';
 
 let _spellFilter = 'all';
 const SPELL_PRESETS = {
@@ -417,14 +417,17 @@ export function renderSpellBook() {
   spellCont.innerHTML = '';
   if (regs.length === 0) spellCont.innerHTML = `<div class="spell-empty">${_spellFilter==='prepared'?'Sin conjuros preparados':'Sin conjuros — añade uno'}</div>`;
   else {
-    // Nivel máximo de ranura disponible (0 = sin ranuras / no lanzador).
-    // Se incluyen pact slots del Brujo (pactSlotsState) porque no van a spellSlotsState.
-    const pactContrib = (state.pactSlotsState?.max > 0) ? (state.pactSlotsState?.level || 0) : 0;
-    const maxSlotLevel = Math.max(
-      [1,2,3,4,5,6,7,8,9].reduce((acc, i) =>
-        (state.spellSlotsState[i]?.max || 0) > 0 ? Math.max(acc, i) : acc, 0),
-      pactContrib
-    );
+    // Nivel máximo casteable — se calcula siempre fresco desde el class text
+    // para evitar depender de que pactSlotsState/spellSlotsState estén actualizados.
+    const _classText = (document.querySelector('.hero-pill[data-field="class"] .meta-value')
+      ?.textContent?.trim()) || '';
+    const _computed  = _classText ? computeSpellSlots(_classText) : null;
+    const _pact      = _classText ? computePactSlots(_classText)  : { level: 0, max: 0 };
+    const maxFromSlots = _computed
+      ? Object.entries(_computed).reduce((acc, [k, v]) => v.max > 0 ? Math.max(acc, +k) : acc, 0)
+      : 0;
+    const maxFromPact  = _pact.max > 0 ? _pact.level : 0;
+    const maxSlotLevel = Math.max(maxFromSlots, maxFromPact);
 
     const levels = [...new Set(regs.map(s=>s.level))].sort((a,b)=>a-b);
     levels
