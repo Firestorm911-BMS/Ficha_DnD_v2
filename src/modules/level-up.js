@@ -218,8 +218,19 @@ export function _confirmNewMulticlass(currentPillText) {
   }
   _syncPactSlots(newPillText);
   renderHitDice();
+
+  // Aplicar recurso de la nueva clase (nivel 1) sin tocar hitDice
+  const newTemplate = window.CLASS_TEMPLATES?.[selectedClass];
+  if (newTemplate?.resource) {
+    state.CHARACTER_STATE.classResource = { ...newTemplate.resource };
+    const scaledUses = getResourceScale(selectedClass, 1);
+    if (scaledUses !== null) state.CHARACTER_STATE.classResource.maxUses = scaledUses;
+    state.CHARACTER_STATE.rageUsesSpent = 0;
+    renderRage();
+  }
+
   addCombatLog(`⬆ Multiclase iniciada: ${newPillText}`);
-  showToast(`✦ ${newPillText} — configurá el recurso de clase si es necesario`);
+  showToast(`✦ ${newPillText}`);
   window.saveToLocal?.();
   modal?.remove();
 }
