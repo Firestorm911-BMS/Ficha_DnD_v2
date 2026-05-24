@@ -2347,23 +2347,43 @@ body.edit-mode .trait-edit-controls { display: flex; }
 }
 
 .spell-slot {
-  width: 20px; height: 20px;
+  width: 22px; height: 22px;
   border-radius: 50%;
   border: 2px solid var(--blue);
   cursor: pointer;
   transition: all 0.2s;
+  flex-shrink: 0;
 }
 
 .spell-slot.used {
-  background: transparent;
-  border-color: var(--text-muted);
-  opacity: 0.4;
+  background: rgba(255,255,255,0.04);
+  border-color: rgba(255,255,255,0.13);
+  opacity: 1;
 }
 
 .spell-slot.available {
   background: var(--blue);
-  box-shadow: 0 0 8px rgba(46,122,191,0.5);
+  box-shadow: 0 0 10px rgba(46,122,191,0.6), inset 0 1px 0 rgba(255,255,255,0.15);
 }
+
+.spell-slot.available:hover {
+  filter: brightness(1.25);
+  transform: scale(1.14);
+}
+
+/* ── Colores por nivel de ranura: azul → violeta → fucsia → naranja → dorado ── */
+.spell-level-block[data-lv="1"] .spell-slot.available { background:#60a5fa; border-color:#60a5fa; box-shadow:0 0 10px rgba(96,165,250,0.60), inset 0 1px 0 rgba(255,255,255,0.15); }
+.spell-level-block[data-lv="2"] .spell-slot.available { background:#818cf8; border-color:#818cf8; box-shadow:0 0 10px rgba(129,140,248,0.60), inset 0 1px 0 rgba(255,255,255,0.15); }
+.spell-level-block[data-lv="3"] .spell-slot.available { background:#a78bfa; border-color:#a78bfa; box-shadow:0 0 11px rgba(167,139,250,0.62), inset 0 1px 0 rgba(255,255,255,0.15); }
+.spell-level-block[data-lv="4"] .spell-slot.available { background:#c084fc; border-color:#c084fc; box-shadow:0 0 11px rgba(192,132,252,0.62), inset 0 1px 0 rgba(255,255,255,0.15); }
+.spell-level-block[data-lv="5"] .spell-slot.available { background:#e879f9; border-color:#e879f9; box-shadow:0 0 13px rgba(232,121,249,0.68), inset 0 1px 0 rgba(255,255,255,0.15); }
+.spell-level-block[data-lv="6"] .spell-slot.available { background:#f472b6; border-color:#f472b6; box-shadow:0 0 13px rgba(244,114,182,0.68), inset 0 1px 0 rgba(255,255,255,0.15); }
+.spell-level-block[data-lv="7"] .spell-slot.available { background:#fb923c; border-color:#fb923c; box-shadow:0 0 14px rgba(251,146,60,0.70), inset 0 1px 0 rgba(255,255,255,0.15); }
+.spell-level-block[data-lv="8"] .spell-slot.available { background:#f87171; border-color:#f87171; box-shadow:0 0 15px rgba(248,113,113,0.75), inset 0 1px 0 rgba(255,255,255,0.15); }
+.spell-level-block[data-lv="9"] .spell-slot.available { background:#fcd34d; border-color:#fcd34d; box-shadow:0 0 18px rgba(252,211,77,0.80), inset 0 1px 0 rgba(255,255,255,0.18); }
+
+/* Pacto del Brujo — índigo profundo, recupera en descanso corto */
+.spell-level-block[data-lv="pact"] .spell-slot.available { background:#6366f1; border-color:#818cf8; box-shadow:0 0 13px rgba(99,102,241,0.70), inset 0 1px 0 rgba(255,255,255,0.15); }
 
 .spell-list { margin-top: 6px; }
 

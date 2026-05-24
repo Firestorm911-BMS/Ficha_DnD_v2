@@ -103,6 +103,7 @@ export function renderSpellSlots() {
     ).join('');
     const pactBlock = document.createElement('div');
     pactBlock.className = 'spell-level-block';
+    pactBlock.dataset.lv = 'pact';
     pactBlock.style.cssText = 'border-left:2px solid var(--gold-dark);padding-left:8px;margin-bottom:4px;';
     pactBlock.innerHTML = `
       <div class="spell-level-header">
@@ -121,6 +122,7 @@ export function renderSpellSlots() {
     ).join('');
     const block = document.createElement('div');
     block.className = 'spell-level-block';
+    block.dataset.lv = lv;
     block.innerHTML = `
       <div class="spell-level-header">
         <span class="spell-level-name">Nv ${lv}</span>
