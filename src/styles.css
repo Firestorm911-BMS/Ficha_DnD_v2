@@ -1320,8 +1320,8 @@ body::after {
 
 .btn-combat-main {
   width: 100%;
-  max-width: 320px;
-  padding: 10px 0;
+  max-width: 480px;
+  padding: 11px 0;
   font-size: 15px;
   letter-spacing: 1px;
 }
