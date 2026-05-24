@@ -3561,6 +3561,42 @@ body.edit-mode .edit-only { display: inline-block !important; }
 .roll-stage.crit   .roll-tag { color: #ffd166; text-shadow: 0 0 30px #ffd166; animation: critPulse .5s ease-in-out infinite alternate; }
 .roll-stage.fumble .roll-tag { color: #ff6f5e; }
 
+/* ── Icono de arma flotante (weapon attack cinematic) ── */
+.roll-weapon-icon {
+  position: absolute;
+  top: 18%; right: 13%;
+  font-size: 76px; line-height: 1;
+  pointer-events: none; z-index: 2;
+  filter: drop-shadow(0 0 18px var(--gold-glow));
+  opacity: 0;
+  transform: rotate(-12deg) scale(0.6);
+  transition: opacity 0.45s ease, transform 0.45s cubic-bezier(0.2,0.8,0.3,1.1);
+}
+.roll-weapon-icon:not(:empty) {
+  opacity: 1;
+  transform: rotate(-12deg) scale(1);
+  animation: weaponFloat 2.8s ease-in-out infinite 0.45s;
+}
+@keyframes weaponFloat {
+  0%, 100% { transform: rotate(-12deg) translateY(0); }
+  50%       { transform: rotate(-12deg) translateY(-14px); }
+}
+
+/* ── Botones de daño en el roll-stage ── */
+.roll-dmg-btn {
+  display: block; margin: 14px auto 0;
+  font-size: 13px; padding: 10px 24px;
+  animation: promptIn 0.35s ease;
+  pointer-events: all;
+}
+.roll-skip-btn {
+  display: block; margin: 8px auto 0;
+  font-size: 11px; opacity: 0.6;
+  animation: promptIn 0.35s ease;
+  pointer-events: all;
+}
+.roll-skip-btn:hover { opacity: 1; }
+
 .roll-burst {
   position: absolute;
   width: 700px; height: 700px;

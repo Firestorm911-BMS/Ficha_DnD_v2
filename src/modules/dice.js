@@ -300,6 +300,7 @@ function rollAttackDamage(i, isCrit = false) {
         ).join('')}
       </g>
     </svg>
+    <div class="roll-weapon-icon" id="rollWeaponIcon"></div>
     <div class="roll-die" id="rollDie">
       <svg viewBox="0 0 100 100" aria-hidden="true">
         <polygon points="50,4 93,28 93,72 50,96 7,72 7,28"
@@ -315,7 +316,12 @@ function rollAttackDamage(i, isCrit = false) {
     <div class="roll-tag" id="rollTag"></div>
   `;
   document.body.appendChild(stage);
-  stage.addEventListener('click', () => stage.classList.remove('open'));
+  stage.addEventListener('click', () => {
+    stage.classList.remove('open');
+    const wi = document.getElementById('rollWeaponIcon');
+    if (wi) wi.textContent = '';
+    document.getElementById('rollBreakdown')?.querySelectorAll('.roll-dmg-btn,.roll-skip-btn').forEach(b => b.remove());
+  });
 
   // Adv/Dis chip
   const advChip = document.createElement('div');
@@ -508,21 +514,80 @@ function rollAttackDamage(i, isCrit = false) {
       addCombatLog(`⚄ ${label}: ${detail}${modStr} = <strong style="color:${color}">${total}${isCrit?' ¡CRÍTICO!':isFumble?' ¡PIFIA!':''}</strong>`);
     }, 950);
 
-    setTimeout(() => stage.classList.remove('open'), (isCrit || isFumble) ? 2900 : 2000);
+    const _stageDur = opts.stageDuration !== undefined ? opts.stageDuration : ((isCrit || isFumble) ? 2900 : 2000);
+    if (_stageDur > 0) setTimeout(() => stage.classList.remove('open'), _stageDur);
   };
+
+  function _weaponIcon(atk) {
+    const n = (atk.name || '').toLowerCase();
+    if (atk.melee === false || /arco|ballesta|honda|dardo/.test(n)) return '🏹';
+    if (/hacha/.test(n))                                             return '🪓';
+    if (/tridente|lanza|pica|alabarda|guadaña|jabalina/.test(n))    return '🔱';
+    if (/mazo|maza|porra|garrote|clava/.test(n))                    return '🔨';
+    if (/daga|cuchillo/.test(n))                                     return '🗡';
+    if (/báculo|bastón|cayado/.test(n))                              return '🪄';
+    if (/látigo/.test(n))                                            return '〰';
+    return '⚔';
+  }
 
   window.rollAttack = function(i) {
     const atk = state.attacks[i] || { name: 'Ataque', bonus: '+0', damage: '1d6+0' };
     const mod = getAttackBonus(normalizeAttack(atk));
     const dmg = parseDamageString(atk.damage);
     configureDiceForDamage(dmg);
+
+    const wiEl = document.getElementById('rollWeaponIcon');
+    if (wiEl) wiEl.textContent = _weaponIcon(atk);
+
     window.LL_cinematicRoll({
       label: `⚔ ${atk.name}`,
       mod: mod,
+      stageDuration: 0,  // stage stays open — cerrado manualmente desde los botones
       onComplete: function(result) {
-        if (!result.fumble) {
-          setTimeout(() => showDamagePrompt(atk, dmg, result.crit, i), result.crit ? 1500 : 800);
+        const brk = document.getElementById('rollBreakdown');
+        if (!brk) return;
+
+        if (result.fumble) {
+          setTimeout(() => {
+            if (wiEl) wiEl.textContent = '';
+            stage.classList.remove('open');
+          }, 3200);
+          return;
         }
+
+        setTimeout(() => {
+          brk.querySelectorAll('.roll-dmg-btn,.roll-skip-btn').forEach(b => b.remove());
+
+          const mult     = result.crit ? 2 : 1;
+          const rageB    = getRageDamageBonus(atk);
+          const magicB   = atk.magicBonus || 0;
+          const glabel   = (dmg.groups || []).map(g => `${Math.abs(g.count) * mult}d${g.sides}`).join('+');
+          const blabel   = formatDamageBonus(dmg.bonus + rageB + magicB);
+
+          const dmgBtn   = document.createElement('button');
+          dmgBtn.className   = 'btn btn-primary roll-dmg-btn';
+          dmgBtn.textContent = `🎲 Tirar daño  ${glabel}${blabel}`;
+          dmgBtn.addEventListener('click', e => {
+            e.stopPropagation();
+            if (wiEl) wiEl.textContent = '';
+            brk.querySelectorAll('.roll-dmg-btn,.roll-skip-btn').forEach(b => b.remove());
+            stage.classList.remove('open');
+            rollAttackDamage(i, result.crit);
+          });
+
+          const skipBtn  = document.createElement('button');
+          skipBtn.className   = 'btn roll-skip-btn';
+          skipBtn.textContent = '✕ Omitir daño';
+          skipBtn.addEventListener('click', e => {
+            e.stopPropagation();
+            if (wiEl) wiEl.textContent = '';
+            brk.querySelectorAll('.roll-dmg-btn,.roll-skip-btn').forEach(b => b.remove());
+            stage.classList.remove('open');
+          });
+
+          brk.appendChild(dmgBtn);
+          brk.appendChild(skipBtn);
+        }, result.crit ? 1300 : 650);
       }
     });
   };
