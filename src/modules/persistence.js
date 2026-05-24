@@ -20,6 +20,8 @@ export const KEY_POINTER = 'dnd_active_key';
 let   SAVE_KEY = localStorage.getItem(KEY_POINTER) || DEFAULT_KEY;
 
 let _saveTimer = null;
+let _skipSave  = false;
+export function skipNextSave() { _skipSave = true; }
 
 const _beforeSaveHooks = [];
 const _afterLoadHooks  = [];
@@ -56,6 +58,7 @@ export function _loadImages(saveKey, target) {
 }
 
 export function saveState() {
+  if (_skipSave) return;
   _beforeSaveHooks.forEach(fn => fn());
   const g = id => document.getElementById(id);
 
@@ -119,6 +122,7 @@ export function saveState() {
 }
 
 export function saveToLocal() {
+  if (_skipSave) return;
   clearTimeout(_saveTimer);
   _saveTimer = setTimeout(() => window.saveState?.(), 500);
 }
@@ -377,7 +381,13 @@ export function loadFromLocal() {
   const hasData = !!localStorage.getItem(SAVE_KEY);
   window.loadState?.();
   if (!hasData) {
-    setTimeout(() => window.openRoster?.(false), 300);
+    const openWizard = sessionStorage.getItem('openWizardOnLoad');
+    if (openWizard) {
+      sessionStorage.removeItem('openWizardOnLoad');
+      setTimeout(() => window.openCreationWizard?.(), 300);
+    } else {
+      setTimeout(() => window.openRoster?.(false), 300);
+    }
   }
 }
 

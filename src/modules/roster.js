@@ -1,5 +1,5 @@
 import { showToast } from './toast-log.js';
-import { getSaveKey, setSaveKey, makeSaveKey, _imgKey, _saveImages, DEFAULT_KEY, KEY_POINTER } from './persistence.js';
+import { getSaveKey, setSaveKey, makeSaveKey, _imgKey, _saveImages, DEFAULT_KEY, KEY_POINTER, skipNextSave } from './persistence.js';
 
 function _rosterChars() {
   const chars = [];
@@ -104,6 +104,7 @@ export function clearSave() {
   localStorage.removeItem(DEFAULT_KEY);
   localStorage.removeItem(KEY_POINTER);
   setSaveKey(DEFAULT_KEY);
+  skipNextSave();
   showToast('Datos borrados');
   location.reload();
 }
@@ -117,6 +118,8 @@ export function newSheet() {
   localStorage.removeItem(DEFAULT_KEY);
   localStorage.removeItem(KEY_POINTER);
   setSaveKey(DEFAULT_KEY);
+  skipNextSave();
+  sessionStorage.setItem('openWizardOnLoad', '1');
   location.reload();
 }
 

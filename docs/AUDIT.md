@@ -886,6 +886,8 @@ Codex reportó que el wrapper de `LL_cinematicRoll` aplicaba desventaja automát
 | 2026-05-23 | DEUDA-01 | Split persistence.js | persistence.js 754→392 líneas. roster.js (121 lín.) con funciones de roster + clearSave + newSheet. share.js (255 lín.) con export/import/URL. Clave SAVE_KEY mutable via getSaveKey/setSaveKey. app.js actualizado con 3 imports. |
 | 2026-05-23 | DEUDA-02 | Split spells.js | spells.js 587→522 líneas. spell-modal.js (71 lín.) con openSpellModal/saveSpellModal/closeSpellModal/addSpell/addCantrip. Sin dep. circular: saveSpellModal usa window.renderSpellBook?(). app.js: import side-effect de spell-modal.js. |
 | 2026-05-23 | FEAT-01 | Condiciones → desventaja sugerida | dice.js IIFE: CONDITION_DISADVANTAGE map + _warnConditions(). conditions.js: getActiveConditions() exportada. LL_cinematicRoll: toast + pulso "Desv." si hay condiciones activas con desventaja para el tipo de tirada. Agotamiento Nv.1/3+ incluido. |
+| 2026-05-23 | BUG-22 | langComp renderizaba HTML crudo | persistence.js: langComp movido del grupo textContent al grupo innerHTML+sanitizeRichText. |
+| 2026-05-23 | BUG-23 | clearSave/newSheet — beforeunload re-escribía datos | Causa: beforeunload dispara saveState() con CHARACTER_STATE en memoria antes de que el reload complete. Fix: persistence.js agrega `skipNextSave()` + flag `_skipSave`; saveState() y saveToLocal() retornan temprano si el flag está activo. roster.js llama `skipNextSave()` en clearSave y newSheet antes de location.reload(). newSheet además usa sessionStorage 'openWizardOnLoad' para que loadFromLocal() abra el wizard en vez del roster. |
 
 ---
 
