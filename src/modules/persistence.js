@@ -287,6 +287,7 @@ export function loadState(directData) {
       CHARACTER_STATE.classResource.maxUses = data.rageMaxUses;
     }
     CHARACTER_STATE.extraClassResources = Array.isArray(data.extraClassResources) ? data.extraClassResources : [];
+    CHARACTER_STATE.levelHistory = (data.levelHistory && typeof data.levelHistory === 'object') ? data.levelHistory : {};
     renderRage();
 
     if (data.unarmedDefFormula) {

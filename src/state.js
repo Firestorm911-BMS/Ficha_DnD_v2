@@ -33,6 +33,7 @@ export const state = {
       effects: []
     },
     extraClassResources: [],
+    levelHistory: {},
     // Tema activo
     classThemeIndex: 4,
     customBg: '#070e07',

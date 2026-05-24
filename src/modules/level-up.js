@@ -244,6 +244,12 @@ export function _confirmNewMulticlass(currentPillText) {
     window.addExtraResource?.(extraRes);
   }
 
+  // Actualizar classText en el snapshot del nivel actual (pill ya cambió a multiclase)
+  const currentLevel = window.getCurrentLevel?.() || 1;
+  if (state.CHARACTER_STATE.levelHistory?.[currentLevel]) {
+    state.CHARACTER_STATE.levelHistory[currentLevel].classText = newPillText;
+  }
+
   addCombatLog(`⬆ Multiclase iniciada: ${newPillText}`);
   showToast(`✦ ${newPillText}`);
   window.saveToLocal?.();
@@ -268,6 +274,18 @@ export function openLevelUpAssistant(newLevel) {
 
   // Detectar multiclase — parsear pill (hasta 2 clases)
   const pillText   = (document.querySelector('.hero-pill[data-field="class"] .meta-value')?.textContent || '').trim();
+
+  // Guardar snapshot del nivel anterior (HP antes de aplicar la tirada)
+  const prevLevel = newLevel - 1;
+  if (prevLevel >= 1) {
+    state.CHARACTER_STATE.levelHistory = state.CHARACTER_STATE.levelHistory || {};
+    if (!state.CHARACTER_STATE.levelHistory[prevLevel]) {
+      state.CHARACTER_STATE.levelHistory[prevLevel] = {
+        hpMax: parseInt(document.getElementById('hpMax')?.textContent) || 0,
+        classText: pillText
+      };
+    }
+  }
   const multiParts = _parseMulticlassParts(pillText);
   const isMulti    = !!multiParts;
 
@@ -468,6 +486,14 @@ export function applyLevelUpHP(gain, label) {
   if (res) res.innerHTML = `<span style="color:var(--gold);font-weight:bold;">+${gain} PG</span> <span style="color:var(--text-muted);font-size:11px;">(${label})</span>`;
   addCombatLog(`❤ Nivel: ${label} = +${gain} PG · nuevo máx ${newMax}`);
   if (modal) modal.dataset.hpGain = String(gain);
+
+  // Guardar snapshot del nivel actual con el nuevo hpMax
+  const currentLevel = window.getCurrentLevel?.() || 1;
+  state.CHARACTER_STATE.levelHistory = state.CHARACTER_STATE.levelHistory || {};
+  state.CHARACTER_STATE.levelHistory[currentLevel] = {
+    hpMax: newMax,
+    classText: document.querySelector('.hero-pill[data-field="class"] .meta-value')?.textContent?.trim() || ''
+  };
 }
 
 export function applyClassTemplate(className) {
