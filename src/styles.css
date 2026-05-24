@@ -2628,12 +2628,8 @@ body.edit-mode .trait-edit-controls { display: flex; }
 ═══════════════════════════════════════════════ */
 .personality-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   gap: 10px;
-}
-
-@media (max-width: 600px) {
-  .personality-grid { grid-template-columns: 1fr; }
 }
 
 .personality-box {

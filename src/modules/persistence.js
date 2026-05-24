@@ -341,14 +341,24 @@ export function loadState(directData) {
     }
 
     // CODEX-10: campos de texto plano usan textContent para evitar XSS al importar JSON externo
+    // Se sanitiza el HTML almacenado (puede contener <div> de sesiones anteriores) antes de asignar
     [
       'heroEpithet', 'charDeity', 'charPlayerName',
       'personalityTraits', 'personalityIdeals', 'personalityBonds', 'personalityFlaws'
     ].forEach(id => {
-      const val = data[id] ?? data.editables?.[id];
-      if (val != null) {
+      const raw = data[id] ?? data.editables?.[id];
+      if (raw != null) {
         const el = g(id);
-        if (el) el.textContent = val;
+        if (el) {
+          const plain = String(raw)
+            .replace(/<br\s*\/?>/gi, '\n')
+            .replace(/<\/div>/gi, '\n')
+            .replace(/<[^>]+>/g, '')
+            .replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&')
+            .replace(/\n{3,}/g, '\n\n')
+            .trim();
+          el.textContent = plain;
+        }
       }
     });
     // langComp almacena HTML estructurado generado por el wizard — necesita innerHTML
