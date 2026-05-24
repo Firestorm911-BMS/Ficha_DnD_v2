@@ -316,10 +316,11 @@ function rollAttackDamage(i, isCrit = false) {
     <div class="roll-tag" id="rollTag"></div>
   `;
   document.body.appendChild(stage);
+  const DEFAULT_DIE_CONTENT = document.getElementById('rollDie').innerHTML;
+
   stage.addEventListener('click', () => {
     stage.classList.remove('open');
-    const wi = document.getElementById('rollWeaponIcon');
-    if (wi) wi.textContent = '';
+    _resetDie();
     document.getElementById('rollBreakdown')?.querySelectorAll('.roll-dmg-btn,.roll-skip-btn').forEach(b => b.remove());
   });
 
@@ -443,6 +444,22 @@ function rollAttackDamage(i, isCrit = false) {
     }
   }
 
+  const WEAPON_SVGS = {
+    sword:  `<svg viewBox="0 0 100 100" aria-hidden="true"><polygon points="50,6 58,58 50,65 42,58" fill="rgba(8,16,8,0.92)" stroke="var(--gold)" stroke-width="1.5" stroke-linejoin="round"/><polygon points="50,6 42,58 50,62" fill="rgba(201,168,76,0.20)" stroke="none"/><rect x="26" y="64" width="48" height="6" rx="2" fill="rgba(8,16,8,0.92)" stroke="var(--gold)" stroke-width="1.5"/><rect x="46" y="70" width="8" height="16" fill="rgba(8,16,8,0.92)" stroke="var(--gold)" stroke-width="1.5"/><line x1="46" y1="75" x2="54" y2="75" stroke="var(--gold)" stroke-width="0.7" opacity="0.5"/><line x1="46" y1="80" x2="54" y2="80" stroke="var(--gold)" stroke-width="0.7" opacity="0.5"/><circle cx="50" cy="92" r="5.5" fill="rgba(8,16,8,0.92)" stroke="var(--gold)" stroke-width="1.5"/></svg>`,
+    axe:    `<svg viewBox="0 0 100 100" aria-hidden="true"><rect x="47" y="8" width="6" height="82" rx="3" fill="rgba(8,16,8,0.92)" stroke="var(--gold)" stroke-width="1.5"/><polygon points="50,12 82,5 88,22 88,45 82,54 50,44" fill="rgba(8,16,8,0.92)" stroke="var(--gold)" stroke-width="1.5" stroke-linejoin="round"/><polygon points="50,12 82,5 88,28 50,28" fill="rgba(201,168,76,0.13)" stroke="none"/></svg>`,
+    bow:    `<svg viewBox="0 0 100 100" aria-hidden="true"><path d="M28,8 Q5,50 28,92" fill="none" stroke="var(--gold)" stroke-width="4" stroke-linecap="round"/><line x1="28" y1="8" x2="28" y2="92" stroke="var(--gold)" stroke-width="1.2" opacity="0.6"/><line x1="28" y1="50" x2="76" y2="50" stroke="var(--gold)" stroke-width="2" stroke-linecap="round"/><polygon points="78,50 67,44 67,56" fill="rgba(8,16,8,0.92)" stroke="var(--gold)" stroke-width="1.5" stroke-linejoin="round"/><line x1="32" y1="50" x2="20" y2="42" stroke="var(--gold)" stroke-width="1.2" opacity="0.7" stroke-linecap="round"/><line x1="32" y1="50" x2="20" y2="58" stroke="var(--gold)" stroke-width="1.2" opacity="0.7" stroke-linecap="round"/></svg>`,
+    spear:  `<svg viewBox="0 0 100 100" aria-hidden="true"><rect x="47" y="40" width="6" height="55" rx="3" fill="rgba(8,16,8,0.92)" stroke="var(--gold)" stroke-width="1.5"/><polygon points="50,5 62,36 50,44 38,36" fill="rgba(8,16,8,0.92)" stroke="var(--gold)" stroke-width="1.5" stroke-linejoin="round"/><polygon points="50,5 62,36 50,40" fill="rgba(201,168,76,0.18)" stroke="none"/><line x1="50" y1="5" x2="50" y2="44" stroke="var(--gold)" stroke-width="0.7" opacity="0.5"/></svg>`,
+    mace:   `<svg viewBox="0 0 100 100" aria-hidden="true"><rect x="47" y="56" width="6" height="38" rx="3" fill="rgba(8,16,8,0.92)" stroke="var(--gold)" stroke-width="1.5"/><circle cx="50" cy="34" r="25" fill="rgba(8,16,8,0.92)" stroke="var(--gold)" stroke-width="1.5"/><polygon points="50,5 55,15 45,15" fill="rgba(8,16,8,0.92)" stroke="var(--gold)" stroke-width="1"/><polygon points="77,20 69,28 68,17" fill="rgba(8,16,8,0.92)" stroke="var(--gold)" stroke-width="1"/><polygon points="23,20 31,28 32,17" fill="rgba(8,16,8,0.92)" stroke="var(--gold)" stroke-width="1"/><polygon points="77,50 69,42 68,52" fill="rgba(8,16,8,0.92)" stroke="var(--gold)" stroke-width="1"/><polygon points="23,50 31,42 32,52" fill="rgba(8,16,8,0.92)" stroke="var(--gold)" stroke-width="1"/><polygon points="50,63 55,53 45,53" fill="rgba(8,16,8,0.92)" stroke="var(--gold)" stroke-width="1"/><circle cx="50" cy="34" r="12" fill="rgba(201,168,76,0.12)" stroke="var(--gold)" stroke-width="0.7" opacity="0.7"/></svg>`,
+    dagger: `<svg viewBox="0 0 100 100" aria-hidden="true"><polygon points="50,10 59,56 50,62 41,56" fill="rgba(8,16,8,0.92)" stroke="var(--gold)" stroke-width="1.5" stroke-linejoin="round"/><polygon points="50,10 41,56 50,59" fill="rgba(201,168,76,0.20)" stroke="none"/><rect x="20" y="61" width="60" height="5" rx="2" fill="rgba(8,16,8,0.92)" stroke="var(--gold)" stroke-width="1.5"/><rect x="46" y="66" width="8" height="13" fill="rgba(8,16,8,0.92)" stroke="var(--gold)" stroke-width="1.5"/><polygon points="50,84 56,89 50,95 44,89" fill="rgba(8,16,8,0.92)" stroke="var(--gold)" stroke-width="1.5" stroke-linejoin="round"/></svg>`,
+    staff:  `<svg viewBox="0 0 100 100" aria-hidden="true"><rect x="47" y="22" width="6" height="74" rx="3" fill="rgba(8,16,8,0.92)" stroke="var(--gold)" stroke-width="1.5"/><circle cx="50" cy="16" r="14" fill="rgba(8,16,8,0.92)" stroke="var(--gold)" stroke-width="1.5"/><circle cx="50" cy="16" r="7" fill="rgba(201,168,76,0.25)" stroke="var(--gold)" stroke-width="0.8"/><circle cx="45" cy="11" r="3" fill="rgba(201,168,76,0.30)" stroke="none"/></svg>`,
+    whip:   `<svg viewBox="0 0 100 100" aria-hidden="true"><rect x="12" y="70" width="30" height="8" rx="4" fill="rgba(8,16,8,0.92)" stroke="var(--gold)" stroke-width="1.5"/><path d="M28,70 Q50,56 64,36 Q78,16 70,6" fill="none" stroke="var(--gold)" stroke-width="2.5" stroke-linecap="round"/><path d="M70,6 L77,10 M70,6 L74,0" stroke="var(--gold)" stroke-width="1.5" stroke-linecap="round" opacity="0.8"/></svg>`,
+  };
+
+  function _resetDie() {
+    const d = document.getElementById('rollDie');
+    if (d) { d.innerHTML = DEFAULT_DIE_CONTENT; d.classList.remove('spinning'); }
+  }
+
   // ── Master cinematic roll ─────────────────────
   window.LL_cinematicRoll = function(opts) {
     opts = opts || {};
@@ -470,7 +487,8 @@ function rollAttackDamage(i, isCrit = false) {
     const isFumble = critOk && chosen === 1;
 
     const die = document.getElementById('rollDie');
-    const num = document.getElementById('rollNum');
+    if (opts.weaponSvg) die.innerHTML = opts.weaponSvg + '<div class="roll-num" id="rollNum">?</div>';
+    const num = die.querySelector('.roll-num');
     const lbl = document.getElementById('rollLabel');
     const brk = document.getElementById('rollBreakdown');
     const tag = document.getElementById('rollTag');
@@ -481,9 +499,11 @@ function rollAttackDamage(i, isCrit = false) {
     brk.textContent = '';
     tag.textContent = '';
 
-    die.classList.remove('spinning');
-    void die.offsetHeight;
-    die.classList.add('spinning');
+    if (!opts.noSpin) {
+      die.classList.remove('spinning');
+      void die.offsetHeight;
+      die.classList.add('spinning');
+    }
 
     let flickI = 0;
     num.textContent = '?';
@@ -518,38 +538,36 @@ function rollAttackDamage(i, isCrit = false) {
     if (_stageDur > 0) setTimeout(() => stage.classList.remove('open'), _stageDur);
   };
 
-  function _weaponIcon(atk) {
+  function _weaponKey(atk) {
     const n = (atk.name || '').toLowerCase();
-    if (atk.melee === false || /arco|ballesta|honda|dardo/.test(n)) return '🏹';
-    if (/hacha/.test(n))                                             return '🪓';
-    if (/tridente|lanza|pica|alabarda|guadaña|jabalina/.test(n))    return '🔱';
-    if (/mazo|maza|porra|garrote|clava/.test(n))                    return '🔨';
-    if (/daga|cuchillo/.test(n))                                     return '🗡';
-    if (/báculo|bastón|cayado/.test(n))                              return '🪄';
-    if (/látigo/.test(n))                                            return '〰';
-    return '⚔';
+    if (atk.melee === false || /arco|ballesta|honda|dardo/.test(n)) return 'bow';
+    if (/hacha/.test(n))                                             return 'axe';
+    if (/tridente|lanza|pica|alabarda|guadaña|jabalina/.test(n))    return 'spear';
+    if (/mazo|maza|porra|garrote|clava/.test(n))                    return 'mace';
+    if (/daga|cuchillo/.test(n))                                     return 'dagger';
+    if (/báculo|bastón|cayado/.test(n))                              return 'staff';
+    if (/látigo/.test(n))                                            return 'whip';
+    return 'sword';
   }
 
   window.rollAttack = function(i) {
     const atk = state.attacks[i] || { name: 'Ataque', bonus: '+0', damage: '1d6+0' };
     const mod = getAttackBonus(normalizeAttack(atk));
     const dmg = parseDamageString(atk.damage);
-    configureDiceForDamage(dmg);
-
-    const wiEl = document.getElementById('rollWeaponIcon');
-    if (wiEl) wiEl.textContent = _weaponIcon(atk);
 
     window.LL_cinematicRoll({
       label: `⚔ ${atk.name}`,
       mod: mod,
-      stageDuration: 0,  // stage stays open — cerrado manualmente desde los botones
+      stageDuration: 0,
+      weaponSvg: WEAPON_SVGS[_weaponKey(atk)],
+      noSpin: true,
       onComplete: function(result) {
         const brk = document.getElementById('rollBreakdown');
         if (!brk) return;
 
         if (result.fumble) {
           setTimeout(() => {
-            if (wiEl) wiEl.textContent = '';
+            _resetDie();
             stage.classList.remove('open');
           }, 3200);
           return;
@@ -558,31 +576,31 @@ function rollAttackDamage(i, isCrit = false) {
         setTimeout(() => {
           brk.querySelectorAll('.roll-dmg-btn,.roll-skip-btn').forEach(b => b.remove());
 
-          const mult     = result.crit ? 2 : 1;
-          const rageB    = getRageDamageBonus(atk);
-          const magicB   = atk.magicBonus || 0;
-          const glabel   = (dmg.groups || []).map(g => `${Math.abs(g.count) * mult}d${g.sides}`).join('+');
-          const blabel   = formatDamageBonus(dmg.bonus + rageB + magicB);
+          const mult   = result.crit ? 2 : 1;
+          const rageB  = getRageDamageBonus(atk);
+          const magicB = atk.magicBonus || 0;
+          const glabel = (dmg.groups || []).map(g => `${Math.abs(g.count) * mult}d${g.sides}`).join('+');
+          const blabel = formatDamageBonus(dmg.bonus + rageB + magicB);
 
-          const dmgBtn   = document.createElement('button');
+          const dmgBtn = document.createElement('button');
           dmgBtn.className   = 'btn btn-primary roll-dmg-btn';
           dmgBtn.textContent = `🎲 Tirar daño  ${glabel}${blabel}`;
           dmgBtn.addEventListener('click', e => {
             e.stopPropagation();
-            if (wiEl) wiEl.textContent = '';
             brk.querySelectorAll('.roll-dmg-btn,.roll-skip-btn').forEach(b => b.remove());
             stage.classList.remove('open');
+            _resetDie();
             rollAttackDamage(i, result.crit);
           });
 
-          const skipBtn  = document.createElement('button');
+          const skipBtn = document.createElement('button');
           skipBtn.className   = 'btn roll-skip-btn';
           skipBtn.textContent = '✕ Omitir daño';
           skipBtn.addEventListener('click', e => {
             e.stopPropagation();
-            if (wiEl) wiEl.textContent = '';
             brk.querySelectorAll('.roll-dmg-btn,.roll-skip-btn').forEach(b => b.remove());
             stage.classList.remove('open');
+            _resetDie();
           });
 
           brk.appendChild(dmgBtn);
