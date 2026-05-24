@@ -1,4 +1,4 @@
-﻿/* ═══════════════════════════════════════════════
+/* ═══════════════════════════════════════════════
    CSS VARIABLES & ROOT — v10
    Variables semánticas de clase:
      --accent / --bg-body / --bg-panel / --border
@@ -354,7 +354,7 @@ body::after {
 .path-btn:hover  { border-color: var(--gold-dark); background: var(--bg-card2); color: var(--text-secondary); }
 .path-btn.active { border-color: var(--gold); background: rgba(201,168,76,0.1); color: var(--gold); }
 .path-btn-icon   { font-size: 22px; }
-.path-btn-name   { font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; }
+.path-btn-name   { font-family: 'Cinzel', serif; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; }
 .path-btn-desc   { font-family: 'IM Fell English', serif; font-size: 11px; font-style: italic; color: var(--text-muted); }
 
 .font-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
@@ -374,7 +374,7 @@ body::after {
 .font-btn:hover  { border-color: var(--gold-dark); color: var(--text-secondary); }
 .font-btn.active { border-color: var(--gold); color: var(--gold); background: rgba(201,168,76,0.08); }
 .font-btn-sample { font-size: 20px; line-height: 1.2; }
-.font-btn-name   { font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; }
+.font-btn-name   { font-family: 'Cinzel', serif; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; }
 
 /* ══════════════════════════════════════════════════
    BLOQUE DE DATOS — 75% del alto con Grid adaptable
@@ -402,7 +402,7 @@ body::after {
 
 .meta-label {
   font-family: 'Cinzel', serif;
-  font-size: 10px;
+  font-size: 11px;
   letter-spacing: 2px;
   text-transform: uppercase;
   color: var(--text-muted);
@@ -456,7 +456,7 @@ body::after {
     gap: 6px 12px;
   }
 
-  .meta-label { font-size: 10px; }
+  .meta-label { font-size: 11px; }
   .meta-value { font-size: 13px; }
 
   /* Nombre centrado en móvil, tamaño legible */
@@ -502,7 +502,7 @@ body::after {
 ═══════════════════════════════════════════════ */
 .btn {
   font-family: 'Cinzel', serif;
-  font-size: 10px;
+  font-size: 11px;
   letter-spacing: 1.5px;
   text-transform: uppercase;
   padding: 8px 16px;
@@ -542,7 +542,7 @@ body::after {
   color: var(--text-primary);
 }
 
-.btn-sm { font-size: 10px; padding: 5px 10px; }
+.btn-sm { font-size: 11px; padding: 5px 10px; }
 
 .btn-icon {
   width: 32px; height: 32px;
@@ -782,7 +782,7 @@ body::after {
 
 .attr-name {
   font-family: 'Cinzel', serif;
-  font-size: 10px;
+  font-size: 11px;
   letter-spacing: 2px;
   text-transform: uppercase;
   color: var(--text-muted);
@@ -854,7 +854,7 @@ body::after {
 
 .stat-hex-label {
   font-family: 'Cinzel', serif;
-  font-size: 10px;
+  font-size: 11px;
   letter-spacing: 2px;
   text-transform: uppercase;
   color: var(--text-muted);
@@ -952,7 +952,7 @@ body::after {
 
 .hp-temp-label {
   font-family: 'Cinzel', serif;
-  font-size: 10px;
+  font-size: 11px;
   letter-spacing: 1px;
   color: var(--text-muted);
   text-transform: uppercase;
@@ -1008,7 +1008,7 @@ body::after {
 
 .skill-attr {
   font-family: 'Cinzel', serif;
-  font-size: 10px;
+  font-size: 11px;
   color: var(--text-muted);
   letter-spacing: 1px;
   text-transform: uppercase;
@@ -1055,7 +1055,7 @@ body::after {
 
 .save-name {
   font-family: 'Cinzel', serif;
-  font-size: 10px;
+  font-size: 11px;
   letter-spacing: 1px;
   text-transform: uppercase;
   color: var(--text-secondary);
@@ -1085,7 +1085,7 @@ body::after {
 
 .death-label {
   font-family: 'Cinzel', serif;
-  font-size: 10px;
+  font-size: 11px;
   letter-spacing: 1.5px;
   text-transform: uppercase;
   width: 65px;
@@ -1132,7 +1132,7 @@ body::after {
 
 .attacks-table th {
   font-family: 'Cinzel', serif;
-  font-size: 10px;
+  font-size: 11px;
   letter-spacing: 2px;
   text-transform: uppercase;
   color: var(--gold-dark);
@@ -1176,7 +1176,7 @@ body::after {
   margin-top: 3px;
   color: var(--text-muted);
   font-family: 'Cinzel', serif;
-  font-size: 10px;
+  font-size: 11px;
   letter-spacing: 1px;
   text-transform: uppercase;
 }
@@ -1192,7 +1192,7 @@ body::after {
   color: var(--text-muted);
   background: rgba(0,0,0,0.12);
   font-family: 'Cinzel', serif;
-  font-size: 10px;
+  font-size: 11px;
   letter-spacing: 0.7px;
   text-transform: uppercase;
 }
@@ -1206,7 +1206,7 @@ body::after {
 .attack-props {
   display: block;
   font-family: 'Cinzel', serif;
-  font-size: 10px;
+  font-size: 11px;
   letter-spacing: 0.8px;
   color: var(--text-muted);
   margin: 2px 0 3px;
@@ -1223,7 +1223,7 @@ body::after {
   color: #ffb199;
   background: rgba(192,57,43,0.12);
   font-family: 'Cinzel', serif;
-  font-size: 10px;
+  font-size: 11px;
   letter-spacing: 0.8px;
   text-transform: uppercase;
 }
@@ -1242,7 +1242,7 @@ body::after {
   background: rgba(201,168,76,0.08);
   color: var(--text-secondary);
   font-family: 'Cinzel', serif;
-  font-size: 10px;
+  font-size: 11px;
   letter-spacing: 0.8px;
   cursor: pointer;
 }
@@ -1266,7 +1266,7 @@ body::after {
   gap: 3px;
   color: var(--text-muted);
   font-family: 'Cinzel', serif;
-  font-size: 10px;
+  font-size: 11px;
   letter-spacing: 0.8px;
   text-transform: uppercase;
 }
@@ -1397,7 +1397,7 @@ body::after {
 .class-btn:hover  { border-color: var(--gold-dark); color: var(--text-secondary); background: var(--bg-card2); }
 .class-btn.active { border-color: var(--gold); color: var(--gold); background: rgba(201,168,76,0.1); }
 .class-btn-icon   { font-size: 18px; line-height: 1; }
-.class-btn-name   { font-family: 'Cinzel', serif; font-size: 9px; letter-spacing: 0.8px; text-transform: uppercase; text-align: center; }
+.class-btn-name   { font-family: 'Cinzel', serif; font-size: 11px; letter-spacing: 0.8px; text-transform: uppercase; text-align: center; }
 
 .dice-fab {
   width: 56px; height: 56px;
@@ -1439,7 +1439,7 @@ body::after {
 
 .dice-panel-title {
   font-family: 'Cinzel', serif;
-  font-size: 10px;
+  font-size: 11px;
   letter-spacing: 2px;
   text-transform: uppercase;
   color: var(--gold);
@@ -1455,7 +1455,7 @@ body::after {
 
 .dice-btn-d {
   font-family: 'Cinzel', serif;
-  font-size: 10px;
+  font-size: 11px;
   padding: 8px 4px;
   background: var(--bg-card2);
   border: 1px solid var(--border);
@@ -1486,7 +1486,7 @@ body::after {
 
 .dice-result-label {
   font-family: 'Cinzel', serif;
-  font-size: 9px;
+  font-size: 11px;
   color: var(--text-muted);
   text-align: center;
   letter-spacing: 1px;
@@ -1556,7 +1556,7 @@ body::after {
   flex: 1; height: 1px;
   background: linear-gradient(to right, transparent, var(--border-bright), transparent);
 }
-.dtd-mark { color: var(--gold-dark); font-size: 9px; }
+.dtd-mark { color: var(--gold-dark); font-size: 11px; }
 @keyframes shapeShake {
   0%, 100% { transform: rotate(0); }
   20% { transform: rotate(-15deg) scale(1.15); }
@@ -1568,7 +1568,7 @@ body::after {
 .dice-controls { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
 .dc-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
 .dc-label {
-  font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 2px;
+  font-family: 'Cinzel', serif; font-size: 11px; letter-spacing: 2px;
   text-transform: uppercase; color: var(--text-muted);
 }
 .dc-stepper { display: flex; align-items: center; gap: 0; }
@@ -1593,7 +1593,7 @@ body::after {
   flex: 1; padding: 5px 8px;
   background: rgba(8,16,8,0.6); border: none;
   color: var(--text-muted);
-  font-family: 'Cinzel', serif; font-size: 9px; letter-spacing: 1.5px;
+  font-family: 'Cinzel', serif; font-size: 11px; letter-spacing: 1.5px;
   text-transform: uppercase; cursor: pointer; transition: all .15s;
 }
 .dc-segmented button + button { border-left: 1px solid var(--border); }
@@ -1675,7 +1675,7 @@ body.edit-mode .hero-pill[data-field="species"] .hero-pill-select  { display: in
 
 .his-tag {
   font-family: 'Cinzel', serif;
-  font-size: 9px;
+  font-size: 11px;
   letter-spacing: 1px;
   text-transform: uppercase;
   background: var(--bg-dark);
@@ -1725,7 +1725,7 @@ body.edit-mode .hero-pill[data-field="species"] .hero-pill-select  { display: in
   font-style: normal;
   color: var(--gold-light);
   font-family: 'Cinzel', serif;
-  font-size: 10px;
+  font-size: 11px;
   letter-spacing: 1px;
   text-transform: uppercase;
 }
@@ -1747,7 +1747,7 @@ body.edit-mode .hero-pill[data-field="species"] .hero-pill-select  { display: in
 
 .condition-tag {
   font-family: 'Cinzel', serif;
-  font-size: 10px;
+  font-size: 11px;
   letter-spacing: 1px;
   text-transform: uppercase;
   padding: 6px 8px;
@@ -1783,7 +1783,7 @@ body.edit-mode .hero-pill[data-field="species"] .hero-pill-select  { display: in
 }
 .exhaustion-label {
   font-family: 'Cinzel', serif;
-  font-size: 9px;
+  font-size: 11px;
   letter-spacing: 2px;
   text-transform: uppercase;
   color: var(--text-muted);
@@ -1831,7 +1831,7 @@ body.edit-mode .hero-pill[data-field="species"] .hero-pill-select  { display: in
 }
 .exhaustion-effects {
   font-family: 'IM Fell English', serif;
-  font-size: 10px;
+  font-size: 11px;
   line-height: 1.7;
 }
 .exhaustion-effect.latest {
@@ -1859,7 +1859,7 @@ body.edit-mode .hero-pill[data-field="species"] .hero-pill-select  { display: in
 
 .resource-name {
   font-family: 'Cinzel', serif;
-  font-size: 10px;
+  font-size: 11px;
   letter-spacing: 2px;
   text-transform: uppercase;
   color: var(--gold-dark);
@@ -2068,7 +2068,7 @@ body.edit-mode .hero-pill[data-field="species"] .hero-pill-select  { display: in
 /* ── Trait: badge de recarga ─────────────────── */
 .trait-rest-badge {
   font-family: 'Cinzel', serif;
-  font-size: 9px;
+  font-size: 11px;
   letter-spacing: 1px;
   text-transform: uppercase;
   padding: 2px 7px;
@@ -2104,7 +2104,7 @@ body.edit-mode .trait-edit-controls { display: flex; }
 
 .trait-edit-label {
   font-family: 'Cinzel', serif;
-  font-size: 9px;
+  font-size: 11px;
   letter-spacing: 1px;
   text-transform: uppercase;
   color: var(--text-muted);
@@ -2126,7 +2126,7 @@ body.edit-mode .trait-edit-controls { display: flex; }
   border: 1px solid var(--border);
   color: var(--text-muted);
   cursor: pointer;
-  font-size: 10px;
+  font-size: 11px;
   padding: 2px 7px;
   border-radius: 3px;
   margin-left: auto;
@@ -2199,7 +2199,7 @@ body.edit-mode .trait-edit-controls { display: flex; }
   background: rgba(0,0,0,0.18);
   color: var(--text-muted);
   font-family: 'Cinzel', serif;
-  font-size: 8px;
+  font-size: 11px;
   letter-spacing: 0.8px;
   cursor: pointer;
 }
@@ -2224,7 +2224,7 @@ body.edit-mode .trait-edit-controls { display: flex; }
 .inv-bonus-tag {
   display: inline-block;
   font-family: 'Cinzel', serif;
-  font-size: 9px;
+  font-size: 11px;
   letter-spacing: 1px;
   padding: 1px 5px;
   border-radius: 8px;
@@ -2243,7 +2243,7 @@ body.edit-mode .trait-edit-controls { display: flex; }
 /* ── Botón Usar (consumibles) ─────────────── */
 .inv-use-btn {
   font-family: 'Cinzel', serif;
-  font-size: 10px;
+  font-size: 11px;
   letter-spacing: 0.5px;
   padding: 3px 9px;
   background: rgba(201,168,76,0.1);
@@ -2263,7 +2263,7 @@ body.edit-mode .trait-edit-controls { display: flex; }
   align-items: center;
   gap: 10px;
   font-family: 'Cinzel', serif;
-  font-size: 10px;
+  font-size: 11px;
   letter-spacing: 1px;
   color: var(--text-muted);
   padding: 8px 8px 2px;
@@ -2275,7 +2275,7 @@ body.edit-mode .trait-edit-controls { display: flex; }
 /* ── Botón "← Aplicar" en el log de combate  */
 .log-apply-btn {
   font-family: 'Cinzel', serif;
-  font-size: 10px;
+  font-size: 11px;
   letter-spacing: 0.5px;
   padding: 2px 8px;
   background: rgba(231,76,60,0.12);
@@ -2303,7 +2303,7 @@ body.edit-mode .trait-edit-controls { display: flex; }
   gap: 3px;
   color: var(--text-muted);
   font-family: 'Cinzel', serif;
-  font-size: 8px;
+  font-size: 11px;
   letter-spacing: 0.8px;
   text-transform: uppercase;
 }
@@ -2335,7 +2335,7 @@ body.edit-mode .trait-edit-controls { display: flex; }
 
 .spell-level-name {
   font-family: 'Cinzel', serif;
-  font-size: 10px;
+  font-size: 11px;
   letter-spacing: 2px;
   text-transform: uppercase;
   color: var(--gold-dark);
@@ -2420,7 +2420,7 @@ body.edit-mode .trait-edit-controls { display: flex; }
 
 .spell-school {
   font-family: 'Cinzel', serif;
-  font-size: 8px;
+  font-size: 11px;
   color: var(--text-muted);
   letter-spacing: 1px;
 }
@@ -2445,7 +2445,7 @@ body.edit-mode .trait-edit-controls { display: flex; }
 
 .journal-session {
   font-family: 'Cinzel', serif;
-  font-size: 10px;
+  font-size: 11px;
   letter-spacing: 2px;
   color: var(--gold);
   text-transform: uppercase;
@@ -2586,7 +2586,7 @@ body.edit-mode .trait-edit-controls { display: flex; }
 
 .xp-level-badge {
   font-family: 'Cinzel', serif;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 1.5px;
   color: var(--gold);
@@ -2662,7 +2662,7 @@ body.edit-mode .trait-edit-controls { display: flex; }
 
 .personality-label {
   font-family: 'Cinzel', serif;
-  font-size: 9px;
+  font-size: 11px;
   letter-spacing: 2px;
   text-transform: uppercase;
   color: var(--gold-dark);
@@ -2685,7 +2685,7 @@ body.edit-mode .trait-edit-controls { display: flex; }
   background: none;
   border: none;
   cursor: pointer;
-  font-size: 10px;
+  font-size: 11px;
   opacity: 0.45;
   padding: 0 0 0 4px;
   vertical-align: middle;
@@ -2773,7 +2773,7 @@ body.edit-mode .trait-edit-controls { display: flex; }
   margin-top: 6px;
   color: var(--text-muted);
   font-family: 'Cinzel', serif;
-  font-size: 8px;
+  font-size: 11px;
   letter-spacing: 1px;
   text-transform: uppercase;
 }
@@ -2818,7 +2818,7 @@ body.edit-mode .trait-edit-controls { display: flex; }
 
 .combat-stat-label {
   font-family: 'Cinzel', serif;
-  font-size: 8px;
+  font-size: 11px;
   letter-spacing: 1.5px;
   text-transform: uppercase;
   color: var(--text-muted);
@@ -2851,7 +2851,7 @@ body.edit-mode .trait-edit-controls { display: flex; }
 
 .combat-death-title {
   font-family: 'Cinzel', serif;
-  font-size: 9px;
+  font-size: 11px;
   letter-spacing: 2px;
   text-transform: uppercase;
   color: #e74c3c;
@@ -2940,7 +2940,7 @@ body.edit-mode .edit-only { display: inline-block !important; }
   background: var(--gold-dark);
   color: var(--bg-deep);
   font-family: 'Cinzel', serif;
-  font-size: 9px;
+  font-size: 11px;
   letter-spacing: 2px;
   text-transform: uppercase;
   padding: 6px 16px;
@@ -2972,7 +2972,7 @@ body.edit-mode .edit-only { display: inline-block !important; }
 
 .badge {
   font-family: 'Cinzel', serif;
-  font-size: 8px;
+  font-size: 11px;
   letter-spacing: 1px;
   text-transform: uppercase;
   padding: 2px 8px;
@@ -3000,7 +3000,7 @@ body.edit-mode .edit-only { display: inline-block !important; }
 
 .prof-bonus-lbl {
   font-family: 'Cinzel', serif;
-  font-size: 8px;
+  font-size: 11px;
   letter-spacing: 1.5px;
   text-transform: uppercase;
   color: var(--text-muted);
@@ -3051,7 +3051,7 @@ body.edit-mode .edit-only { display: inline-block !important; }
   border: 1px solid var(--gold);
   color: var(--gold);
   font-family: 'Cinzel', serif;
-  font-size: 10px;
+  font-size: 11px;
   letter-spacing: 1.5px;
   text-transform: uppercase;
   padding: 10px 20px;
@@ -3087,7 +3087,7 @@ body.edit-mode .edit-only { display: inline-block !important; }
 
 .passive-label {
   font-family: 'Cinzel', serif;
-  font-size: 8px;
+  font-size: 11px;
   letter-spacing: 1.5px;
   text-transform: uppercase;
   color: var(--text-muted);
@@ -3128,7 +3128,7 @@ body.edit-mode .edit-only { display: inline-block !important; }
 
 .inspiration-lbl {
   font-family: 'Cinzel', serif;
-  font-size: 9px;
+  font-size: 11px;
   letter-spacing: 2px;
   text-transform: uppercase;
   color: var(--text-secondary);
@@ -3143,7 +3143,7 @@ body.edit-mode .edit-only { display: inline-block !important; }
    MOBILE NAV
 ═══════════════════════════════════════════════ */
 @media (max-width: 480px) {
-  .tab-btn { padding: 6px 4px; font-size: 10px; }
+  .tab-btn { padding: 6px 4px; font-size: 11px; }
   .tab-icon { display: none; }
   .tab-btn-config .tab-icon { display: flex; }
   .combat-panel { padding: 20px 16px; }
@@ -3193,7 +3193,7 @@ body.edit-mode .edit-only { display: inline-block !important; }
   height: 16px;
   border-radius: 3px;
   font-family: 'Cinzel', serif;
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 700;
   display: flex;
   align-items: center;
@@ -3233,7 +3233,7 @@ body.edit-mode .edit-only { display: inline-block !important; }
 
 .init-hp-val {
   font-family: 'Cinzel', serif;
-  font-size: 10px;
+  font-size: 11px;
   letter-spacing: 0.5px;
   cursor: pointer;
   white-space: nowrap;
@@ -3366,13 +3366,13 @@ body.edit-mode .edit-only { display: inline-block !important; }
 .hero-eyebrow {
   display: flex; align-items: center; gap: 12px;
   font-family: 'Cinzel', serif;
-  font-size: 10px; letter-spacing: 6px; text-transform: uppercase;
+  font-size: 11px; letter-spacing: 6px; text-transform: uppercase;
   color: var(--gold-dark);
   margin-bottom: 4px;
 }
 .hero-rune {
   color: var(--gold);
-  font-size: 8px;
+  font-size: 11px;
   text-shadow: 0 0 10px var(--gold-glow);
 }
 
@@ -3404,7 +3404,7 @@ body.edit-mode .edit-only { display: inline-block !important; }
 .char-optional-field {
   display: none;
   font-family: 'Cinzel', serif;
-  font-size: 9px;
+  font-size: 11px;
   letter-spacing: 1.5px;
   text-transform: uppercase;
   color: var(--text-muted);
@@ -3432,7 +3432,7 @@ body.edit-mode .edit-only { display: inline-block !important; }
 }
 .appear-label {
   font-family: 'Cinzel', serif;
-  font-size: 8px;
+  font-size: 11px;
   letter-spacing: 1.2px;
   text-transform: uppercase;
   color: var(--text-muted);
@@ -3463,7 +3463,7 @@ body.edit-mode .edit-only { display: inline-block !important; }
 }
 .hd-group-label {
   font-family: 'Cinzel', serif;
-  font-size: 8px;
+  font-size: 11px;
   letter-spacing: 1px;
   text-transform: uppercase;
   color: var(--text-muted);
@@ -3489,7 +3489,7 @@ body.edit-mode .edit-only { display: inline-block !important; }
 }
 .hero-divider .diamond {
   color: var(--gold);
-  font-size: 10px;
+  font-size: 11px;
   text-shadow: 0 0 14px var(--gold-glow);
 }
 
@@ -3513,7 +3513,7 @@ body.edit-mode .edit-only { display: inline-block !important; }
 }
 .hero-pill-label {
   font-family: 'Cinzel', serif;
-  font-size: 10px; letter-spacing: 2.5px; text-transform: uppercase;
+  font-size: 11px; letter-spacing: 2.5px; text-transform: uppercase;
   color: var(--gold-dark);
 }
 .hero-pill-value {
@@ -3575,7 +3575,7 @@ body.edit-mode .edit-only { display: inline-block !important; }
   background: rgba(7,14,7,0.85);
   border: 1px solid var(--gold-dark);
   font-family: 'Cinzel', serif;
-  font-size: 10px; letter-spacing: 2px; color: var(--gold);
+  font-size: 11px; letter-spacing: 2px; color: var(--gold);
   text-transform: uppercase;
   inset: auto;
   width: auto; height: auto;
@@ -3747,7 +3747,7 @@ body.shake-fumble { animation: screenShake .4s cubic-bezier(.36,.07,.19,.97); }
 }
 .roll-log.open { display: block; animation: slideUp .25s ease; }
 .roll-log-title {
-  font-family: 'Cinzel', serif; font-size: 9px; letter-spacing: 3px;
+  font-family: 'Cinzel', serif; font-size: 11px; letter-spacing: 3px;
   color: var(--gold); margin-bottom: 10px; text-transform: uppercase;
   display: flex; justify-content: space-between; align-items: center;
 }
@@ -3762,9 +3762,9 @@ body.shake-fumble { animation: screenShake .4s cubic-bezier(.36,.07,.19,.97); }
 }
 .roll-log-entry.crit   { border-left-color: #ffd166; color: #ffd166; background: rgba(255,209,102,0.06); }
 .roll-log-entry.fumble { border-left-color: #e74c3c; color: #ff7f6f; background: rgba(231,76,60,0.05); }
-.roll-log-meta { color: var(--text-muted); font-size: 9px; letter-spacing: 1px; font-family: 'Cinzel', serif; text-transform: uppercase; margin-bottom: 2px; }
+.roll-log-meta { color: var(--text-muted); font-size: 11px; letter-spacing: 1px; font-family: 'Cinzel', serif; text-transform: uppercase; margin-bottom: 2px; }
 .roll-log-total { font-size: 14px; font-weight: bold; }
-.roll-log-detail { opacity: 0.6; font-size: 10px; margin-left: 6px; }
+.roll-log-detail { opacity: 0.6; font-size: 11px; margin-left: 6px; }
 
 /* Bitácora floating button */
 .log-btn {
@@ -3781,7 +3781,7 @@ body.shake-fumble { animation: screenShake .4s cubic-bezier(.36,.07,.19,.97); }
   border: 1px solid var(--border);
   color: var(--gold);
   font-family: 'Cinzel', serif;
-  font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+  font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
   cursor: pointer;
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
@@ -3791,7 +3791,7 @@ body.shake-fumble { animation: screenShake .4s cubic-bezier(.36,.07,.19,.97); }
 .log-btn .badge {
   display: inline-block; margin-left: 6px;
   background: var(--gold-dark); color: #000;
-  font-family: 'Cinzel', serif; font-size: 9px;
+  font-family: 'Cinzel', serif; font-size: 11px;
   padding: 1px 6px; border-radius: 999px;
 }
 
@@ -3813,7 +3813,7 @@ body.shake-fumble { animation: screenShake .4s cubic-bezier(.36,.07,.19,.97); }
 }
 .adv-chip.open { display: flex; }
 .adv-chip button {
-  font-family: 'Cinzel', serif; font-size: 9px; letter-spacing: 2px;
+  font-family: 'Cinzel', serif; font-size: 11px; letter-spacing: 2px;
   padding: 6px 14px; background: transparent;
   border: none; border-radius: 999px;
   color: var(--text-muted); cursor: pointer;
@@ -3824,7 +3824,7 @@ body.shake-fumble { animation: screenShake .4s cubic-bezier(.36,.07,.19,.97); }
 .adv-chip button:not(.active):hover { color: var(--gold); }
 .adv-chip-hint {
   position: absolute; top: -18px; left: 50%; transform: translateX(-50%);
-  font-family: 'IM Fell English', serif; font-size: 10px; font-style: italic;
+  font-family: 'IM Fell English', serif; font-size: 11px; font-style: italic;
   color: var(--text-muted); white-space: nowrap;
   opacity: 0; transition: opacity .2s;
 }
@@ -3943,7 +3943,7 @@ body.rage-active::before {
 }
 .bs-label {
   font-family: 'Cinzel', serif;
-  font-size: 8px; letter-spacing: 2px; text-transform: uppercase;
+  font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
   color: var(--text-muted);
   margin-top: 6px;
 }
@@ -4060,7 +4060,7 @@ body.rage-active::before {
 }
 #tab-combate .death-label {
   font-family: 'Cinzel', serif;
-  font-size: 10px;
+  font-size: 11px;
   letter-spacing: 2.5px;
   min-width: 70px;
 }
@@ -4115,7 +4115,7 @@ body.rage-active::before {
 }
 .rage-rounds.active { display: block; }
 .rage-rounds-label {
-  font-family: 'Cinzel', serif; font-size: 9px; letter-spacing: 2px;
+  font-family: 'Cinzel', serif; font-size: 11px; letter-spacing: 2px;
   text-transform: uppercase; color: #ff7f6f; margin-bottom: 8px;
 }
 .rage-pips-row {
@@ -4197,7 +4197,7 @@ body.rage-active::before {
    PRINCIPAL TAB — densidad optimizada
 ═══════════════════════════════════════════════ */
 #tab-principal .card { padding: 12px 14px !important; margin-bottom: 10px !important; }
-#tab-principal .card-title { margin-bottom: 8px !important; padding-bottom: 6px !important; font-size: 10px !important; }
+#tab-principal .card-title { margin-bottom: 8px !important; padding-bottom: 6px !important; font-size: 11px !important; }
 #tab-principal .attributes-grid { gap: 6px !important; }
 #tab-principal .attr-box { padding: 8px 4px !important; }
 #tab-principal .saves-list .save-row { padding: 4px 6px !important; }
@@ -4242,7 +4242,7 @@ body.rage-active::before {
 #tab-principal .attr-box::after {
   position: absolute;
   top: 4px; right: 6px;
-  font-size: 10px;
+  font-size: 11px;
   color: var(--gold-dark);
   opacity: 0.35;
   pointer-events: none;
@@ -4348,7 +4348,7 @@ body.rage-active::before {
 }
 .dice-label {
   font-family: 'Cinzel', serif;
-  font-size: 9px;
+  font-size: 11px;
   letter-spacing: 1px;
   text-transform: uppercase;
   color: var(--text-muted);
@@ -4712,7 +4712,7 @@ input[type="range"] { min-height: 20px; }
   text-overflow: ellipsis;
 }
 .spell-card-level {
-  font-size: 9px;
+  font-size: 11px;
   background: var(--bg-card2);
   padding: 2px 5px;
   border-radius: 3px;
@@ -4721,13 +4721,13 @@ input[type="range"] { min-height: 20px; }
   white-space: nowrap;
 }
 .spell-card-school {
-  font-size: 10px;
+  font-size: 11px;
   color: var(--text-muted);
   font-style: italic;
   white-space: nowrap;
 }
 .spell-tag {
-  font-size: 9px;
+  font-size: 11px;
   padding: 1px 5px;
   border-radius: 3px;
   font-family: 'Cinzel', serif;
@@ -4762,7 +4762,7 @@ input[type="range"] { min-height: 20px; }
 }
 .spell-level-divider {
   font-family: 'Cinzel', serif;
-  font-size: 9px;
+  font-size: 11px;
   letter-spacing: 2px;
   text-transform: uppercase;
   color: var(--text-muted);
@@ -4834,7 +4834,7 @@ input[type="range"] { min-height: 20px; }
 .spell-modal-box label {
   display: block;
   font-family: 'Cinzel', serif;
-  font-size: 9px;
+  font-size: 11px;
   letter-spacing: 1px;
   text-transform: uppercase;
   color: var(--text-muted);
@@ -4905,7 +4905,7 @@ input[type="range"] { min-height: 20px; }
 .attack-modal-box label {
   display: block;
   font-family: 'Cinzel', serif;
-  font-size: 9px;
+  font-size: 11px;
   letter-spacing: 1px;
   text-transform: uppercase;
   color: var(--text-muted);
@@ -5002,7 +5002,7 @@ input[type="range"] { min-height: 20px; }
   display: inline-flex;
   align-items: center;
   font-family: 'Cinzel', serif;
-  font-size: 8px;
+  font-size: 11px;
   letter-spacing: 0.5px;
   color: var(--gold-light);
   background: rgba(201,168,76,0.12);
@@ -5046,7 +5046,7 @@ input[type="range"] { min-height: 20px; }
 }
 .lv-label {
   font-family: 'Cinzel', serif;
-  font-size: 10px;
+  font-size: 11px;
   letter-spacing: 1px;
   text-transform: uppercase;
   color: var(--text-muted);
@@ -5126,7 +5126,7 @@ input[type="range"] { min-height: 20px; }
 }
 .wiz-step-sub {
   font-family: 'Cinzel', serif;
-  font-size: 10px;
+  font-size: 11px;
   letter-spacing: 1px;
   text-transform: uppercase;
   color: var(--text-muted);
@@ -5188,7 +5188,7 @@ input[type="range"] { min-height: 20px; }
   letter-spacing: 0.5px;
 }
 .wiz-card-sub {
-  font-size: 10px;
+  font-size: 11px;
   color: var(--text-muted);
   margin-bottom: 6px;
 }
@@ -5199,7 +5199,7 @@ input[type="range"] { min-height: 20px; }
   margin-bottom: 6px;
 }
 .wiz-tag {
-  font-size: 9px;
+  font-size: 11px;
   font-family: 'Cinzel', serif;
   background: var(--bg-card2);
   border: 1px solid var(--border);
@@ -5271,7 +5271,7 @@ input[type="range"] { min-height: 20px; }
 }
 .wiz-summary-score-label {
   font-family: 'Cinzel', serif;
-  font-size: 9px;
+  font-size: 11px;
   letter-spacing: 1px;
   color: var(--text-muted);
   text-transform: uppercase;
@@ -5295,7 +5295,7 @@ input[type="range"] { min-height: 20px; }
   border: 1px solid var(--border);
   color: var(--text-muted);
   font-family: 'Cinzel', serif;
-  font-size: 10px;
+  font-size: 11px;
   letter-spacing: 1px;
   text-transform: uppercase;
   padding: 6px 14px;
@@ -5353,7 +5353,7 @@ input[type="range"] { min-height: 20px; }
 .wiz-label {
   display: block;
   font-family: 'Cinzel', serif;
-  font-size: 9px;
+  font-size: 11px;
   letter-spacing: 1px;
   text-transform: uppercase;
   color: var(--text-muted);
@@ -5395,7 +5395,7 @@ input[type="range"] { min-height: 20px; }
 }
 .wiz-summary-label {
   font-family: 'Cinzel', serif;
-  font-size: 9px;
+  font-size: 11px;
   letter-spacing: 1px;
   text-transform: uppercase;
   color: var(--text-muted);
