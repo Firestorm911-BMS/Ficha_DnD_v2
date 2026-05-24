@@ -112,6 +112,15 @@ const SPECIES_DATA = {
 //  INIT
 // ═══════════════════════════════════════════════
 
+// Enter en .personality-text inserta <br> en lugar de <div> (comportamiento de navegador)
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Enter') return;
+  if (!e.target.classList?.contains('personality-text')) return;
+  if (e.target.contentEditable !== 'true') return;
+  e.preventDefault();
+  document.execCommand('insertLineBreak');
+});
+
 document.addEventListener('DOMContentLoaded', () => {
   ['STR','DEX','CON','INT','WIS','CHA'].forEach(a => calcMod(a));
   renderSkills();

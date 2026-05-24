@@ -76,6 +76,7 @@ export function normalizeAttack(atk = {}) {
     properties: Array.isArray(atk.properties) ? atk.properties : (atk.properties ? String(atk.properties).split(',').map(s=>s.trim()).filter(Boolean) : []),
     magicBonus: typeof atk.magicBonus === 'number' ? atk.magicBonus : 0,
     extraDamage: Array.isArray(atk.extraDamage) ? atk.extraDamage : [],
+    weight: parseFloat(atk.weight) || 0,
   };
 }
 
@@ -84,9 +85,10 @@ export function normalizeAttacks() {
 }
 
 export function getAttackBonus(atk) {
+  const abilityMod = (atk.ability === 'NONE') ? 0 : getMod(atk.ability || 'STR');
   const base = Number.isFinite(atk.attackBonus)
     ? atk.attackBonus
-    : getMod(atk.ability || 'STR') + (atk.proficient ? getProfBonus() : 0);
+    : abilityMod + (atk.proficient ? getProfBonus() : 0);
   return base + getEquipmentAttackBonus() + (atk.magicBonus || 0);
 }
 
@@ -175,7 +177,7 @@ export function openAttackModal(i) {
   if (_attackModalIndex >= 0 && state.attacks[_attackModalIndex]) {
     const atk = state.attacks[_attackModalIndex];
     document.getElementById('amName').value = atk.name || '';
-    document.getElementById('amDamage').value = atk.damage || '1d6';
+    _setDamageSelect(atk.damage || '1d6');
     _setSelectValue('amType', atk.type || 'Cortante');
     _setSelectValue('amAbility', atk.ability || 'STR');
     _setSelectValue('amMagicBonus', String(atk.magicBonus || 0));
@@ -184,12 +186,14 @@ export function openAttackModal(i) {
     document.getElementById('amEquipped').checked = atk.equipped !== false;
     document.getElementById('amMelee').checked = atk.melee !== false;
     document.getElementById('amRage').checked = atk.rage !== false;
+    document.getElementById('amWeight').value = atk.weight || 0;
+    document.getElementById('amSyncInventory').checked = false;
     if (presetSel) presetSel.value = '';
     _buildExtraDamageRows(atk.extraDamage || []);
   } else {
     _attackModalIndex = -1;
     document.getElementById('amName').value = '';
-    document.getElementById('amDamage').value = '1d6';
+    _setSelectValue('amDamage', '1d6');
     _setSelectValue('amType', 'Cortante');
     _setSelectValue('amAbility', 'STR');
     _setSelectValue('amMagicBonus', '0');
@@ -198,6 +202,8 @@ export function openAttackModal(i) {
     document.getElementById('amEquipped').checked = true;
     document.getElementById('amMelee').checked = true;
     document.getElementById('amRage').checked = true;
+    document.getElementById('amWeight').value = 0;
+    document.getElementById('amSyncInventory').checked = true;
     if (presetSel) presetSel.value = '';
     _buildExtraDamageRows([]);
   }
@@ -253,12 +259,20 @@ export function saveAttackFromModal() {
     if (dice) extraDamage.push({ dice, type: edType });
   });
 
-  const atk = { name, damage, type, ability, magicBonus, properties, proficient, equipped, melee, rage, attackBonus: null, extraDamage };
+  const weight = parseFloat(document.getElementById('amWeight')?.value || '0') || 0;
+  const syncInventory = document.getElementById('amSyncInventory')?.checked ?? false;
+
+  const atk = { name, damage, type, ability, magicBonus, properties, proficient, equipped, melee, rage, attackBonus: null, extraDamage, weight };
 
   if (_attackModalIndex >= 0 && state.attacks[_attackModalIndex]) {
     state.attacks[_attackModalIndex] = atk;
   } else {
     state.attacks.push(atk);
+  }
+
+  if (syncInventory && weight > 0) {
+    state.inventory.push({ icon: '⚔', name, qty: 1, type: 'weapon', equipped: true, weight, acBonus: 0, acBase: null, attackBonus: 0, speedBonus: 0 });
+    window.renderInventory?.();
   }
 
   closeAttackModal();
@@ -284,6 +298,22 @@ function _buildPresetOptions() {
   }
   sel.innerHTML = html;
   sel.dataset.built = '1';
+}
+
+function _setDamageSelect(damage) {
+  const sel = document.getElementById('amDamage');
+  if (!sel) return;
+  // strip embedded bonus (+3, -1…) to get just the dice part
+  const dicePart = String(damage).replace(/\s*[+-]\s*\d+$/, '').trim();
+  sel.value = dicePart;
+  if (sel.value !== dicePart) {
+    // custom value not in preset list — add temporarily
+    const opt = document.createElement('option');
+    opt.value = dicePart;
+    opt.textContent = dicePart;
+    sel.insertBefore(opt, sel.firstChild);
+    sel.value = dicePart;
+  }
 }
 
 function _setSelectValue(id, value) {
@@ -329,7 +359,7 @@ function _updateAttackPreview() {
   const damage = document.getElementById('amDamage')?.value || '1d6';
   const type = document.getElementById('amType')?.value || 'Cortante';
 
-  const abilityMod = getMod(ability);
+  const abilityMod = (ability === 'NONE') ? 0 : getMod(ability);
   const profBonus = proficient ? getProfBonus() : 0;
   const attackTotal = abilityMod + profBonus + magicBonus;
   const attackStr = attackTotal >= 0 ? `+${attackTotal}` : `${attackTotal}`;
