@@ -694,6 +694,16 @@ Al confirmar nueva clase:
 **Constante nueva**: `ALL_CLASSES` (12 clases PHB)
 **No cubre**: restricciones RAW de atributo mínimo para multiclase, ni 3+ clases simultáneas (FEAT-04)
 
+### FEAT-05b — Recursos múltiples (extraClassResources)
+Ampliación de FEAT-05 para mostrar ambos recursos de clase simultáneamente.
+- `state.js`: campo `extraClassResources: []` en CHARACTER_STATE
+- `rage.js`: `addExtraResource(res)` push/upsert; `toggleExtraResourcePip(idx,el)` manejo de usos; `_renderExtraResources()` paneles extra bajo el recurso primario en `#rageCard`
+- `rests.js`: shortRest/longRest resetean `usesSpent` de extras según `recovery`
+- `persistence.js`: carga `extraClassResources` al restaurar estado (default `[]`)
+- `level-up.js`: `_confirmNewMulticlass` llama `addExtraResource` en vez de reemplazar el primario
+- `xp.js`: escala `maxUses` de extras al subir de nivel usando `className` del recurso
+- `wizard.js`: incluye `className` al llamar `addExtraResource` para el recurso secundario
+
 ---
 
 ---
@@ -910,6 +920,8 @@ Codex reportó que el wrapper de `LL_cinematicRoll` aplicaba desventaja automát
 | 2026-05-23 | FEAT-01 | Condiciones → desventaja sugerida | dice.js IIFE: CONDITION_DISADVANTAGE map + _warnConditions(). conditions.js: getActiveConditions() exportada. LL_cinematicRoll: toast + pulso "Desv." si hay condiciones activas con desventaja para el tipo de tirada. Agotamiento Nv.1/3+ incluido. |
 | 2026-05-23 | BUG-22 | langComp renderizaba HTML crudo | persistence.js: langComp movido del grupo textContent al grupo innerHTML+sanitizeRichText. |
 | 2026-05-23 | BUG-23 | clearSave/newSheet — beforeunload re-escribía datos | Causa: beforeunload dispara saveState() con CHARACTER_STATE en memoria antes de que el reload complete. Fix: persistence.js agrega `skipNextSave()` + flag `_skipSave`; saveState() y saveToLocal() retornan temprano si el flag está activo. roster.js llama `skipNextSave()` en clearSave y newSheet antes de location.reload(). newSheet además usa sessionStorage 'openWizardOnLoad' para que loadFromLocal() abra el wizard en vez del roster. |
+| 2026-05-23 | FEAT-05 | Multiclase desde asistente de nivel | level-up.js: toggle "▲ Subir [Clase] / ✦ Nueva clase" en modal de subida de nivel para personajes de clase única. "Nueva clase" muestra grid de 11 clases (excluye la actual); confirmar actualiza pill, hitDice y recalcula ranuras. Nuevas funciones: switchLevelUpMode, selectNewMulticlassClass, _confirmNewMulticlass, _handleLevelUpConfirm. Constante ALL_CLASSES (12 PHB). |
+| 2026-05-23 | FEAT-05b | extraClassResources — recursos múltiples en multiclase | state.js: campo `extraClassResources: []` en CHARACTER_STATE. rage.js: addExtraResource() (push/upsert), toggleExtraResourcePip(idx,el), _renderExtraResources() renderiza paneles extra bajo el recurso primario en #rageCard con pips clickeables. rests.js: shortRest/longRest resetean extras según recovery. persistence.js: carga extraClassResources al restaurar estado. level-up.js: _confirmNewMulticlass llama addExtraResource (no reemplaza primario). xp.js: escala maxUses de extras al subir de nivel si tienen className. wizard.js: pasa className al llamar addExtraResource para el recurso secundario. |
 
 ---
 
