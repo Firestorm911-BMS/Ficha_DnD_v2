@@ -275,14 +275,24 @@ export function openLevelUpAssistant(newLevel) {
   // Detectar multiclase — parsear pill (hasta 2 clases)
   const pillText   = (document.querySelector('.hero-pill[data-field="class"] .meta-value')?.textContent || '').trim();
 
-  // Guardar snapshot del nivel anterior (HP antes de aplicar la tirada)
+  // addXP ya bumpeó "Clase N-1" → "Clase N" antes de abrir el modal.
+  // Para el snapshot previo y para la base de multiclase necesitamos "Clase N-1".
+  let prevPillText = pillText;
+  if (!pillText.includes('/')) {
+    const _bm = pillText.match(/^(.+?)\s+(\d+)$/);
+    if (_bm && parseInt(_bm[2]) === newLevel) {
+      prevPillText = `${_bm[1].trim()} ${newLevel - 1}`;
+    }
+  }
+
+  // Guardar snapshot del nivel anterior con la pill correcta (pre-bump)
   const prevLevel = newLevel - 1;
   if (prevLevel >= 1) {
     state.CHARACTER_STATE.levelHistory = state.CHARACTER_STATE.levelHistory || {};
     if (!state.CHARACTER_STATE.levelHistory[prevLevel]) {
       state.CHARACTER_STATE.levelHistory[prevLevel] = {
         hpMax: parseInt(document.getElementById('hpMax')?.textContent) || 0,
-        classText: pillText
+        classText: prevPillText
       };
     }
   }
@@ -424,7 +434,7 @@ export function openLevelUpAssistant(newLevel) {
 
   const modal = document.createElement('div');
   modal.id = 'levelUpModal';
-  modal.dataset.pillText = pillText;
+  modal.dataset.pillText = prevPillText;
   modal.dataset.mode     = 'subir';
   modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:9998;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);';
   modal.innerHTML = `
