@@ -454,18 +454,20 @@ export function takeLevelUpHPAvg(dieSides, conMod) {
 export function applyLevelUpHP(gain, label) {
   const maxEl = document.getElementById('hpMax');
   const curEl = document.getElementById('hpCurrent');
-  const oldMax = parseInt(maxEl?.textContent) || 0;
-  const newMax = oldMax + gain;
+  // Deshacer tirada previa de esta sesión antes de aplicar la nueva
+  const modal    = document.getElementById('levelUpModal');
+  const prevGain = parseInt(modal?.dataset.hpGain || '0');
+  const baseMax  = Math.max(1, (parseInt(maxEl?.textContent)  || 0) - prevGain);
+  const baseCur  = Math.max(0, (parseInt(curEl?.textContent)  || 0) - prevGain);
+  const newMax   = baseMax + gain;
   if (maxEl) maxEl.textContent = newMax;
-  if (curEl) curEl.textContent = parseInt(curEl.textContent) + gain;
+  if (curEl) curEl.textContent = baseCur + gain;
   updateHP();
   window.saveToLocal?.();
   const res = document.getElementById('lvHpResult');
   if (res) res.innerHTML = `<span style="color:var(--gold);font-weight:bold;">+${gain} PG</span> <span style="color:var(--text-muted);font-size:11px;">(${label})</span>`;
   addCombatLog(`❤ Nivel: ${label} = +${gain} PG · nuevo máx ${newMax}`);
-  // Registrar en el modal para deshacer si el usuario cambia de modo
-  const modal = document.getElementById('levelUpModal');
-  if (modal) modal.dataset.hpGain = String((parseInt(modal.dataset.hpGain || '0')) + gain);
+  if (modal) modal.dataset.hpGain = String(gain);
 }
 
 export function applyClassTemplate(className) {
