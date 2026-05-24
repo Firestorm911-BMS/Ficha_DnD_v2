@@ -1150,15 +1150,99 @@
       </div>
     </div>
     <div class="form-row">
-      <div style="flex:1;"><label>Escuela</label><input id="smSchool" placeholder="Evocación, Abjuración…"></div>
-      <div style="flex:1;"><label>Tiempo de lanzamiento</label><input id="smCastTime" placeholder="1 acción"></div>
+      <div style="flex:1;"><label>Escuela</label>
+        <select id="smSchool">
+          <option value="">— Escuela —</option>
+          <option>Abjuración</option>
+          <option>Conjuración</option>
+          <option>Adivinación</option>
+          <option>Encantamiento</option>
+          <option>Evocación</option>
+          <option>Ilusión</option>
+          <option>Nigromancia</option>
+          <option>Transmutación</option>
+        </select>
+      </div>
+      <div style="flex:1;"><label>Tiempo de lanzamiento</label>
+        <select id="smCastTime">
+          <option value="">— Tiempo —</option>
+          <option>1 acción</option>
+          <option>1 acción adicional</option>
+          <option>1 reacción</option>
+          <option>1 ronda</option>
+          <option>1 minuto</option>
+          <option>10 minutos</option>
+          <option>1 hora</option>
+          <option>8 horas</option>
+          <option>24 horas</option>
+          <option>Especial</option>
+        </select>
+      </div>
     </div>
     <div class="form-row">
-      <div style="flex:1;"><label>Alcance</label><input id="smRange" placeholder="9m, Personal, Toque…"></div>
-      <div style="flex:1;"><label>Componentes</label><input id="smComponents" placeholder="V, S, M"></div>
+      <div style="flex:1;"><label>Alcance</label>
+        <select id="smRange">
+          <option value="">— Alcance —</option>
+          <option>Personal</option>
+          <option>Toque</option>
+          <option>1.5m</option>
+          <option>3m</option>
+          <option>4.5m</option>
+          <option>9m</option>
+          <option>18m</option>
+          <option>27m</option>
+          <option>36m</option>
+          <option>45m</option>
+          <option>60m</option>
+          <option>90m</option>
+          <option>150m</option>
+          <option>180m</option>
+          <option>300m</option>
+          <option>500m</option>
+          <option>1.5 km</option>
+        </select>
+      </div>
+      <div style="flex:1;"><label>Componentes</label>
+        <select id="smComponents">
+          <option value="">— Componentes —</option>
+          <option>V</option>
+          <option>S</option>
+          <option>M</option>
+          <option>V, S</option>
+          <option>V, M</option>
+          <option>S, M</option>
+          <option>V, S, M</option>
+        </select>
+      </div>
     </div>
     <div class="form-row">
-      <div style="flex:1;"><label>Duración</label><input id="smDuration" placeholder="Instantáneo, 1 min…"></div>
+      <div style="flex:1;"><label>Duración</label>
+        <select id="smDuration">
+          <option value="">— Duración —</option>
+          <optgroup label="Sin concentración">
+            <option>Instantáneo</option>
+            <option>1 ronda</option>
+            <option>1 min</option>
+            <option>10 min</option>
+            <option>1 hora</option>
+            <option>8 horas</option>
+            <option>24 horas</option>
+            <option>7 días</option>
+            <option>Hasta 1 hora</option>
+            <option>Hasta disipar</option>
+            <option>Permanente</option>
+            <option>Especial</option>
+          </optgroup>
+          <optgroup label="Concentración">
+            <option>Conc., 1 min</option>
+            <option>Conc., 10 min</option>
+            <option>Conc., 1 h</option>
+            <option>Conc., 2 h</option>
+            <option>Conc., 8 h</option>
+            <option>Conc., 24 h</option>
+          </optgroup>
+        </select>
+      </div>
       <div style="flex:1;">
         <label>Tirada de salvación</label>
         <select id="smSave"><option value="">— Ninguna —</option><option>STR</option><option>DEX</option><option>CON</option><option>INT</option><option>WIS</option><option>CHA</option></select>

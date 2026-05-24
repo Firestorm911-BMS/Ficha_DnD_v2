@@ -7,6 +7,31 @@ let _spellPresetsData = null;   // cache: spells.json { "0":[...], ..., "9":[...
 export function addSpell()   { openSpellModal(null, 1); }
 export function addCantrip() { openSpellModal(null, 0); }
 
+// ── Helpers ─────────────────────────────────────────────────────────────────
+
+/**
+ * Asigna `val` al <select id=`id`>.
+ * Si el valor no existe entre las opciones lo inserta como opción temporal
+ * (data-custom="1") al principio, para que los presets con valores no estándar
+ * (p.ej. "Personal (cono 4.5m)") no queden silenciados.
+ */
+function _setSelectValue(id, val) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  // Eliminar opción temporal anterior si existe
+  el.querySelector('option[data-custom="1"]')?.remove();
+  if (!val) { el.value = ''; return; }
+  const exists = Array.from(el.options).some(o => o.value === val || o.text === val);
+  if (!exists) {
+    const opt = document.createElement('option');
+    opt.value         = val;
+    opt.textContent   = val;
+    opt.dataset.custom = '1';
+    el.insertBefore(opt, el.options[0]);
+  }
+  el.value = val;
+}
+
 // ── Preset PHB (spells.json) ────────────────────────────────────────────────
 
 async function _loadSpellPresets() {
@@ -121,15 +146,15 @@ export function onSpellPresetChange() {
 }
 
 function _fillFormFromSpell(sp) {
-  document.getElementById('smName').value       = sp.name;
-  document.getElementById('smLevel').value      = sp.level ?? 0;
-  document.getElementById('smSchool').value     = sp.school      || '';
-  document.getElementById('smCastTime').value   = sp.castTime    || '1 acción';
-  document.getElementById('smRange').value      = sp.range       || '';
-  document.getElementById('smComponents').value = sp.components  || '';
-  document.getElementById('smDuration').value   = sp.duration    || '';
-  document.getElementById('smConc').checked     = sp.concentration || false;
-  document.getElementById('smRitual').checked   = sp.ritual       || false;
+  document.getElementById('smName').value   = sp.name;
+  document.getElementById('smLevel').value  = sp.level ?? 0;
+  _setSelectValue('smSchool',     sp.school      || '');
+  _setSelectValue('smCastTime',   sp.castTime    || '1 acción');
+  _setSelectValue('smRange',      sp.range       || '');
+  _setSelectValue('smComponents', sp.components  || '');
+  _setSelectValue('smDuration',   sp.duration    || '');
+  document.getElementById('smConc').checked    = sp.concentration || false;
+  document.getElementById('smRitual').checked  = sp.ritual       || false;
   const saveEl = document.getElementById('smSave');
   if (saveEl) saveEl.value = sp.save   || '';
   const atkEl  = document.getElementById('smAttack');
@@ -161,13 +186,13 @@ export function openSpellModal(id = null, forceLevel = null) {
     _loadSpellPresets();
   }
 
-  document.getElementById('smName').value       = spell?.name         || '';
-  document.getElementById('smLevel').value      = lv;
-  document.getElementById('smSchool').value     = spell?.school       || '';
-  document.getElementById('smCastTime').value   = spell?.castTime     || '1 acción';
-  document.getElementById('smRange').value      = spell?.range        || '';
-  document.getElementById('smComponents').value = spell?.components   || '';
-  document.getElementById('smDuration').value   = spell?.duration     || '';
+  document.getElementById('smName').value  = spell?.name || '';
+  document.getElementById('smLevel').value = lv;
+  _setSelectValue('smSchool',     spell?.school      || '');
+  _setSelectValue('smCastTime',   spell?.castTime    || '1 acción');
+  _setSelectValue('smRange',      spell?.range       || '');
+  _setSelectValue('smComponents', spell?.components  || '');
+  _setSelectValue('smDuration',   spell?.duration    || '');
   document.getElementById('smConc').checked     = spell?.concentration || false;
   document.getElementById('smRitual').checked   = spell?.ritual        || false;
   document.getElementById('smSave').value       = spell?.save         || '';
