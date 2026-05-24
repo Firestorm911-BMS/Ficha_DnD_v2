@@ -949,6 +949,37 @@ Codex reportó que el wrapper de `LL_cinematicRoll` aplicaba desventaja automát
 
 
 
+## FEAT-07 — Animación cinemática del dado de daño en flujo de ataque
+
+**Archivos**: `src/modules/dice.js`
+**Estado**: `[x]` — commits d4e8f40, 17eaf33, ba71f17 · 2026-05-24
+
+### Descripción
+Al pulsar el badge de ataque (`+X`) se mostraba el d20 animado y, tras el resultado, aparecía el botón "Tirar daño". Al pulsarlo el stage se cerraba y el resultado del dado de daño solo era visible en la bitácora de combate — nunca había animación visual para el dado de daño.
+
+### Implementación
+Nueva función privada `_showDamageAnimation(attackIndex, isCrit)` dentro del IIFE de `dice.js`:
+- Pre-calcula el daño completo (dados base × multiplicador de crítico, bonus de rabia, bonus mágico, dados extra) usando `rollAllDiceGroups`.
+- Reutiliza el stage abierto sin cerrarlo: reemplaza el contenido de `#rollDie` con el SVG del arma (espada, hacha, arco, etc. según `_weaponKey`), fija el label a `"Daño — [nombre]"` y añade clase `crit` si corresponde.
+- Flicker de números aleatorios (1–primarySides) durante 800 ms, luego muestra el total.
+- Registra en la bitácora con el botón `← Aplicar` y dispara `showToast`.
+- Stage se cierra solo tras 3 200 ms (o con click, igual que el d20).
+
+Modificación en `window.rollAttack`: el `dmgBtn` ya no llama `rollAttackDamage` directamente sino `_showDamageAnimation(i, result.crit)`, sin cerrar el stage primero.
+
+### SVGs por fase
+- **Tirada de ataque** (d20): muestra el SVG del d20 en `rollDie`, fijo sin spin (`noSpin: true`).
+- **Tirada de daño**: muestra el SVG del arma correspondiente (de `WEAPON_SVGS`), fijo sin spin.
+
+### Comportamiento en crítico
+Si el d20 fue crítico el stage mantiene el borde/glow dorado (`class="crit"`) y el tag muestra `✦ CRÍTICO` durante la tirada de daño. Los dados se duplican automáticamente (multiplicador × 2).
+
+### Notas
+- `rollAttackDamage` (llamado por los botones directos "Daño" / "Crítico" en la tabla de ataques) no cambia — sigue logueando en bitácora sin animación.
+- El dado primario de la animación es el de mayor número de caras del arma; los dados extra (encantamientos) se suman al total pero no animan por separado.
+
+---
+
 | Fecha | Sesión | Bugs atacados | Resultado |
 |-------|--------|---------------|-----------|
 | 2026-05-19 | Auditoría inicial | — | Identificados 13 bugs + 1 omisión |
@@ -991,6 +1022,7 @@ Codex reportó que el wrapper de `LL_cinematicRoll` aplicaba desventaja automát
 | 2026-05-24 | FEAT-06: mejoras | dado→select, sin atributo, peso+sync inventario, fix Enter personalidad | attacks.js: select amDamage (1…2d12), NONE ability, weight+syncInventory en save. app.js: keydown delegado en .personality-text → execCommand insertLineBreak. commit fbd1c04. |
 | 2026-05-24 | BUG-25: tarjeta personalidad | Overflow derecho + literal &lt;div&gt; + reubicación | (1) persistence.js CODEX-10: sanitiza HTML almacenado antes de textContent (strip &lt;div&gt;/&lt;br&gt;, decode entidades iterativo). (2) index.html: personalidad de vuelta a col-right, columna única. (3) styles.css: personality-grid cambiado de 2 columnas a 1 columna. |
 | 2026-05-24 | Visual QOL | 4 mejoras rápidas + Easter egg EVA-01 | styles.css: class-btn-name 7px→9px, pip hover/active scale, hp-bar 6px→10px+border-radius, attack-btn :active táctil. app.js: Código Konami (↑↑↓↓←→←→BA) activa CLASS_THEMES[12] EVA-01 con toast. |
+| 2026-05-24 | FEAT-07 | Animación dado de daño en flujo de ataque | dice.js: nueva `_showDamageAnimation()` dentro del IIFE. Al pulsar "Tirar daño" el stage se reutiliza mostrando el SVG del arma (fijo, sin spin) + flicker 800 ms + total con desglose. d20 también fijo sin spin. Crítico mantiene glow dorado y duplica dados. commits d4e8f40, 17eaf33, ba71f17. |
 | 2026-05-23 | FEAT-06 | Modal de creación/edición de armas (Weapon Wizard) | attacks.js: WEAPON_PRESETS (35 armas PHB), campos magicBonus/extraDamage en normalizeAttack, openAttackModal/saveAttackFromModal/etc. dice.js: rollAttackDamage suma magicBonus + itera extraDamage; showDamagePrompt muestra extra en label. index.html: #attackModal HTML. styles.css: .attack-modal-box, .am-toggles, .am-extra-row, .am-preview, .attack-magic-tag, .attack-extra-dmg. |
 | 2026-05-23 | FEAT-05 | Multiclase desde asistente de nivel | level-up.js: toggle "▲ Subir [Clase] / ✦ Nueva clase" en modal de subida de nivel para personajes de clase única. "Nueva clase" muestra grid de 11 clases (excluye la actual); confirmar actualiza pill, hitDice y recalcula ranuras. Nuevas funciones: switchLevelUpMode, selectNewMulticlassClass, _confirmNewMulticlass, _handleLevelUpConfirm. Constante ALL_CLASSES (12 PHB). |
 | 2026-05-23 | FEAT-05b | extraClassResources — recursos múltiples en multiclase | state.js: campo `extraClassResources: []` en CHARACTER_STATE. rage.js: addExtraResource() (push/upsert), toggleExtraResourcePip(idx,el), _renderExtraResources() renderiza paneles extra bajo el recurso primario en #rageCard con pips clickeables. rests.js: shortRest/longRest resetean extras según recovery. persistence.js: carga extraClassResources al restaurar estado. level-up.js: _confirmNewMulticlass llama addExtraResource (no reemplaza primario). xp.js: escala maxUses de extras al subir de nivel si tienen className. wizard.js: pasa className al llamar addExtraResource para el recurso secundario. |
