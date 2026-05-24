@@ -271,9 +271,18 @@ function _restoreFromSnapshot(snapshot, targetLevel) {
 export function setLevelDirect(level) {
   level = Math.max(1, Math.min(20, parseInt(level) || 1));
 
-  // Capturar nivel actual ANTES de cambiar XP
+  // Capturar nivel actual ANTES de cambiar XP.
+  // Usar también los niveles de la pill como fuente de verdad (puede ser mayor al XP
+  // si el XP no está sincronizado con la pill multiclase).
   const oldLevel = getCurrentLevel();
-  const goingDown = level < oldLevel;
+  const metaElSD       = document.querySelector('.hero-pill[data-field="class"] .meta-value');
+  const oldClassTextSD = metaElSD?.textContent?.trim() || '';
+  const pillTotalLevels = oldClassTextSD.split('/').reduce((s, p) => {
+    const m = p.trim().match(/\s+(\d+)$/);
+    return s + (m ? parseInt(m[1]) : 0);
+  }, 0);
+  const effectiveOldLevel = Math.max(oldLevel, pillTotalLevels);
+  const goingDown = level < effectiveOldLevel;
 
   const xp = XP_TABLE[level - 1] || 0;
   const curEl = document.getElementById('xpCurrent');
@@ -281,9 +290,6 @@ export function setLevelDirect(level) {
   if (curEl) curEl.textContent = xp;
   const nextXP = XP_TABLE[level] || XP_TABLE[XP_TABLE.length - 1];
   if (nextEl) nextEl.textContent = nextXP;
-
-  const metaElSD       = document.querySelector('.hero-pill[data-field="class"] .meta-value');
-  const oldClassTextSD = metaElSD?.textContent?.trim() || '';
 
   if (goingDown) {
     const snapshot = (CHARACTER_STATE.levelHistory || {})[level];
@@ -374,6 +380,18 @@ export function setLevelDirect(level) {
         renderSpellSlots();
       }
     }
+  }
+
+  // Safety net: si la pill sigue teniendo más niveles de clase que el nivel fijado,
+  // forzar limpieza (cubre casos donde goingDown fue falso por XP desincronizado
+  // o snapshot con classText vacío/erróneo).
+  const finalPill = metaElSD?.textContent?.trim() || '';
+  if (finalPill.includes('/')) {
+    const finalTotal = finalPill.split('/').reduce((s, p) => {
+      const m = p.trim().match(/\s+(\d+)$/);
+      return s + (m ? parseInt(m[1]) : 0);
+    }, 0);
+    if (finalTotal > level) _setLevelDirectMulticlass(metaElSD, finalPill, level);
   }
 
   updateXP();
