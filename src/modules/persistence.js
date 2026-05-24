@@ -91,6 +91,7 @@ export function saveState() {
   CHARACTER_STATE.rageUsesSpent    = CHARACTER_STATE.rageUsesSpent || 0;
 
   CHARACTER_STATE.journalHTML    = g('journalContainer')?.innerHTML || '';
+  CHARACTER_STATE.trackerEntries     = state.trackerEntries;
   CHARACTER_STATE.spells             = state.spells;
   CHARACTER_STATE.spellSlotsState    = state.spellSlotsState;
   CHARACTER_STATE.pactSlotsState     = state.pactSlotsState;
@@ -140,6 +141,10 @@ export function migrateState(raw) {
     raw.multiclass         ??= false;
     raw.spellcastingAttr   ??= 'INT';
     raw.version             = 2;
+  }
+  if (v < 3) {
+    raw.trackerEntries ??= [];
+    raw.version         = 3;
   }
   return raw;
 }
@@ -304,6 +309,10 @@ export function loadState(directData) {
     }
 
     if (data.journalHTML)    { const c = g('journalContainer'); if (c) c.innerHTML = sanitizeRichText(data.journalHTML); }
+    if (Array.isArray(data.trackerEntries)) {
+      state.trackerEntries = data.trackerEntries;
+      window.renderTracker?.();
+    }
     if (data.spells && Array.isArray(data.spells)) {
       state.spells = data.spells;
       window.renderSpellBook?.();

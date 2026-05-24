@@ -660,6 +660,26 @@
       });
     }
 
+    // ══════════════════════════════════════════
+    //  FEAT-12 — Rastreador de Iniciativa
+    // ══════════════════════════════════════════
+    section('FEAT-12 — Rastreador de Iniciativa (persistencia)');
+
+    test('migrateState v2→v3: agrega trackerEntries vacío', () => {
+      const raw = { version: 2, charName: 'Test' };
+      const migrated = window.migrateState(raw);
+      assert(Array.isArray(migrated.trackerEntries), 'trackerEntries debe ser array');
+      assertEqual(migrated.trackerEntries.length, 0, 'debe iniciar vacío');
+    });
+
+    test('migrateState v3: respeta trackerEntries existente', () => {
+      const entries = [{ id: 'ie-1', name: 'Goblin', init: 15, hp: 7, hpMax: 7, type: 'enemy' }];
+      const raw = { version: 3, trackerEntries: entries };
+      const migrated = window.migrateState(raw);
+      assertEqual(migrated.trackerEntries.length, 1, 'debe conservar la entrada existente');
+      assertEqual(migrated.trackerEntries[0].name, 'Goblin');
+    });
+
     // ─────────────────────────────────────────────
     //  Resumen
     // ─────────────────────────────────────────────

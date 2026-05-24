@@ -81,6 +81,9 @@ export const state = {
   traits:       [],
   skillsState:  [],   // inicializado por app.js tras definir SKILLS_DATA
 
+  // ── Rastreador de iniciativa (persistido, fuente de verdad)
+  trackerEntries: [],  // [{id, name, init, hp, hpMax, type:'player'|'ally'|'enemy'}]
+
   // ── Ranuras de conjuro
   spellSlotsState: _emptySlots(),
   pactSlotsState:  { level: 0, max: 0, used: 0 },

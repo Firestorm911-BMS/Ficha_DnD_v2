@@ -710,16 +710,17 @@
       <div class="col">
         <!-- Initiative Tracker -->
         <div class="card">
-          <div class="card-title"><span class="card-title-icon">🎯</span>Rastreador de Iniciativa
-            <button class="btn btn-sm" style="margin-left:auto;" onclick="addInitEntry()">+ Añadir</button>
+          <div class="card-title"><span class="card-title-icon">🎯</span>Rastreador de Iniciativa</div>
+          <!-- Add-entry row -->
+          <div class="init-add-row">
+            <button class="btn btn-sm init-btn-player" onclick="addPlayerEntry()">⚔ Jugador</button>
+            <button class="btn btn-sm init-btn-ally"   onclick="addInitEntry('ally')">+ Aliado</button>
+            <button class="btn btn-sm init-btn-enemy"  onclick="addInitEntry('enemy')">+ Enemigo</button>
+            <button class="btn btn-sm init-btn-clear"  onclick="clearCombat()" title="Limpiar combate">🗑</button>
           </div>
-          <div class="init-tracker" id="initTracker">
-            <div class="init-entry current-turn" id="initPlayer">
-              <div class="init-num" contenteditable="false">0</div>
-              <div class="init-name" contenteditable="false">Personaje</div>
-              <button class="init-del" onclick="this.closest('.init-entry').remove()">✕</button>
-            </div>
-          </div>
+          <!-- Tracker list — rendered by renderTracker() in initiative.js -->
+          <div class="init-tracker" id="initTracker"></div>
+          <!-- Controls -->
           <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;">
             <button class="btn btn-sm btn-primary" onclick="nextTurn()">▶ Siguiente turno</button>
             <button class="btn btn-sm" onclick="sortInit()">↑ Ordenar</button>

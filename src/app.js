@@ -6,7 +6,7 @@ import { CONDITIONS, EXHAUSTION_EFFECTS, renderConditions, renderExhaustion, cha
 import { getScore, getMod, calcMod, calcProfBonus, getProfBonus, renderSaves, setSpellcastingAttr, renderSpellStats } from './modules/attributes.js';
 import { renderSkills, cycleSkillProf, updatePassivePerception } from './modules/skills.js';
 import { renderDeathSaves, checkDeathOutcome, toggleDeath, rollDeathSave, resetDeathSaves } from './modules/death-saves.js';
-import { addInitEntry, nextTurn, incrementRound, sortInit } from './modules/initiative.js';
+import { addInitEntry, addPlayerEntry, nextTurn, incrementRound, sortInit, clearCombat, renderTracker } from './modules/initiative.js';
 import { getResourceScale, calcResourceMaxUses, getRageDamageBonus, renderRage, toggleRage, toggleRagePip, resetRageState } from './modules/rage.js';
 import { updateHP, changeHP, syncCombatOverlay, openCombatOverlay, applyDamageAmount, applyDamage, applyHeal, undoHP, setHP, rollConcentrationCheck } from './modules/hp.js';
 import { _migrateHitDice, _hdTotalDice, _hdTotalSpent, updateRestNote, renderHitDice, _hdChangeDie, _hdAdjCount, _hdRemoveGroup, spendHitDie } from './modules/hit-dice.js';

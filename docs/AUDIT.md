@@ -1,6 +1,6 @@
 # Auditoría Técnica — Ficha D&D 5e
 
-**Fecha de última actualización**: 2026-05-24 (sesión 3)
+**Fecha de última actualización**: 2026-05-24 (sesión 4)
 **Rama activa**: `main`
 **Arquitectura actual**: `app.js` (826 líneas) + 22 módulos ES bajo `src/modules/` + `src/state.js` + `src/wizard.js` (ES module)
 
@@ -949,6 +949,72 @@ Codex reportó que el wrapper de `LL_cinematicRoll` aplicaba desventaja automát
 
 
 
+## FEAT-12 — Rastreador de Iniciativa mejorado
+
+**Archivos**: `src/modules/initiative.js` (reescritura), `src/state.js`, `src/modules/persistence.js`, `index.html`, `src/styles.css`, `tests/tests.html`
+**Estado**: `[x]` — 2026-05-24
+
+### Descripción
+El tracker anterior no tenía persistencia, no trackeba HP de criaturas, ni distinguía tipos de combatiente. Se perdía todo al recargar la página.
+
+### Implementación
+
+**Nuevo schema de entrada**:
+```js
+{ id: 'ie-1234-5', name: 'Goblin', init: 15, hp: 7, hpMax: 7, type: 'player'|'ally'|'enemy' }
+```
+
+**`src/state.js`**:
+- Nuevo campo `trackerEntries: []` en el objeto `state` (array en memoria, paralelo a `state.spells`, etc.)
+
+**`src/modules/initiative.js`** (reescritura completa — 66 → 210 líneas):
+- `renderTracker()` — construye el DOM completo desde `state.trackerEntries` usando `createElement`. Auto-sincroniza `init` del jugador desde `#statInit` en cada render.
+- `addInitEntry(type)` — agrega nueva entrada (enemy por defecto).
+- `addPlayerEntry()` — agrega el personaje activo con nombre/init/HP leídos del DOM (idempotente — no duplica si ya existe).
+- `nextTurn()` — avanza `_currentTurnId` (volatile, se reinicia en reload), hace re-render.
+- `sortInit()`, `incrementRound()` — sin cambio de comportamiento.
+- `clearCombat()` — confirm + limpia `state.trackerEntries` + reinicia ronda + log.
+- `rollInitiativeAll()` — tira para el PJ con bonus, para criaturas sin bonus; auto-agrega PJ si no existe; llama `sortInit()`.
+- Event delegation: click → `_onTrackerClick` (del, hp-minus, hp-plus, hp-edit via prompt). blur → `_onTrackerBlur` (edición inline de init y nombre).
+
+**`src/modules/persistence.js`**:
+- `migrateState()`: nueva rama `v < 3` → `trackerEntries ??= []`, bumps a `version: 3`.
+- `saveState()`: `CHARACTER_STATE.trackerEntries = state.trackerEntries`.
+- `loadState()`: si `data.trackerEntries` es array → `state.trackerEntries = data.trackerEntries` + `window.renderTracker?.()`.
+
+**`src/app.js`**:
+- Import actualizado: agrega `addPlayerEntry`, `clearCombat`, `renderTracker`.
+
+**`index.html`**:
+- Eliminado el `<div class="init-entry" id="initPlayer">` estático.
+- Nueva fila `.init-add-row` con botones: ⚔ Jugador · + Aliado · + Enemigo · 🗑 Limpiar.
+- `#initTracker` ahora vacío — poblado por `renderTracker()`.
+
+**`src/styles.css`**:
+- Grid `.init-entry`: `40px 1fr auto` → `16px 36px 1fr auto 18px` (badge | init | nombre | hp-group | del).
+- `.init-empty`: mensaje de estado vacío.
+- `.init-add-row`: row de botones add.
+- `.init-btn-player/ally/enemy/clear`: colores diferenciados.
+- `.init-type-badge`, `.init-type-player/ally/enemy`: badges de color (verde/azul/rojo).
+- `.init-entry-player/ally/enemy`: borde izquierdo de color.
+- `.init-hp-group`, `.init-hp-btn`, `.init-hp-val`: controles de HP.
+
+**`tests/tests.html`**:
+- 2 tests nuevos (total: 61): `migrateState v2→v3 agrega trackerEntries vacío` + `migrateState v3 respeta trackerEntries existente`.
+
+### Verificación manual
+1. Abrir pestaña Combate → tracker vacío con mensaje "Sin combatientes".
+2. Click "⚔ Jugador" → aparece el PJ con su iniciativa y PG actuales.
+3. Click "+ Enemigo" → aparece "Criatura 1" con init 0, HP —.
+4. Click en "—" del HP → prompt "0/0" → escribir "25/50" → muestra "25/50" en rojo.
+5. Click "−" → baja a 24. Click "+" → sube a 25.
+6. Click "🎲 Tirar iniciativa" → todos reciben init, se ordena automáticamente.
+7. Click "▶ Siguiente turno" → borde dorado avanza.
+8. Recargar página → combatientes y HP conservados.
+9. Click "🗑 Limpiar" → confirm → tracker vacío, ronda reiniciada a 1.
+
+---
+
 ## FEAT-08 — Selector de presets PHB en modal de conjuros
 
 **Archivos**: `src/data/spells.json` (nuevo), `src/modules/spell-modal.js`, `index.html`, `tests/tests.html`
@@ -1071,6 +1137,7 @@ Si el d20 fue crítico el stage mantiene el borde/glow dorado (`class="crit"`) y
 | 2026-05-24 | BUG-27 | Botón Eliminar conjuro invisible en modo edición | app.js `toggleEditMode()` llamaba render de ataques/inventario/rasgos/hitDice pero omitía `renderSpellBook()`. Las tarjetas de conjuro se dibujaban al cargar con editMode=false y nunca se refrescaban. Fix: añadir `renderSpellBook()` al bloque de renders de `toggleEditMode()`. commit 434ad51. |
 | 2026-05-24 | UX | Eliminar botón 🎲 Dados redundante en pestaña Combate | El botón abría el mismo popup que el Cofre de Dados. Eliminado de `combat-quick-actions`. Botón Modo Combate: max-width 320→480px para ocupar el ancho completo. commits 1a4c868. |
 | 2026-05-24 | FEAT-11 | Filtro de conjuros por nivel de ranuras disponible | `renderSpellBook()` calcula `maxSlotLevel` fresco desde el class text del hero pill usando `computeSpellSlots()` + `computePactSlots()` (sin depender de estado guardado). Solo muestra secciones de nivel ≤ maxSlotLevel. maxSlotLevel=0 muestra "Sin ranuras disponibles". Cubre las 12 clases PHB: no-lanzadores→0, medio-lanzadores nv1→0, lanzadores completos nv1→1, Brujo nv1→1 (pact). commits 2dd5bbf, 5a1c3cc, a6f60d9, 3508eca. |
+| 2026-05-24 | FEAT-12 | Rastreador de Iniciativa — persistencia, HP, tipos, Jugador, Limpiar | initiative.js: reescritura completa. `state.trackerEntries` como fuente de verdad (array persistido). Cada entrada: `{id, name, init, hp, hpMax, type:'player'/'ally'/'enemy'}`. `renderTracker()` construye DOM completo via createElement. Event delegation en el container (`click` + `blur`) para edición inline de init/nombre y ajuste de HP. `addPlayerEntry()` inserta el PJ con init/HP del DOM (sincronización automática en cada render). `clearCombat()` limpia todo + reinicia ronda. Badget de tipo con colores (verde/azul/rojo). HP con botones ±1 y click para editar prompt. persistence.js: `migrateState` v2→v3 (trackerEntries default []). `saveState` serializa `state.trackerEntries`. `loadState` restaura + llama `renderTracker`. state.js: campo `trackerEntries: []` agregado. index.html: nueva fila de botones (⚔ Jugador, + Aliado, + Enemigo, 🗑 Limpiar). styles.css: `.init-add-row`, `.init-type-badge`, `.init-type-player/ally/enemy`, `.init-entry-player/ally/enemy`, `.init-hp-group`, `.init-hp-btn`, `.init-hp-val`, `.init-empty`. Grid `.init-entry` actualizado a 5 columnas. tests: 2 tests migrateState v2→v3. |
 | 2026-05-24 | FEAT-10 | Dropdowns en modal de conjuro (escuela, tiempo, alcance, componentes, duración) | index.html: 5 `<input>` → `<select>` con opciones PHB. smSchool: 8 escuelas. smCastTime: 10 opciones. smRange: 17 valores estándar. smComponents: V/S/M/combinaciones. smDuration: optgroups sin-conc y conc. spell-modal.js: `_setSelectValue()` — inserta opción temporal si el preset tiene valor fuera de lista; usado en `_fillFormFromSpell()` y `openSpellModal()`. |
 | 2026-05-24 | FEAT-09 | Selector clase+hechizo en modal + badge de clase por color | spells.js: CLASS_COLORS, getSpellsForClass(), badge inline en tarjeta. spell-modal.js: smSourceClass, onSpellClassChange() (SPELL_PRESETS), onSpellPresetChange() dual-source, sourceClass en saveSpellModal. index.html: fila clase+hechizo. |
 | 2026-05-24 | BUG-26 | Botón Editar conjuro oculto fuera de modo edición | spells.js buildSpellCard: ✎ Editar sacado del gate editMode — siempre visible al expandir la tarjeta. ✕ Eliminar sigue requiriendo modo edición (acción destructiva). |
