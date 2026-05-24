@@ -486,7 +486,7 @@ function rollAttackDamage(i, isCrit = false) {
     }
 
     const primarySides = dmg.primary?.sides || 6;
-    const svg = DICE_SVGS[primarySides] || DICE_SVGS[6];
+    const svg = WEAPON_SVGS[_weaponKey(atk)];
     const die = document.getElementById('rollDie');
     const lbl = document.getElementById('rollLabel');
     const brk = document.getElementById('rollBreakdown');
@@ -626,8 +626,6 @@ function rollAttackDamage(i, isCrit = false) {
       label: `⚔ ${atk.name}`,
       mod: mod,
       stageDuration: 0,
-      weaponSvg: WEAPON_SVGS[_weaponKey(atk)],
-      noSpin: true,
       onComplete: function(result) {
         const brk = document.getElementById('rollBreakdown');
         if (!brk) return;
