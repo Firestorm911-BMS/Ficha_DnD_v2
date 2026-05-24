@@ -374,7 +374,7 @@ body::after {
 .font-btn:hover  { border-color: var(--gold-dark); color: var(--text-secondary); }
 .font-btn.active { border-color: var(--gold); color: var(--gold); background: rgba(201,168,76,0.08); }
 .font-btn-sample { font-size: 20px; line-height: 1.2; }
-.font-btn-name   { font-family: 'Cinzel', serif; font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; }
+.font-btn-name   { font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; }
 
 /* ══════════════════════════════════════════════════
    BLOQUE DE DATOS — 75% del alto con Grid adaptable
@@ -402,7 +402,7 @@ body::after {
 
 .meta-label {
   font-family: 'Cinzel', serif;
-  font-size: 9px;
+  font-size: 10px;
   letter-spacing: 2px;
   text-transform: uppercase;
   color: var(--text-muted);
@@ -456,7 +456,7 @@ body::after {
     gap: 6px 12px;
   }
 
-  .meta-label { font-size: 9px; }
+  .meta-label { font-size: 10px; }
   .meta-value { font-size: 13px; }
 
   /* Nombre centrado en móvil, tamaño legible */
@@ -542,7 +542,7 @@ body::after {
   color: var(--text-primary);
 }
 
-.btn-sm { font-size: 9px; padding: 5px 10px; }
+.btn-sm { font-size: 10px; padding: 5px 10px; }
 
 .btn-icon {
   width: 32px; height: 32px;
@@ -782,7 +782,7 @@ body::after {
 
 .attr-name {
   font-family: 'Cinzel', serif;
-  font-size: 8px;
+  font-size: 10px;
   letter-spacing: 2px;
   text-transform: uppercase;
   color: var(--text-muted);
@@ -854,7 +854,7 @@ body::after {
 
 .stat-hex-label {
   font-family: 'Cinzel', serif;
-  font-size: 8px;
+  font-size: 10px;
   letter-spacing: 2px;
   text-transform: uppercase;
   color: var(--text-muted);
@@ -952,7 +952,7 @@ body::after {
 
 .hp-temp-label {
   font-family: 'Cinzel', serif;
-  font-size: 9px;
+  font-size: 10px;
   letter-spacing: 1px;
   color: var(--text-muted);
   text-transform: uppercase;
@@ -1008,7 +1008,7 @@ body::after {
 
 .skill-attr {
   font-family: 'Cinzel', serif;
-  font-size: 8px;
+  font-size: 10px;
   color: var(--text-muted);
   letter-spacing: 1px;
   text-transform: uppercase;
@@ -1085,7 +1085,7 @@ body::after {
 
 .death-label {
   font-family: 'Cinzel', serif;
-  font-size: 9px;
+  font-size: 10px;
   letter-spacing: 1.5px;
   text-transform: uppercase;
   width: 65px;
@@ -1132,7 +1132,7 @@ body::after {
 
 .attacks-table th {
   font-family: 'Cinzel', serif;
-  font-size: 8px;
+  font-size: 10px;
   letter-spacing: 2px;
   text-transform: uppercase;
   color: var(--gold-dark);
@@ -1176,7 +1176,7 @@ body::after {
   margin-top: 3px;
   color: var(--text-muted);
   font-family: 'Cinzel', serif;
-  font-size: 8px;
+  font-size: 10px;
   letter-spacing: 1px;
   text-transform: uppercase;
 }
@@ -1192,7 +1192,7 @@ body::after {
   color: var(--text-muted);
   background: rgba(0,0,0,0.12);
   font-family: 'Cinzel', serif;
-  font-size: 8px;
+  font-size: 10px;
   letter-spacing: 0.7px;
   text-transform: uppercase;
 }
@@ -1206,7 +1206,7 @@ body::after {
 .attack-props {
   display: block;
   font-family: 'Cinzel', serif;
-  font-size: 8px;
+  font-size: 10px;
   letter-spacing: 0.8px;
   color: var(--text-muted);
   margin: 2px 0 3px;
@@ -1223,7 +1223,7 @@ body::after {
   color: #ffb199;
   background: rgba(192,57,43,0.12);
   font-family: 'Cinzel', serif;
-  font-size: 8px;
+  font-size: 10px;
   letter-spacing: 0.8px;
   text-transform: uppercase;
 }
@@ -1242,7 +1242,7 @@ body::after {
   background: rgba(201,168,76,0.08);
   color: var(--text-secondary);
   font-family: 'Cinzel', serif;
-  font-size: 9px;
+  font-size: 10px;
   letter-spacing: 0.8px;
   cursor: pointer;
 }
@@ -1266,7 +1266,7 @@ body::after {
   gap: 3px;
   color: var(--text-muted);
   font-family: 'Cinzel', serif;
-  font-size: 8px;
+  font-size: 10px;
   letter-spacing: 0.8px;
   text-transform: uppercase;
 }
@@ -1568,7 +1568,7 @@ body::after {
 .dice-controls { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
 .dc-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
 .dc-label {
-  font-family: 'Cinzel', serif; font-size: 9px; letter-spacing: 2px;
+  font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 2px;
   text-transform: uppercase; color: var(--text-muted);
 }
 .dc-stepper { display: flex; align-items: center; gap: 0; }
@@ -1747,7 +1747,7 @@ body.edit-mode .hero-pill[data-field="species"] .hero-pill-select  { display: in
 
 .condition-tag {
   font-family: 'Cinzel', serif;
-  font-size: 9px;
+  font-size: 10px;
   letter-spacing: 1px;
   text-transform: uppercase;
   padding: 6px 8px;
@@ -1859,7 +1859,7 @@ body.edit-mode .hero-pill[data-field="species"] .hero-pill-select  { display: in
 
 .resource-name {
   font-family: 'Cinzel', serif;
-  font-size: 9px;
+  font-size: 10px;
   letter-spacing: 2px;
   text-transform: uppercase;
   color: var(--gold-dark);
@@ -3513,7 +3513,7 @@ body.edit-mode .edit-only { display: inline-block !important; }
 }
 .hero-pill-label {
   font-family: 'Cinzel', serif;
-  font-size: 8px; letter-spacing: 2.5px; text-transform: uppercase;
+  font-size: 10px; letter-spacing: 2.5px; text-transform: uppercase;
   color: var(--gold-dark);
 }
 .hero-pill-value {
