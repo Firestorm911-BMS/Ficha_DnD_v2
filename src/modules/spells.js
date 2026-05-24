@@ -417,14 +417,20 @@ export function renderSpellBook() {
   spellCont.innerHTML = '';
   if (regs.length === 0) spellCont.innerHTML = `<div class="spell-empty">${_spellFilter==='prepared'?'Sin conjuros preparados':'Sin conjuros — añade uno'}</div>`;
   else {
+    // Nivel máximo de ranura disponible (0 = sin ranuras / no lanzador)
+    const maxSlotLevel = [1,2,3,4,5,6,7,8,9]
+      .reduce((acc, i) => (state.spellSlotsState[i]?.max || 0) > 0 ? Math.max(acc, i) : acc, 0);
+
     const levels = [...new Set(regs.map(s=>s.level))].sort((a,b)=>a-b);
-    levels.forEach(lv => {
-      const div = document.createElement('div');
-      div.className = 'spell-level-divider';
-      div.textContent = `— Nivel ${lv} —`;
-      spellCont.appendChild(div);
-      regs.filter(s=>s.level===lv).forEach(s => spellCont.appendChild(buildSpellCard(s)));
-    });
+    levels
+      .filter(lv => maxSlotLevel === 0 || lv <= maxSlotLevel)
+      .forEach(lv => {
+        const div = document.createElement('div');
+        div.className = 'spell-level-divider';
+        div.textContent = `— Nivel ${lv} —`;
+        spellCont.appendChild(div);
+        regs.filter(s=>s.level===lv).forEach(s => spellCont.appendChild(buildSpellCard(s)));
+      });
   }
 }
 
