@@ -1,5 +1,5 @@
 import { state } from '../state.js';
-import { calcProfBonus } from './attributes.js';
+import { calcProfBonus, getMod } from './attributes.js';
 import { renderHitDice, _migrateHitDice } from './hit-dice.js';
 import { computeSpellSlots, _syncPactSlots, renderSpellSlots, CASTER_TYPE } from './spell-slots.js';
 import { calcResourceMaxUses, renderRage } from './rage.js';
@@ -119,6 +119,92 @@ export function addXP() {
   updateXP();
 }
 
+function _setLevelDirectMulticlass(metaEl, pillText, targetLevel) {
+  const parts = pillText.split('/').map(p => {
+    const m = p.trim().match(/^(.+?)\s+(\d+)$/);
+    return m ? { clase: m[1].trim(), nivel: parseInt(m[2]) } : null;
+  }).filter(Boolean);
+
+  const totalCurrent = parts.reduce((s, p) => s + p.nivel, 0);
+  if (targetLevel >= totalCurrent) return; // subiendo o mismo nivel, sin cambios
+
+  // Reducir niveles empezando por la última clase
+  let toRemove = totalCurrent - targetLevel;
+  const newParts = parts.map(p => ({ ...p }));
+  for (let i = newParts.length - 1; i >= 0 && toRemove > 0; i--) {
+    const removable = Math.min(newParts[i].nivel, toRemove);
+    newParts[i].nivel -= removable;
+    toRemove -= removable;
+  }
+  const activeParts = newParts.filter(p => p.nivel > 0);
+
+  // Reducir HP por promedio de cada nivel eliminado
+  const conMod = getMod('CON');
+  let hpReduction = 0;
+  for (let i = 0; i < parts.length; i++) {
+    const removed = parts[i].nivel - (newParts[i]?.nivel || 0);
+    if (removed > 0) {
+      const dieStr   = window.CLASS_TEMPLATES?.[parts[i].clase]?.hitDie || 'd8';
+      const dieSides = parseInt(dieStr.replace('d', '')) || 8;
+      hpReduction   += removed * Math.max(1, Math.ceil(dieSides / 2 + 0.5) + conMod);
+    }
+  }
+  if (hpReduction > 0) {
+    const maxEl  = document.getElementById('hpMax');
+    const curHpEl = document.getElementById('hpCurrent');
+    if (maxEl)   maxEl.textContent   = Math.max(1, (parseInt(maxEl.textContent)   || 0) - hpReduction);
+    if (curHpEl) curHpEl.textContent = Math.max(0, (parseInt(curHpEl.textContent) || 0) - hpReduction);
+    window.updateHP?.();
+  }
+
+  // Actualizar hitDice — reducir conteo por tipo de dado
+  for (let i = 0; i < parts.length; i++) {
+    const removed = parts[i].nivel - (newParts[i]?.nivel || 0);
+    if (removed > 0) {
+      const dieStr = window.CLASS_TEMPLATES?.[parts[i].clase]?.hitDie || 'd8';
+      const entry  = CHARACTER_STATE.hitDice?.find(d => d.die === dieStr);
+      if (entry) {
+        entry.count = Math.max(0, entry.count - removed);
+        entry.spent = Math.min(entry.spent || 0, entry.count);
+      }
+    }
+  }
+  CHARACTER_STATE.hitDice = (CHARACTER_STATE.hitDice || []).filter(d => d.count > 0);
+  if (!CHARACTER_STATE.hitDice.length) _migrateHitDice();
+
+  // Quitar recursos extra de clases eliminadas
+  const activeClassNames = new Set(activeParts.map(p => p.clase));
+  if (CHARACTER_STATE.extraClassResources?.length) {
+    CHARACTER_STATE.extraClassResources = CHARACTER_STATE.extraClassResources.filter(
+      r => activeClassNames.has(r.className)
+    );
+  }
+
+  // Si quedó una sola clase, sincronizar recurso principal y ranuras
+  const newPillText = activeParts.map(p => `${p.clase} ${p.nivel}`).join('/');
+  if (metaEl) metaEl.textContent = newPillText;
+
+  if (activeParts.length === 1 && CHARACTER_STATE.classResource) {
+    const newUses = calcResourceMaxUses(activeParts[0].clase, activeParts[0].nivel);
+    if (newUses !== null) CHARACTER_STATE.classResource.maxUses = newUses;
+  }
+  _syncPactSlots(newPillText);
+  const newSlots = computeSpellSlots(newPillText);
+  if (newSlots) {
+    [1,2,3,4,5,6,7,8,9].forEach(lv => {
+      const used = Math.min(state.spellSlotsState[lv]?.used || 0, newSlots[lv]?.max || 0);
+      state.spellSlotsState[lv] = { max: newSlots[lv]?.max || 0, used };
+    });
+  }
+  renderSpellSlots();
+  renderRage();
+  renderHitDice();
+
+  if (hpReduction > 0) {
+    showToast(`⚠ HP reducido ~${hpReduction} PG (promedio). Ajustá si es necesario.`);
+  }
+}
+
 export function setLevelDirect(level) {
   level = Math.max(1, Math.min(20, parseInt(level) || 1));
   const xp = XP_TABLE[level - 1] || 0;
@@ -127,37 +213,69 @@ export function setLevelDirect(level) {
   if (curEl) curEl.textContent = xp;
   const nextXP = XP_TABLE[level] || XP_TABLE[XP_TABLE.length - 1];
   if (nextEl) nextEl.textContent = nextXP;
-  // Sincronizar dado de golpe solo si es personaje de una clase
-  _migrateHitDice();
-  if ((CHARACTER_STATE.hitDice||[]).length === 1) {
-    CHARACTER_STATE.hitDice[0].count = level;
-    CHARACTER_STATE.hitDice[0].spent = Math.min(CHARACTER_STATE.hitDice[0].spent, level);
+
+  const metaElSD     = document.querySelector('.hero-pill[data-field="class"] .meta-value');
+  const oldClassTextSD = metaElSD?.textContent?.trim() || '';
+
+  if (oldClassTextSD.includes('/')) {
+    // Personaje multiclase — limpiar clases que ya no corresponden
+    _setLevelDirectMulticlass(metaElSD, oldClassTextSD, level);
+    // Si después del ajuste quedó clase única, sincronizar hitDice
+    const afterPill = metaElSD?.textContent?.trim() || '';
+    if (!afterPill.includes('/')) {
+      _migrateHitDice();
+      if ((CHARACTER_STATE.hitDice||[]).length === 1) {
+        CHARACTER_STATE.hitDice[0].count = level;
+        CHARACTER_STATE.hitDice[0].spent = Math.min(CHARACTER_STATE.hitDice[0].spent || 0, level);
+      }
+    }
+  } else {
+    // Personaje de clase única
+    _migrateHitDice();
+    if ((CHARACTER_STATE.hitDice||[]).length === 1) {
+      CHARACTER_STATE.hitDice[0].count = level;
+      CHARACTER_STATE.hitDice[0].spent = Math.min(CHARACTER_STATE.hitDice[0].spent || 0, level);
+    }
+    const classNameSD = oldClassTextSD.replace(/\s+\d+$/, '').trim();
+    if (metaElSD && classNameSD) {
+      const oldLevel  = parseInt(oldClassTextSD.match(/(\d+)\s*$/)?.[1]) || 1;
+      const newClassTextSD = `${classNameSD} ${level}`;
+      metaElSD.textContent = newClassTextSD;
+
+      // Reducir HP por promedio si baja de nivel
+      if (level < oldLevel) {
+        const dieStr    = window.CLASS_TEMPLATES?.[classNameSD]?.hitDie || CHARACTER_STATE.hitDieType || 'd8';
+        const dieSides  = parseInt(dieStr.replace('d', '')) || 8;
+        const hpPerLvl  = Math.max(1, Math.ceil(dieSides / 2 + 0.5) + getMod('CON'));
+        const hpReduction = (oldLevel - level) * hpPerLvl;
+        const maxEl  = document.getElementById('hpMax');
+        const curHpEl = document.getElementById('hpCurrent');
+        if (maxEl)   maxEl.textContent   = Math.max(1, (parseInt(maxEl.textContent)   || 0) - hpReduction);
+        if (curHpEl) curHpEl.textContent = Math.max(0, (parseInt(curHpEl.textContent) || 0) - hpReduction);
+        window.updateHP?.();
+        showToast(`⚠ HP reducido ~${hpReduction} PG (promedio). Ajustá si es necesario.`);
+      }
+
+      if (CHARACTER_STATE.classResource) {
+        const newUses = calcResourceMaxUses(classNameSD, level);
+        if (newUses !== null) { CHARACTER_STATE.classResource.maxUses = newUses; renderRage(); }
+      }
+      if (CASTER_TYPE[classNameSD]) {
+        const newSlots = computeSpellSlots(newClassTextSD);
+        if (newSlots) {
+          [1,2,3,4,5,6,7,8,9].forEach(lv => {
+            const used = Math.min(state.spellSlotsState[lv]?.used || 0, newSlots[lv]?.max || 0);
+            state.spellSlotsState[lv] = { max: newSlots[lv]?.max || 0, used };
+          });
+        }
+        _syncPactSlots(newClassTextSD);
+        renderSpellSlots();
+      }
+    }
   }
+
   updateXP();
   renderHitDice();
-  // Actualizar meta-value de clase + recurso + ranuras (solo clase única sin multiclase)
-  const metaElSD = document.querySelector('.hero-pill[data-field="class"] .meta-value');
-  const oldClassTextSD = metaElSD?.textContent?.trim() || '';
-  const classNameSD = oldClassTextSD.replace(/\s+\d+$/, '').trim();
-  if (metaElSD && classNameSD && !oldClassTextSD.includes('/')) {
-    const newClassTextSD = `${classNameSD} ${level}`;
-    metaElSD.textContent = newClassTextSD;
-    if (CHARACTER_STATE.classResource) {
-      const newUses = calcResourceMaxUses(classNameSD, level);
-      if (newUses !== null) { CHARACTER_STATE.classResource.maxUses = newUses; renderRage(); }
-    }
-    if (CASTER_TYPE[classNameSD]) {
-      const newSlots = computeSpellSlots(newClassTextSD);
-      if (newSlots) {
-        [1,2,3,4,5,6,7,8,9].forEach(lv => {
-          const used = Math.min(state.spellSlotsState[lv]?.used || 0, newSlots[lv]?.max || 0);
-          state.spellSlotsState[lv] = { max: newSlots[lv]?.max || 0, used };
-        });
-      }
-      _syncPactSlots(newClassTextSD);
-      renderSpellSlots();
-    }
-  }
   showToast(`✦ Nivel ${level} fijado`);
   window.saveToLocal?.();
 }
