@@ -30,8 +30,8 @@ import { showToast } from './modules/toast-log.js';
   // ─── Estado del wizard ─────────────────────────────────────────
   const W = window._wiz = {
     step: 1,
-    steps: 8,
-    names: ['Identidad','Especie','Clase','Trasfondo','Atributos','Habilidades','Equipo','Resumen'],
+    steps: 9,
+    names: ['Identidad','Especie','Clase','Trasfondo','Atributos','Habilidades','Equipo','Historia','Resumen'],
     classes: null,
     species: null,
     backgrounds: null,
@@ -60,6 +60,11 @@ import { showToast } from './modules/toast-log.js';
       classSkills: [],
       // Equipo de clase (paso 7)
       equipmentChoices: [],
+      // Historia (paso 8)
+      pTraits: '', pIdeals: '', pBonds: '', pFlaws: '',
+      appGender: '', appAge: '', appHeight: '', appWeight: '',
+      appSkin: '', appEyes: '', appHair: '',
+      historia: '',
     };
   }
 
@@ -132,7 +137,7 @@ import { showToast } from './modules/toast-log.js';
   // ═══════════════════════════════════════════════
   function _render() {
     _updateBar();
-    const fns = [null, _step1, _step2, _step3, _step4, _step5, _step6, _step7, _step8];
+    const fns = [null, _step1, _step2, _step3, _step4, _step5, _step6, _step7, _step8, _step9];
     const body = document.getElementById('wizBody');
     if (body && fns[W.step]) {
       body.innerHTML = fns[W.step]();
@@ -297,6 +302,20 @@ import { showToast } from './modules/toast-log.js';
     }
     if (W.step === 6) {
       d.classSkills = [...document.querySelectorAll('.wz_skill_pick:checked')].map(c => c.value);
+    }
+    if (W.step === 8) {
+      d.pTraits   = (document.getElementById('wz_pTraits')?.value   || '').trim();
+      d.pIdeals   = (document.getElementById('wz_pIdeals')?.value   || '').trim();
+      d.pBonds    = (document.getElementById('wz_pBonds')?.value    || '').trim();
+      d.pFlaws    = (document.getElementById('wz_pFlaws')?.value    || '').trim();
+      d.appGender = (document.getElementById('wz_appGender')?.value || '').trim();
+      d.appAge    = (document.getElementById('wz_appAge')?.value    || '').trim();
+      d.appHeight = (document.getElementById('wz_appHeight')?.value || '').trim();
+      d.appWeight = (document.getElementById('wz_appWeight')?.value || '').trim();
+      d.appSkin   = (document.getElementById('wz_appSkin')?.value   || '').trim();
+      d.appEyes   = (document.getElementById('wz_appEyes')?.value   || '').trim();
+      d.appHair   = (document.getElementById('wz_appHair')?.value   || '').trim();
+      d.historia  = (document.getElementById('wz_historia')?.value  || '').trim();
     }
     if (W.step === 7) {
       (d.equipmentChoices || []).forEach((choice, i) => {
@@ -1106,9 +1125,75 @@ import { showToast } from './modules/toast-log.js';
   }
 
   // ═══════════════════════════════════════════════
-  //  STEP 8 — Resumen
+  //  STEP 8 — Historia, Apariencia y Personalidad
   // ═══════════════════════════════════════════════
   function _step8() {
+    const d = W.data;
+    const bg = (W.backgrounds||[]).find(b => b.id === d.backgroundId);
+
+    const inp = (id, label, val, placeholder) =>
+      `<div><label style="${css.L}">${label}</label>
+        <input id="${id}" value="${esc(val)}" placeholder="${esc(placeholder)}"
+          style="${css.S}font-family:'IM Fell English',serif;font-size:13px;"></div>`;
+
+    const ta = (id, label, val, placeholder, rows) =>
+      `<div><label style="${css.L}">${label}</label>
+        <textarea id="${id}" placeholder="${esc(placeholder)}"
+          style="${css.S}resize:vertical;min-height:${rows*22}px;font-family:'IM Fell English',serif;font-size:13px;line-height:1.55;">${esc(val)}</textarea></div>`;
+
+    return `
+      <div style="text-align:center;margin-bottom:16px;">
+        <div style="font-family:'Cinzel Decorative',serif;font-size:14px;color:var(--gold);">📜 Historia y Apariencia</div>
+        <div style="${css.hint}margin-top:2px;">Todos los campos son opcionales — podés completarlos o editarlos en la ficha en cualquier momento.</div>
+      </div>
+
+      <div style="${css.panel}margin-bottom:12px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+          <div style="font-family:Cinzel,serif;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold-dark);">🌀 Personalidad</div>
+          ${bg ? `<button onclick="_wizSuggestPersonality()" style="${css.btn}font-size:9px;padding:4px 10px;">🎲 Sugerir del trasfondo</button>` : `<span style="font-size:10px;color:var(--text-muted);font-style:italic;">Elegí un trasfondo para sugerencias</span>`}
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          ${ta('wz_pTraits','⚡ Rasgos',d.pTraits,'Dos rasgos de personalidad...',4)}
+          ${ta('wz_pIdeals','⚖ Ideales',d.pIdeals,'Un principio o creencia...',4)}
+          ${ta('wz_pBonds', '❤ Vínculos',d.pBonds,'Personas o lugares importantes...',4)}
+          ${ta('wz_pFlaws', '⚠ Defectos',d.pFlaws,'Debilidades o vicios...',4)}
+        </div>
+      </div>
+
+      <div style="${css.panel}margin-bottom:12px;">
+        <div style="font-family:Cinzel,serif;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold-dark);margin-bottom:10px;">🪞 Apariencia Física</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+          ${inp('wz_appGender','Género',      d.appGender,'Ej. Masculino, femenino…')}
+          ${inp('wz_appAge',   'Edad',        d.appAge,   'Ej. 28 años')}
+          ${inp('wz_appHeight','Altura',      d.appHeight,'Ej. 1,80 m')}
+          ${inp('wz_appWeight','Peso',        d.appWeight,'Ej. 80 kg')}
+          ${inp('wz_appSkin',  'Piel',        d.appSkin,  'Ej. Bronceada, pálida…')}
+          ${inp('wz_appEyes',  'Ojos',        d.appEyes,  'Ej. Azules, verdes…')}
+          ${inp('wz_appHair',  'Cabello',     d.appHair,  'Ej. Negro largo, rizado…')}
+        </div>
+      </div>
+
+      <div style="${css.panel}">
+        <div style="font-family:Cinzel,serif;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold-dark);margin-bottom:8px;">📜 Historia del Personaje</div>
+        ${ta('wz_historia','',d.historia,'Narra el trasfondo de tu personaje: de dónde viene, qué lo motiva, qué eventos marcaron su vida…',7)}
+      </div>`;
+  }
+
+  window._wizSuggestPersonality = function() {
+    const bg = (W.backgrounds||[]).find(b => b.id === W.data.backgroundId);
+    if (!bg) { showToast('⚠ Elegí un trasfondo primero'); return; }
+    const pick = (arr) => arr?.length ? arr[Math.floor(Math.random() * arr.length)] : '';
+    const set  = (id, val) => { if (val) { const el = document.getElementById(id); if (el) el.value = val; } };
+    set('wz_pTraits', pick(bg.personalityTraits));
+    set('wz_pIdeals', pick(bg.ideals));
+    set('wz_pBonds',  pick(bg.bonds));
+    set('wz_pFlaws',  pick(bg.flaws));
+  };
+
+  // ═══════════════════════════════════════════════
+  //  STEP 9 — Resumen
+  // ═══════════════════════════════════════════════
+  function _step9() {
     const d = W.data;
     const cls  = (W.classes||[]).find(c => c.id === d.cls);
     const cls2 = (W.classes||[]).find(c => c.id === d.cls2);
@@ -1505,6 +1590,25 @@ import { showToast } from './modules/toast-log.js';
       _setIfEmpty('personalityBonds',  pick(bg.bonds));
       _setIfEmpty('personalityFlaws',  pick(bg.flaws));
     }
+
+    // ─── Historia y apariencia del paso 8 (prioridad sobre sugerencias) ──
+    const _setField = (id, val) => {
+      if (!val) return;
+      const el = document.getElementById(id);
+      if (el) el.textContent = val;
+    };
+    _setField('personalityTraits', d.pTraits);
+    _setField('personalityIdeals', d.pIdeals);
+    _setField('personalityBonds',  d.pBonds);
+    _setField('personalityFlaws',  d.pFlaws);
+    _setField('charHistoryCE',     d.historia);
+    _setField('appearGender',      d.appGender);
+    _setField('appearAge',         d.appAge);
+    _setField('appearHeight',      d.appHeight);
+    _setField('appearWeight',      d.appWeight);
+    _setField('appearSkin',        d.appSkin);
+    _setField('appearEyes',        d.appEyes);
+    _setField('appearHair',        d.appHair);
 
     // ─── Equipo inicial del trasfondo → inventario ──────────────
     if (bg?.equipment) {
