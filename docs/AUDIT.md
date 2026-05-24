@@ -949,6 +949,51 @@ Codex reportó que el wrapper de `LL_cinematicRoll` aplicaba desventaja automát
 
 
 
+## FEAT-08 — Selector de presets PHB en modal de conjuros
+
+**Archivos**: `src/data/spells.json` (nuevo), `src/modules/spell-modal.js`, `index.html`, `tests/tests.html`
+**Estado**: `[x]` — 2026-05-24
+
+### Descripción
+El modal de "Añadir / Editar Conjuro" ahora incluye un selector de presets con 54 conjuros clásicos del PHB 5e en español, organizados por nivel. Al elegir un preset, se rellenan automáticamente todos los campos del formulario (nombre, nivel, escuela, tiempo de lanzamiento, alcance, componentes, duración, concentración, ritual, salvación, ataque y descripción).
+
+### Implementación
+
+**`src/data/spells.json`** (nuevo):
+- 54 hechizos PHB 5e agrupados por nivel (claves `"0"` a `"9"`).
+- Distribución: 10 trucos, 10 Nv1, 8 Nv2, 7 Nv3, 5 Nv4, 4 Nv5, 3 Nv6, 3 Nv7, 2 Nv8, 3 Nv9.
+- Cada hechizo: `{name, school, castTime, range, components, duration, concentration, ritual, save, attack, desc}`.
+- Cargado vía `fetch()` (mismo patrón que `classes.json`/`species.json`). Cacheado en `_spellPresetsData`.
+
+**`src/modules/spell-modal.js`**:
+- `_loadSpellPresets()` — async, carga `spells.json` una sola vez, llama `_buildSpellPresetOptions()` al resolver.
+- `_buildSpellPresetOptions()` — construye `<optgroup>` por nivel en `#smPreset`, idempotente (`dataset.built`).
+- `onSpellPresetChange()` — rellena todos los campos del formulario desde el preset seleccionado.
+- `openSpellModal()` — ahora también inicializa `smRitual`, resetea `smPreset` a vacío, y llama `_loadSpellPresets()` en background.
+- `saveSpellModal()` — ahora incluye `ritual: smRitual.checked` en el objeto guardado.
+- Bridge: `window.onSpellPresetChange` documentado con comentario `// window bridge`.
+
+**`index.html`**:
+- Nueva fila "📚 Preset PHB" con `<select id="smPreset">` al inicio del modal de conjuros.
+- Nuevo checkbox `<input type="checkbox" id="smRitual">` con label "📜 Ritual" en la misma fila que Concentración.
+
+**`tests/tests.html`**:
+- 3 tests nuevos: `ritual:false` por defecto, `ritual:true` al marcar checkbox, combinación `concentration + ritual`.
+
+### Campo `ritual`
+El campo `ritual` ya estaba en `docs/CHARACTER_SCHEMA.md` como campo de la entidad `Spell`. Al ser un campo optional per-spell (no en `CHARACTER_STATE`), los conjuros existentes sin el campo retornan `undefined` → tratado como `false`. No requiere migración de schema.
+
+### FEAT-08b — Completar base de datos de presets (pendiente)
+
+La base actual cubre 54 conjuros clásicos (~25% del PHB 5e). Quedan pendientes:
+- Nivel 1: ~30 conjuros adicionales (Alarma, Absorber Elementos, Marca del Cazador, etc.)
+- Nivel 2: ~25 adicionales (Visión en la Oscuridad, Inmovilizar Persona, etc.)
+- Niveles 3–9: cobertura parcial; faltan conjuros de clase específica (Paladín, Explorador, Clérigo, etc.)
+- Para completar: expandir `spells.json` con los conjuros faltantes del PHB. No requiere cambios en el código JS ni HTML — solo ampliar el JSON.
+- Meta: ~220 conjuros para cobertura completa del PHB 5e base.
+
+---
+
 ## FEAT-07 — Animación cinemática del dado de daño en flujo de ataque
 
 **Archivos**: `src/modules/dice.js`
@@ -1023,6 +1068,7 @@ Si el d20 fue crítico el stage mantiene el borde/glow dorado (`class="crit"`) y
 | 2026-05-24 | BUG-25: tarjeta personalidad | Overflow derecho + literal &lt;div&gt; + reubicación | (1) persistence.js CODEX-10: sanitiza HTML almacenado antes de textContent (strip &lt;div&gt;/&lt;br&gt;, decode entidades iterativo). (2) index.html: personalidad de vuelta a col-right, columna única. (3) styles.css: personality-grid cambiado de 2 columnas a 1 columna. |
 | 2026-05-24 | Visual QOL | 4 mejoras rápidas + Easter egg EVA-01 | styles.css: class-btn-name 7px→9px, pip hover/active scale, hp-bar 6px→10px+border-radius, attack-btn :active táctil. app.js: Código Konami (↑↑↓↓←→←→BA) activa CLASS_THEMES[12] EVA-01 con toast. |
 | 2026-05-24 | FEAT-07 | Animación dado de daño en flujo de ataque | dice.js: nueva `_showDamageAnimation()` dentro del IIFE. Al pulsar "Tirar daño" el stage se reutiliza mostrando el SVG del arma (fijo, sin spin) + flicker 800 ms + total con desglose. d20 también fijo sin spin. Crítico mantiene glow dorado y duplica dados. commits d4e8f40, 17eaf33, ba71f17. |
+| 2026-05-24 | FEAT-08 | Selector de presets PHB en modal de conjuros | spells.json (nuevo, 54 hechizos clásicos PHB en ES). spell-modal.js: _loadSpellPresets(), _buildSpellPresetOptions(), onSpellPresetChange(). index.html: fila preset + checkbox ritual. saveSpellModal incluye campo ritual. 3 tests nuevos. |
 | 2026-05-23 | FEAT-06 | Modal de creación/edición de armas (Weapon Wizard) | attacks.js: WEAPON_PRESETS (35 armas PHB), campos magicBonus/extraDamage en normalizeAttack, openAttackModal/saveAttackFromModal/etc. dice.js: rollAttackDamage suma magicBonus + itera extraDamage; showDamagePrompt muestra extra en label. index.html: #attackModal HTML. styles.css: .attack-modal-box, .am-toggles, .am-extra-row, .am-preview, .attack-magic-tag, .attack-extra-dmg. |
 | 2026-05-23 | FEAT-05 | Multiclase desde asistente de nivel | level-up.js: toggle "▲ Subir [Clase] / ✦ Nueva clase" en modal de subida de nivel para personajes de clase única. "Nueva clase" muestra grid de 11 clases (excluye la actual); confirmar actualiza pill, hitDice y recalcula ranuras. Nuevas funciones: switchLevelUpMode, selectNewMulticlassClass, _confirmNewMulticlass, _handleLevelUpConfirm. Constante ALL_CLASSES (12 PHB). |
 | 2026-05-23 | FEAT-05b | extraClassResources — recursos múltiples en multiclase | state.js: campo `extraClassResources: []` en CHARACTER_STATE. rage.js: addExtraResource() (push/upsert), toggleExtraResourcePip(idx,el), _renderExtraResources() renderiza paneles extra bajo el recurso primario en #rageCard con pips clickeables. rests.js: shortRest/longRest resetean extras según recovery. persistence.js: carga extraClassResources al restaurar estado. level-up.js: _confirmNewMulticlass llama addExtraResource (no reemplaza primario). xp.js: escala maxUses de extras al subir de nivel si tienen className. wizard.js: pasa className al llamar addExtraResource para el recurso secundario. |

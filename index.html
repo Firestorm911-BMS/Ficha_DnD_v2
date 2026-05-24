@@ -1124,6 +1124,9 @@
   <div class="spell-modal-box">
     <h3>✦ Añadir / Editar Conjuro</h3>
     <div class="form-row">
+      <div style="flex:1;"><label>📚 Preset PHB</label><select id="smPreset" onchange="onSpellPresetChange()"><option value="">— Elegir preset —</option></select></div>
+    </div>
+    <div class="form-row">
       <div style="flex:2;"><label>Nombre</label><input id="smName" placeholder="Nombre del conjuro"></div>
       <div style="flex:1;"><label>Nivel (0=truco)</label>
         <select id="smLevel"><option value="0">Truco</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option></select>
@@ -1156,6 +1159,10 @@
       <div style="flex:1;display:flex;align-items:center;gap:8px;padding-top:18px;">
         <input type="checkbox" id="smConc" style="width:auto;accent-color:var(--gold);">
         <label style="margin:0;letter-spacing:0;font-size:12px;text-transform:none;">⚡ Concentración</label>
+      </div>
+      <div style="flex:1;display:flex;align-items:center;gap:8px;padding-top:18px;">
+        <input type="checkbox" id="smRitual" style="width:auto;accent-color:var(--gold);">
+        <label style="margin:0;letter-spacing:0;font-size:12px;text-transform:none;">📜 Ritual</label>
       </div>
     </div>
     <label>Descripción</label>

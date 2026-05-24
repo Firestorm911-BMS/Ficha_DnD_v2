@@ -40,6 +40,22 @@
     <div class="hero-pill" data-field="class">
       <span class="meta-value" id="test-class-meta">Druida</span>
     </div>
+    <!-- Para spell-modal.js: formulario mínimo -->
+    <div id="spellModal"></div>
+    <input id="smName">
+    <select id="smLevel"><option value="0">0</option><option value="1">1</option><option value="2">2</option></select>
+    <input id="smSchool">
+    <input id="smCastTime">
+    <input id="smRange">
+    <input id="smComponents">
+    <input id="smDuration">
+    <input type="checkbox" id="smConc">
+    <input type="checkbox" id="smRitual">
+    <select id="smSave"><option value=""></option><option value="DEX">DEX</option></select>
+    <select id="smAttack"><option value=""></option><option value="ranged">ranged</option></select>
+    <select id="smCastAttr"><option value=""></option><option value="INT">INT</option></select>
+    <textarea id="smDesc"></textarea>
+    <select id="smPreset"><option value="">—</option></select>
   </div>
 
   <div id="results"></div>
@@ -568,6 +584,67 @@
       test('Cadena vacía devuelve cadena vacía', () => {
         assertEqual(sanitizeRichText(''), '');
         assertEqual(sanitizeRichText(null), '');
+      });
+    }
+
+    // ══════════════════════════════════════════
+    //  spell-modal — campo ritual + saveSpellModal (FEAT-08)
+    // ══════════════════════════════════════════
+    {
+      const { saveSpellModal } = await import('../src/modules/spell-modal.js');
+      section('spell-modal — ritual + saveSpellModal (FEAT-08)');
+
+      function _fillSpellForm(overrides = {}) {
+        const f = {
+          smName:        'Detectar Magia',
+          smLevel:       '1',
+          smSchool:      'Adivinación',
+          smCastTime:    '1 acción',
+          smRange:       'Personal',
+          smComponents:  'V, S',
+          smDuration:    'Conc., 10 min',
+          smConc:        false,
+          smRitual:      false,
+          smSave:        '',
+          smAttack:      '',
+          smCastAttr:    '',
+          smDesc:        'Detectas magia a 9m.',
+          ...overrides,
+        };
+        for (const [id, val] of Object.entries(f)) {
+          const el = document.getElementById(id);
+          if (!el) continue;
+          if (el.type === 'checkbox') el.checked = val;
+          else el.value = val;
+        }
+      }
+
+      test('saveSpellModal guarda ritual:false por defecto', () => {
+        state.spells.length = 0;
+        _fillSpellForm({ smRitual: false });
+        saveSpellModal();
+        const sp = state.spells[0];
+        assert(sp !== undefined,      'debe existir el conjuro guardado');
+        assertEqual(sp.ritual, false, 'ritual debe ser false');
+      });
+
+      test('saveSpellModal guarda ritual:true cuando el checkbox está marcado', () => {
+        state.spells.length = 0;
+        _fillSpellForm({ smRitual: true });
+        saveSpellModal();
+        const sp = state.spells[0];
+        assert(sp !== undefined,     'debe existir el conjuro guardado');
+        assertEqual(sp.ritual, true, 'ritual debe ser true');
+      });
+
+      test('saveSpellModal incluye concentration cuando smConc está marcado', () => {
+        state.spells.length = 0;
+        _fillSpellForm({ smConc: true, smRitual: true });
+        saveSpellModal();
+        const sp = state.spells[0];
+        assert(sp !== undefined,           'debe existir el conjuro guardado');
+        assertEqual(sp.concentration, true, 'concentration debe ser true');
+        assertEqual(sp.ritual, true,        'ritual debe ser true');
       });
     }
 
