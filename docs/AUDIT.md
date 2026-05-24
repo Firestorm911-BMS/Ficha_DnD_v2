@@ -1,6 +1,6 @@
 # Auditoría Técnica — Ficha D&D 5e
 
-**Fecha de última actualización**: 2026-05-23
+**Fecha de última actualización**: 2026-05-23 (sesión 2)
 **Rama activa**: `main`
 **Arquitectura actual**: `app.js` (826 líneas) + 22 módulos ES bajo `src/modules/` + `src/state.js` + `src/wizard.js` (ES module)
 
@@ -674,6 +674,32 @@ La hero-pill actualmente tiene dos selectores fijos. Requiere refactor de UI a l
 
 ---
 
+## FEAT-06 — Modal de configuración de armas (Weapon Wizard)
+
+**Archivos**: `src/modules/attacks.js`, `src/modules/dice.js`, `index.html`, `src/styles.css`
+**Estado**: `[x]` — 2026-05-23
+
+### Descripción
+El botón "+ Añadir" en la tarjeta de Ataques ahora abre un modal de creación/edición de armas con:
+- **Arma base**: selector agrupado (Simple CaC/Dist. · Marcial CaC/Dist.) con 35 armas PHB 5e. Al seleccionar, auto-rellena nombre, dado de daño, tipo, atributo y propiedades.
+- **Bono mágico**: +0/+1/+2/+3. Se suma al bono de ataque y al daño.
+- **Daño extra**: filas dinámicas de `{dado, tipo}` para encantamientos (fuego, rayo, necrótico…). Botón "+" agrega filas; cada una tiene ✕ para eliminar.
+- **Preview en vivo**: muestra bono de ataque y fórmula de daño completa mientras el usuario edita.
+- **Botón ✎ Editar** por fila en los ataques existentes (abre el modal pre-cargado con los valores del ataque).
+
+### Nuevos campos en el schema de ataque
+- `magicBonus: 0` — número, se suma a `getAttackBonus()` y al bono de daño en `rollAttackDamage`
+- `extraDamage: []` — array de `{dice, type}`. Se tiran en `rollAttackDamage` y se muestran en la ficha.
+
+### Funciones nuevas en attacks.js
+`openAttackModal(i?)`, `closeAttackModal()`, `onAttackPresetChange()`, `saveAttackFromModal()`, `addAttackExtraDamageRow()`, `updateAttackPreview()`, más helpers internos.
+
+### Cambios en dice.js
+`rollAttackDamage`: incluye `magicBonus` en el bonus total; itera `extraDamage` y tira cada grupo.
+`showDamagePrompt`: muestra los dados extra en el label del botón "Tirar".
+
+---
+
 ## FEAT-05 — Iniciar multiclase desde asistente de nivel
 
 **Archivos**: `src/modules/level-up.js`
@@ -955,6 +981,7 @@ Codex reportó que el wrapper de `LL_cinematicRoll` aplicaba desventaja automát
 | 2026-05-23 | FEAT-01 | Condiciones → desventaja sugerida | dice.js IIFE: CONDITION_DISADVANTAGE map + _warnConditions(). conditions.js: getActiveConditions() exportada. LL_cinematicRoll: toast + pulso "Desv." si hay condiciones activas con desventaja para el tipo de tirada. Agotamiento Nv.1/3+ incluido. |
 | 2026-05-23 | BUG-22 | langComp renderizaba HTML crudo | persistence.js: langComp movido del grupo textContent al grupo innerHTML+sanitizeRichText. |
 | 2026-05-23 | BUG-23 | clearSave/newSheet — beforeunload re-escribía datos | Causa: beforeunload dispara saveState() con CHARACTER_STATE en memoria antes de que el reload complete. Fix: persistence.js agrega `skipNextSave()` + flag `_skipSave`; saveState() y saveToLocal() retornan temprano si el flag está activo. roster.js llama `skipNextSave()` en clearSave y newSheet antes de location.reload(). newSheet además usa sessionStorage 'openWizardOnLoad' para que loadFromLocal() abra el wizard en vez del roster. |
+| 2026-05-23 | FEAT-06 | Modal de creación/edición de armas (Weapon Wizard) | attacks.js: WEAPON_PRESETS (35 armas PHB), campos magicBonus/extraDamage en normalizeAttack, openAttackModal/saveAttackFromModal/etc. dice.js: rollAttackDamage suma magicBonus + itera extraDamage; showDamagePrompt muestra extra en label. index.html: #attackModal HTML. styles.css: .attack-modal-box, .am-toggles, .am-extra-row, .am-preview, .attack-magic-tag, .attack-extra-dmg. |
 | 2026-05-23 | FEAT-05 | Multiclase desde asistente de nivel | level-up.js: toggle "▲ Subir [Clase] / ✦ Nueva clase" en modal de subida de nivel para personajes de clase única. "Nueva clase" muestra grid de 11 clases (excluye la actual); confirmar actualiza pill, hitDice y recalcula ranuras. Nuevas funciones: switchLevelUpMode, selectNewMulticlassClass, _confirmNewMulticlass, _handleLevelUpConfirm. Constante ALL_CLASSES (12 PHB). |
 | 2026-05-23 | FEAT-05b | extraClassResources — recursos múltiples en multiclase | state.js: campo `extraClassResources: []` en CHARACTER_STATE. rage.js: addExtraResource() (push/upsert), toggleExtraResourcePip(idx,el), _renderExtraResources() renderiza paneles extra bajo el recurso primario en #rageCard con pips clickeables. rests.js: shortRest/longRest resetean extras según recovery. persistence.js: carga extraClassResources al restaurar estado. level-up.js: _confirmNewMulticlass llama addExtraResource (no reemplaza primario). xp.js: escala maxUses de extras al subir de nivel si tienen className. wizard.js: pasa className al llamar addExtraResource para el recurso secundario. |
 | 2026-05-23 | FEAT-05: fix re-tirada | HP acumulado al re-tirar dado en asistente de nivel | level-up.js `applyLevelUpHP`: lee `modal.dataset.hpGain` (gain previo), resta del HP actual para obtener base, aplica el nuevo gain, y sobreescribe (no acumula) el dataset. Previene que tirar el dado 3 veces sume HP de las 3 tiradas. commit bf51247. |

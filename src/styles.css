@@ -4255,6 +4255,7 @@ body.rage-active::before {
   .edit-indicator,
   #combatOverlay,
   #spellModal,
+  #attackModal,
   #levelUpModal,
   #creationWizard,
   #diceRollerModal,
@@ -4714,6 +4715,170 @@ input[type="range"] { min-height: 20px; }
   gap: 8px;
   justify-content: flex-end;
   margin-top: 12px;
+}
+
+/* ══════════════════════════════════════════
+   ATTACK MODAL
+══════════════════════════════════════════ */
+#attackModal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  z-index: 9000;
+  align-items: center;
+  justify-content: center;
+}
+#attackModal.open { display: flex; }
+.attack-modal-box {
+  background: var(--bg-card);
+  border: 1px solid var(--gold);
+  border-radius: 8px;
+  padding: 20px 24px;
+  width: min(520px, 94vw);
+  max-height: 88vh;
+  overflow-y: auto;
+}
+.attack-modal-box h3 {
+  font-family: 'Cinzel', serif;
+  color: var(--gold);
+  margin: 0 0 14px;
+  font-size: 13px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+.attack-modal-box .form-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.attack-modal-box label {
+  display: block;
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 3px;
+}
+.attack-modal-box input,
+.attack-modal-box select {
+  width: 100%;
+  box-sizing: border-box;
+  background: var(--bg-deep);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  font-family: 'IM Fell English', serif;
+  font-size: 13px;
+  padding: 5px 8px;
+  border-radius: 4px;
+}
+.attack-modal-box input:focus,
+.attack-modal-box select:focus {
+  outline: none;
+  border-color: var(--gold);
+}
+.attack-modal-box .modal-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+.am-toggles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-bottom: 10px;
+}
+.am-toggles label {
+  display: flex !important;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  font-family: 'IM Fell English', serif !important;
+  font-size: 13px !important;
+  color: var(--text-secondary) !important;
+  text-transform: none !important;
+  letter-spacing: 0 !important;
+  margin-bottom: 0 !important;
+}
+.am-toggles input[type="checkbox"] {
+  width: auto !important;
+  accent-color: var(--gold);
+}
+.am-extra-row {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  margin-bottom: 5px;
+}
+.am-extra-row .am-extra-dice {
+  flex: 0 0 80px !important;
+  width: 80px !important;
+}
+.am-extra-row .am-extra-type { flex: 1; }
+.am-extra-remove {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  cursor: pointer;
+  border-radius: 3px;
+  padding: 3px 8px;
+  font-size: 11px;
+  line-height: 1;
+}
+.am-extra-remove:hover { color: var(--gold); border-color: var(--gold); }
+.am-preview {
+  background: rgba(201,168,76,0.06);
+  border: 1px solid rgba(201,168,76,0.2);
+  border-radius: 4px;
+  padding: 8px 14px;
+  margin-bottom: 10px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  color: var(--text-secondary);
+  min-height: 36px;
+  letter-spacing: 0.5px;
+}
+.am-preview strong { color: var(--gold); }
+.am-preview-sep { color: var(--border); }
+.attack-magic-tag {
+  display: inline-flex;
+  align-items: center;
+  font-family: 'Cinzel', serif;
+  font-size: 8px;
+  letter-spacing: 0.5px;
+  color: var(--gold-light);
+  background: rgba(201,168,76,0.12);
+  border: 1px solid rgba(201,168,76,0.25);
+  border-radius: 3px;
+  padding: 1px 5px;
+  margin-left: 4px;
+}
+.attack-extra-dmg {
+  display: block;
+  font-size: 11px;
+  color: var(--text-muted);
+  font-family: 'IM Fell English', serif;
+  font-style: italic;
+}
+.attack-extra-dmg em {
+  font-style: normal;
+  color: var(--gold-dark);
+}
+.attack-edit-btn {
+  border-color: rgba(201,168,76,0.3) !important;
+  color: var(--gold-dark) !important;
+}
+.attack-edit-btn:hover {
+  border-color: var(--gold) !important;
+  color: var(--gold-light) !important;
 }
 
 /* ══════════════════════════════════════════

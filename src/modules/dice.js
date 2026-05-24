@@ -212,17 +212,19 @@ function showDamagePrompt(atk, dmg, isCrit, attackIndex) {
   if (existing) existing.remove();
   const mult = isCrit ? 2 : 1;
   const rageBonus = getRageDamageBonus(atk);
+  const magicBonus = atk.magicBonus || 0;
   const groupsLabel = (dmg.groups || [{ count: dmg.count, sides: dmg.sides }])
     .map(g => `${Math.abs(g.count) * mult}d${g.sides}`).join('+');
-  const bonusLabel = formatDamageBonus(dmg.bonus + rageBonus);
+  const bonusLabel = formatDamageBonus(dmg.bonus + rageBonus + magicBonus);
+  const extraLabel = (atk.extraDamage || []).map(ed => `+${ed.dice} ${ed.type}`).join(' ');
   const prompt = document.createElement('div');
   prompt.id = 'damagePrompt';
   prompt.style.cssText = `position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:linear-gradient(135deg,rgba(8,14,8,0.97),rgba(20,12,6,0.97));border:2px solid var(--gold);border-radius:8px;padding:24px 32px;z-index:10000;text-align:center;box-shadow:0 0 40px var(--gold-glow),0 20px 60px rgba(0,0,0,0.8);animation:promptIn 0.3s ease;min-width:280px;`;
   prompt.innerHTML = `
     <div style="font-family:'Cinzel Decorative',serif;font-size:22px;color:var(--gold-light);margin-bottom:8px;">${isCrit ? '✦ ¡CRÍTICO!' : '⚔ Impacto'}</div>
-    <div style="font-family:'Cinzel',serif;font-size:11px;color:var(--text-muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:16px;">${escapeAttr(atk.name)} · ${escapeAttr(dmg.raw)}${rageBonus ? ` · ${CHARACTER_STATE.classResource?.name || 'Recurso'} +${rageBonus}` : ''}${isCrit ? ' · dados ×2' : ''}</div>
+    <div style="font-family:'Cinzel',serif;font-size:11px;color:var(--text-muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:16px;">${escapeAttr(atk.name)} · ${escapeAttr(dmg.raw)}${rageBonus ? ` · ${CHARACTER_STATE.classResource?.name || 'Recurso'} +${rageBonus}` : ''}${magicBonus ? ` · +${magicBonus} mágico` : ''}${extraLabel ? ` · ${extraLabel}` : ''}${isCrit ? ' · dados ×2' : ''}</div>
     <div style="display:flex;gap:12px;justify-content:center;">
-      <button class="btn btn-primary" onclick="rollAttackDamage(${attackIndex},${isCrit})" style="font-size:13px;padding:10px 20px;">🎲 Tirar ${groupsLabel}${bonusLabel}</button>
+      <button class="btn btn-primary" onclick="rollAttackDamage(${attackIndex},${isCrit})" style="font-size:13px;padding:10px 20px;">🎲 Tirar ${groupsLabel}${bonusLabel}${extraLabel ? ' ' + extraLabel : ''}</button>
       <button class="btn" onclick="this.closest('#damagePrompt').remove()" style="font-size:11px;">✕ Omitir</button>
     </div>`;
   document.body.appendChild(prompt);
@@ -246,18 +248,29 @@ function rollAttackDamage(i, isCrit = false) {
 
   const dmg = parseDamageString(atk.damage);
   const rageBonus = getRageDamageBonus(atk);
+  const magicBonus = atk.magicBonus || 0;
   const mult = isCrit ? 2 : 1;
   const { total: diceTotal, parts } = rollAllDiceGroups(dmg.groups, mult);
-  const grandTotal = Math.max(0, diceTotal + dmg.bonus + rageBonus);
-  const bonusStr = formatDamageBonus(dmg.bonus + rageBonus);
-  const detail = parts.join(' + ') + (bonusStr ? ` ${bonusStr}` : '') + (rageBonus ? ` (${CHARACTER_STATE.classResource?.name || 'Recurso'})` : '');
+  const baseBonus = dmg.bonus + rageBonus + magicBonus;
+  let total = Math.max(0, diceTotal + baseBonus);
+  const bonusStr = formatDamageBonus(baseBonus);
+  let detail = parts.join(' + ') + (bonusStr ? ` ${bonusStr}` : '');
+  if (rageBonus) detail += ` (${CHARACTER_STATE.classResource?.name || 'Recurso'})`;
+  if (magicBonus) detail += ` [+${magicBonus}✦]`;
+
+  for (const ed of (atk.extraDamage || [])) {
+    const edDmg = parseDamageString(ed.dice || '1d6');
+    const { total: edTotal, parts: edParts } = rollAllDiceGroups(edDmg.groups, mult);
+    total += edTotal;
+    detail += ` + ${edParts.join('+')} ${ed.type}`;
+  }
 
   addCombatLog(
     `⚔ Daño <em>${escapeAttr(atk.name)}</em>${isCrit ? ' ✦ CRÍTICO' : ''}: ${detail} = ` +
-    `<strong style="color:var(--gold);font-size:15px;">${grandTotal}</strong> · ` +
-    `<button class="log-apply-btn" onclick="applyDamageAmount(${grandTotal},{physical:${atk.melee !== false}});this.parentElement.querySelector('.log-apply-btn').remove()">← Aplicar</button>`
+    `<strong style="color:var(--gold);font-size:15px;">${total}</strong> · ` +
+    `<button class="log-apply-btn" onclick="applyDamageAmount(${total},{physical:${atk.melee !== false}});this.parentElement.querySelector('.log-apply-btn').remove()">← Aplicar</button>`
   );
-  showToast(`${isCrit ? '✦ CRÍTICO · ' : ''}Daño: ${grandTotal}`);
+  showToast(`${isCrit ? '✦ CRÍTICO · ' : ''}Daño: ${total}`);
 }
 
 // ═══════════════════════════════════════════════

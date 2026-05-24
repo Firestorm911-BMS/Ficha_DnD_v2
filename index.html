@@ -672,7 +672,7 @@
         <!-- Attacks -->
         <div class="card">
           <div class="card-title"><span class="card-title-icon">⚔</span>Ataques
-            <button class="btn btn-sm" style="margin-left:auto;" onclick="addAttack()">+ Añadir</button>
+            <button class="btn btn-sm" style="margin-left:auto;" onclick="openAttackModal()">+ Añadir</button>
           </div>
           <table class="attacks-table" id="attacksTable">
             <thead>
@@ -1162,6 +1162,80 @@
     <div class="modal-actions">
       <button class="btn btn-sm" onclick="closeSpellModal()">Cancelar</button>
       <button class="btn btn-sm btn-primary" onclick="saveSpellModal()">✓ Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ ATTACK MODAL ══════════════ -->
+<div id="attackModal" onclick="if(event.target===this)closeAttackModal()">
+  <div class="attack-modal-box">
+    <h3>⚔ Configurar Arma</h3>
+
+    <div class="form-row">
+      <div style="flex:1;">
+        <label>Arma base</label>
+        <select id="amPreset" onchange="onAttackPresetChange()">
+          <option value="">— Personalizada —</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div style="flex:2;"><label>Nombre</label><input id="amName" placeholder="Espada larga +1, Daga de Fuego…" oninput="updateAttackPreview()"></div>
+      <div style="flex:1;">
+        <label>Bono mágico</label>
+        <select id="amMagicBonus" onchange="updateAttackPreview()">
+          <option value="0">Sin encantamiento</option>
+          <option value="1">+1</option>
+          <option value="2">+2</option>
+          <option value="3">+3</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div style="flex:1;"><label>Dado de daño</label><input id="amDamage" placeholder="1d8" oninput="updateAttackPreview()"></div>
+      <div style="flex:1.2;">
+        <label>Tipo de daño</label>
+        <select id="amType" onchange="updateAttackPreview()">
+          <option>Ácido</option><option>Contundente</option><option selected>Cortante</option>
+          <option>Frío</option><option>Fuego</option><option>Fuerza</option>
+          <option>Necrótico</option><option>Perforante</option><option>Psíquico</option>
+          <option>Radiante</option><option>Relámpago</option><option>Trueno</option><option>Veneno</option>
+        </select>
+      </div>
+      <div style="flex:0.8;">
+        <label>Atributo</label>
+        <select id="amAbility" onchange="updateAttackPreview()">
+          <option>STR</option><option>DEX</option><option>CON</option>
+          <option>INT</option><option>WIS</option><option>CHA</option>
+        </select>
+      </div>
+    </div>
+
+    <div style="margin-bottom:8px;">
+      <label>Propiedades</label>
+      <input id="amProperties" placeholder="Fineza, Ligera, Arrojadiza, Versátil…">
+    </div>
+
+    <div style="margin-bottom:10px;">
+      <label>Daño extra <span style="font-size:9px;color:var(--text-muted);text-transform:none;letter-spacing:0;font-family:'IM Fell English',serif;">(encantamientos: fuego, rayo, necrótico…)</span></label>
+      <div id="amExtraDamageList"></div>
+      <button type="button" class="btn btn-sm" onclick="addAttackExtraDamageRow()" style="margin-top:6px;font-size:11px;padding:4px 12px;">+ Agregar daño</button>
+    </div>
+
+    <div class="am-toggles">
+      <label><input type="checkbox" id="amProficient" onchange="updateAttackPreview()"> Competencia</label>
+      <label><input type="checkbox" id="amEquipped"> Equipado</label>
+      <label><input type="checkbox" id="amMelee"> Cuerpo a cuerpo</label>
+      <label><input type="checkbox" id="amRage"> Bono de rabia</label>
+    </div>
+
+    <div id="amPreview" class="am-preview"></div>
+
+    <div class="modal-actions">
+      <button class="btn btn-sm" onclick="closeAttackModal()">Cancelar</button>
+      <button class="btn btn-sm btn-primary" onclick="saveAttackFromModal()">✓ Guardar arma</button>
     </div>
   </div>
 </div>
