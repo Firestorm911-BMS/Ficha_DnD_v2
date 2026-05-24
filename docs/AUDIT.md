@@ -706,6 +706,41 @@ Ampliación de FEAT-05 para mostrar ambos recursos de clase simultáneamente.
 
 ---
 
+## BUG-24 — ALTO · `setLevelDirect` no limpiaba clases ni ajustaba HP al bajar de nivel
+
+**Archivos**: `src/modules/xp.js`, `src/modules/level-up.js`, `src/modules/persistence.js`, `src/state.js`
+**Estado**: `[x]` — commits 83f5760 + a2bc486 · 2026-05-23
+
+### Descripción
+Al usar "Fijar Nv" para bajar el nivel de un personaje multiclase ocurrían dos problemas:
+1. La segunda clase permanecía en la pill (ej. "Bárbaro 1/Explorador 1" → fijado a Nv1 → seguía mostrando "Bárbaro 1/Explorador 1")
+2. El HP máximo no se reducía, quedando con los PG del nivel superior
+
+### Fix — fase 1 (aproximado)
+`xp.js`: nueva función `_setLevelDirectMulticlass()`:
+- Parsea la pill, reduce niveles de derecha a izquierda hasta alcanzar el target
+- Elimina clases con 0 niveles restantes y sus `extraClassResources`
+- Reconstruye `hitDice` reduciendo conteo por tipo de dado
+- Resta HP por promedio: `ceil(die/2+0.5) + CON` × niveles eliminados
+- Clase única: misma lógica de reducción de HP aproximada
+
+### Fix — fase 2 (historial exacto)
+Se agrega `CHARACTER_STATE.levelHistory: {}` — snapshot `{hpMax, classText}` por cada nivel alcanzado.
+
+**Dónde se graba:**
+- `openLevelUpAssistant(newLevel)`: guarda snapshot del nivel `newLevel-1` con HP pre-tirada y classText actual (solo si no existía)
+- `applyLevelUpHP(gain, label)`: guarda/actualiza snapshot del nivel actual con el `hpMax` resultante
+- `_confirmNewMulticlass()`: actualiza `classText` del snapshot del nivel actual con la nueva pill multiclase
+
+**Dónde se restaura (`setLevelDirect`):**
+- Si existe `levelHistory[targetLevel]` → restaura HP exacto (diff aplicado a hpCurrent también), restaura classText en pill, reconstruye hitDice mergeando por tipo de dado, filtra extraClassResources a clases secundarias del snapshot, resincroniza recursos y ranuras
+- Si no existe snapshot → fallback al cálculo aproximado por promedio
+- Siempre borra entradas `levelHistory[k]` para `k > targetLevel`
+
+**Persistencia**: `persistence.js` carga `levelHistory` en `loadState`; `state.js` inicializa el campo con `{}`.
+
+---
+
 ---
 
 ## CODEX-01 — CRÍTICO · Brujo nuevo no inicializa Espacios de Pacto
@@ -922,6 +957,9 @@ Codex reportó que el wrapper de `LL_cinematicRoll` aplicaba desventaja automát
 | 2026-05-23 | BUG-23 | clearSave/newSheet — beforeunload re-escribía datos | Causa: beforeunload dispara saveState() con CHARACTER_STATE en memoria antes de que el reload complete. Fix: persistence.js agrega `skipNextSave()` + flag `_skipSave`; saveState() y saveToLocal() retornan temprano si el flag está activo. roster.js llama `skipNextSave()` en clearSave y newSheet antes de location.reload(). newSheet además usa sessionStorage 'openWizardOnLoad' para que loadFromLocal() abra el wizard en vez del roster. |
 | 2026-05-23 | FEAT-05 | Multiclase desde asistente de nivel | level-up.js: toggle "▲ Subir [Clase] / ✦ Nueva clase" en modal de subida de nivel para personajes de clase única. "Nueva clase" muestra grid de 11 clases (excluye la actual); confirmar actualiza pill, hitDice y recalcula ranuras. Nuevas funciones: switchLevelUpMode, selectNewMulticlassClass, _confirmNewMulticlass, _handleLevelUpConfirm. Constante ALL_CLASSES (12 PHB). |
 | 2026-05-23 | FEAT-05b | extraClassResources — recursos múltiples en multiclase | state.js: campo `extraClassResources: []` en CHARACTER_STATE. rage.js: addExtraResource() (push/upsert), toggleExtraResourcePip(idx,el), _renderExtraResources() renderiza paneles extra bajo el recurso primario en #rageCard con pips clickeables. rests.js: shortRest/longRest resetean extras según recovery. persistence.js: carga extraClassResources al restaurar estado. level-up.js: _confirmNewMulticlass llama addExtraResource (no reemplaza primario). xp.js: escala maxUses de extras al subir de nivel si tienen className. wizard.js: pasa className al llamar addExtraResource para el recurso secundario. |
+| 2026-05-23 | FEAT-05: fix re-tirada | HP acumulado al re-tirar dado en asistente de nivel | level-up.js `applyLevelUpHP`: lee `modal.dataset.hpGain` (gain previo), resta del HP actual para obtener base, aplica el nuevo gain, y sobreescribe (no acumula) el dataset. Previene que tirar el dado 3 veces sume HP de las 3 tiradas. commit bf51247. |
+| 2026-05-23 | BUG-24 | setLevelDirect no limpiaba clases ni ajustaba HP al bajar nivel | Dos problemas: (1) personaje multiclase conservaba la segunda clase al bajar de nivel; (2) HP no se reducía. Fix inicial (commit 83f5760): xp.js agrega `_setLevelDirectMulticlass()` que elimina clases sobrantes de derecha a izquierda, limpia extraClassResources, rebuilding hitDice y ajusta HP por promedio de dado+CON. Clase única: misma lógica de HP aproximado. |
+| 2026-05-23 | BUG-24: historial por nivel | Restauración exacta de HP/clase al bajar nivel | Mejora sobre el fix anterior: se agrega `CHARACTER_STATE.levelHistory` (objeto clave=nivel, valor={hpMax,classText}). Guardado en 3 puntos de level-up.js: openLevelUpAssistant guarda snapshot del nivel previo antes de la tirada; applyLevelUpHP guarda snapshot del nivel actual con HP resultante; _confirmNewMulticlass actualiza classText del snapshot al confirmar multiclase. setLevelDirect: si existe snapshot para el nivel destino → restaura HP exacto y classText (recomputa hitDice, extraClassResources, recursos y ranuras desde el snapshot). Si no hay snapshot → fallback aproximado. Siempre borra entradas de historia por encima del nivel destino. 4 archivos: state.js, persistence.js, level-up.js, xp.js. commit a2bc486. |
 
 ---
 
