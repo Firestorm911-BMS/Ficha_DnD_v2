@@ -430,15 +430,19 @@ export function renderSpellBook() {
     const maxSlotLevel = Math.max(maxFromSlots, maxFromPact);
 
     const levels = [...new Set(regs.map(s=>s.level))].sort((a,b)=>a-b);
-    levels
-      .filter(lv => maxSlotLevel === 0 || lv <= maxSlotLevel)
-      .forEach(lv => {
+    const visible = maxSlotLevel > 0 ? levels.filter(lv => lv <= maxSlotLevel) : [];
+
+    if (visible.length === 0) {
+      spellCont.innerHTML = `<div class="spell-empty">Sin ranuras disponibles en este nivel</div>`;
+    } else {
+      visible.forEach(lv => {
         const div = document.createElement('div');
         div.className = 'spell-level-divider';
         div.textContent = `— Nivel ${lv} —`;
         spellCont.appendChild(div);
         regs.filter(s=>s.level===lv).forEach(s => spellCont.appendChild(buildSpellCard(s)));
       });
+    }
   }
 }
 
