@@ -641,6 +641,19 @@ document.addEventListener('keydown', e => {
   window.nextTurn?.();
 });
 
+// Easter egg: Código Konami → Tema EVA-01
+(function () {
+  const SEQ = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
+  let _k = 0;
+  document.addEventListener('keydown', e => {
+    _k = (e.key === SEQ[_k]) ? _k + 1 : (e.key === SEQ[0] ? 1 : 0);
+    if (_k < SEQ.length) return;
+    _k = 0;
+    applyClassTheme(12);
+    showToast('⚡ UNIDAD-01 ACTIVADA — CAMPO AT AL MÁXIMO ⚡');
+  });
+})();
+
 // ═══════════════════════════════════════════════
 // COMBATE TAB — Battle Stance sync + Rage Rounds
 // ═══════════════════════════════════════════════

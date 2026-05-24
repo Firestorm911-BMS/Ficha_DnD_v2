@@ -1397,7 +1397,7 @@ body::after {
 .class-btn:hover  { border-color: var(--gold-dark); color: var(--text-secondary); background: var(--bg-card2); }
 .class-btn.active { border-color: var(--gold); color: var(--gold); background: rgba(201,168,76,0.1); }
 .class-btn-icon   { font-size: 18px; line-height: 1; }
-.class-btn-name   { font-family: 'Cinzel', serif; font-size: 7px; letter-spacing: 0.8px; text-transform: uppercase; text-align: center; }
+.class-btn-name   { font-family: 'Cinzel', serif; font-size: 9px; letter-spacing: 0.8px; text-transform: uppercase; text-align: center; }
 
 .dice-fab {
   width: 56px; height: 56px;
@@ -1877,8 +1877,10 @@ body.edit-mode .hero-pill[data-field="species"] .hero-pill-select  { display: in
   border-radius: 50%;
   border: 2px solid var(--gold-dark);
   cursor: pointer;
-  transition: all 0.2s;
+  transition: transform 0.12s, box-shadow 0.2s;
 }
+.pip:hover  { transform: scale(1.15); }
+.pip:active { transform: scale(0.85); }
 
 .pip.used {
   background: var(--mapuche-ochre);
@@ -3810,8 +3812,9 @@ body.rage-active::before {
   50%      { text-shadow: 0 0 24px rgba(255,82,82,0.9); }
 }
 .bs-hp-bar {
-  width: 100%; height: 6px; margin-top: 8px;
+  width: 100%; height: 10px; margin-top: 8px;
   background: rgba(0,0,0,0.5); border: 1px solid rgba(201,168,76,0.2);
+  border-radius: 5px;
   position: relative; overflow: hidden;
 }
 .bs-hp-bar-fill {
@@ -3892,6 +3895,11 @@ body.rage-active::before {
 .attacks-table .attack-btn:hover {
   transform: scale(1.15) rotate(15deg);
   box-shadow: 0 0 16px var(--gold-glow);
+}
+.attacks-table .attack-btn:active {
+  transform: scale(0.9);
+  box-shadow: 0 0 20px var(--gold-glow);
+  background: linear-gradient(135deg, var(--gold), var(--gold-light)) !important;
 }
 
 /* Death saves — cinematic crystal pearls */
