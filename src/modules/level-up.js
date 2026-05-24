@@ -128,6 +128,22 @@ export function _confirmMulticlassLevelUp(originalPillText) {
 export function switchLevelUpMode(mode) {
   const modal   = document.getElementById('levelUpModal');
   if (!modal) return;
+
+  // Deshacer cualquier gain de HP del modo anterior antes de cambiar
+  const prevGain = parseInt(modal.dataset.hpGain || '0');
+  if (prevGain > 0) {
+    const maxEl = document.getElementById('hpMax');
+    const curEl = document.getElementById('hpCurrent');
+    if (maxEl) maxEl.textContent = Math.max(1, (parseInt(maxEl.textContent) || 0) - prevGain);
+    if (curEl) curEl.textContent = Math.max(0, (parseInt(curEl.textContent) || 0) - prevGain);
+    window.updateHP?.();
+    modal.dataset.hpGain = '0';
+    const r1 = document.getElementById('lvHpResult');
+    if (r1) r1.innerHTML = '<span style="color:var(--text-muted)">— Tira el dado</span>';
+    const r2 = document.getElementById('lvHpResultNueva');
+    if (r2) r2.innerHTML = '— Seleccioná una clase';
+  }
+
   const btnSubir = document.getElementById('lvModeSubir');
   const btnNueva = document.getElementById('lvModeNueva');
   const secSubir = document.getElementById('lvSectionSubir');
@@ -447,6 +463,9 @@ export function applyLevelUpHP(gain, label) {
   const res = document.getElementById('lvHpResult');
   if (res) res.innerHTML = `<span style="color:var(--gold);font-weight:bold;">+${gain} PG</span> <span style="color:var(--text-muted);font-size:11px;">(${label})</span>`;
   addCombatLog(`❤ Nivel: ${label} = +${gain} PG · nuevo máx ${newMax}`);
+  // Registrar en el modal para deshacer si el usuario cambia de modo
+  const modal = document.getElementById('levelUpModal');
+  if (modal) modal.dataset.hpGain = String((parseInt(modal.dataset.hpGain || '0')) + gain);
 }
 
 export function applyClassTemplate(className) {
