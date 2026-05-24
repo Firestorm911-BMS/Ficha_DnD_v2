@@ -674,6 +674,28 @@ La hero-pill actualmente tiene dos selectores fijos. Requiere refactor de UI a l
 
 ---
 
+## FEAT-05 — Iniciar multiclase desde asistente de nivel
+
+**Archivos**: `src/modules/level-up.js`
+**Estado**: `[x]` — 2026-05-23
+
+### Descripción
+Al subir de nivel con personaje de clase única, el asistente ahora muestra un toggle:
+- **▲ Subir [Clase]**: flujo estándar (HP, slots, ASI/Dote) — sin cambios
+- **✦ Nueva clase**: muestra grid de 11 clases disponibles (excluye la actual); al seleccionar, habilita sección de HP con el dado de la nueva clase
+
+Al confirmar nueva clase:
+- Actualiza pill de `"Explorador 2"` → `"Explorador 2/NuevaClase 1"`
+- Agrega o incrementa entrada en `hitDice` según el dado de la nueva clase
+- Recalcula ranuras de conjuro con el nuevo texto de clase combinado
+- El recurso de clase de la nueva clase debe configurarse manualmente (aviso via toast)
+
+**Funciones nuevas**: `switchLevelUpMode`, `selectNewMulticlassClass`, `_confirmNewMulticlass`, `_handleLevelUpConfirm`
+**Constante nueva**: `ALL_CLASSES` (12 clases PHB)
+**No cubre**: restricciones RAW de atributo mínimo para multiclase, ni 3+ clases simultáneas (FEAT-04)
+
+---
+
 ---
 
 ## CODEX-01 — CRÍTICO · Brujo nuevo no inicializa Espacios de Pacto

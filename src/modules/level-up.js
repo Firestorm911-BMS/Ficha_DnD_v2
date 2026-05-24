@@ -10,6 +10,7 @@ const PROF_BONUS_TABLE = [0, 2,2,2,2, 3,3,3,3, 4,4,4,4, 5,5,5,5, 6,6,6,6];
 const FULL_CASTERS  = new Set(['Bardo','Clérigo','Druida','Mago','Hechicero']);
 const HALF_CASTERS  = new Set(['Paladín','Explorador']);
 const WARLOCK_CLASS = 'Brujo';
+const ALL_CLASSES   = ['Bárbaro','Bardo','Clérigo','Druida','Guerrero','Hechicero','Mago','Monje','Paladín','Pícaro','Explorador','Brujo'];
 
 // ── Devuelve un array de 9 elementos con las ranuras por nivel de conjuro
 // para una clase y nivel dados. Usa computeSpellSlots internamente.
@@ -124,6 +125,114 @@ export function _confirmMulticlassLevelUp(originalPillText) {
   modal?.remove();
 }
 
+export function switchLevelUpMode(mode) {
+  const modal   = document.getElementById('levelUpModal');
+  if (!modal) return;
+  const btnSubir = document.getElementById('lvModeSubir');
+  const btnNueva = document.getElementById('lvModeNueva');
+  const secSubir = document.getElementById('lvSectionSubir');
+  const secNueva = document.getElementById('lvSectionNueva');
+  if (mode === 'subir') {
+    if (btnSubir) { btnSubir.style.background = 'rgba(201,168,76,0.85)'; btnSubir.style.color = '#1a1209'; }
+    if (btnNueva) { btnNueva.style.background = 'transparent';           btnNueva.style.color = 'var(--gold)'; }
+    if (secSubir) secSubir.style.display = '';
+    if (secNueva) secNueva.style.display = 'none';
+    modal.dataset.mode = 'subir';
+  } else {
+    if (btnNueva) { btnNueva.style.background = 'rgba(201,168,76,0.85)'; btnNueva.style.color = '#1a1209'; }
+    if (btnSubir) { btnSubir.style.background = 'transparent';           btnSubir.style.color = 'var(--gold)'; }
+    if (secSubir) secSubir.style.display = 'none';
+    if (secNueva) secNueva.style.display = '';
+    modal.dataset.mode = 'nueva';
+  }
+}
+
+export function selectNewMulticlassClass(className) {
+  document.querySelectorAll('.lv-new-class-card').forEach(c => {
+    c.style.borderColor = 'rgba(201,168,76,0.3)';
+    c.style.background  = 'transparent';
+  });
+  const card = document.getElementById('lvNewCard_' + className);
+  if (card) { card.style.borderColor = 'var(--gold)'; card.style.background = 'rgba(201,168,76,0.12)'; }
+
+  const modal = document.getElementById('levelUpModal');
+  if (modal) modal.dataset.selectedNewClass = className;
+
+  const dieType = window.CLASS_TEMPLATES?.[className]?.hitDie || 'd8';
+  const sides   = parseInt(dieType.replace('d', '')) || 8;
+  const conMod  = getMod('CON');
+  const avg     = Math.ceil(sides / 2 + 0.5) + conMod;
+  const conSign = conMod >= 0 ? '+' : '';
+
+  const hpSec = document.getElementById('lvHpSectionNueva');
+  if (hpSec) { hpSec.style.opacity = '1'; hpSec.style.pointerEvents = 'auto'; hpSec.style.transition = 'opacity 0.25s'; }
+
+  const rollBtn = document.getElementById('lvRollBtnNueva');
+  const avgBtn  = document.getElementById('lvAvgBtnNueva');
+  if (rollBtn) {
+    rollBtn.textContent = `🎲 Tirar ${dieType}${conSign}${conMod} CON`;
+    rollBtn.onclick = () => {
+      const roll = Math.ceil(Math.random() * sides);
+      const gain = Math.max(1, roll + conMod);
+      applyLevelUpHP(gain, `1d${sides}(${roll}) ${conSign}${conMod} CON`);
+      const res = document.getElementById('lvHpResultNueva');
+      if (res) res.innerHTML = `<span style="color:var(--gold);font-weight:bold;">+${gain} PG</span>`;
+    };
+  }
+  if (avgBtn) {
+    avgBtn.textContent = `Promedio (${avg})`;
+    avgBtn.onclick = () => {
+      const gain = Math.max(1, Math.ceil(sides / 2 + 0.5) + conMod);
+      applyLevelUpHP(gain, `Promedio ${Math.ceil(sides / 2 + 0.5)} ${conSign}${conMod} CON`);
+      const res = document.getElementById('lvHpResultNueva');
+      if (res) res.innerHTML = `<span style="color:var(--gold);font-weight:bold;">+${gain} PG</span>`;
+    };
+  }
+}
+
+export function _confirmNewMulticlass(currentPillText) {
+  const modal = document.getElementById('levelUpModal');
+  const selectedClass = modal?.dataset.selectedNewClass;
+  if (!selectedClass) { showToast('⚠ Seleccioná una clase para continuar'); return; }
+
+  const pillEl = document.querySelector('.hero-pill[data-field="class"] .meta-value');
+  if (!pillEl) { modal?.remove(); return; }
+
+  const newPillText = `${currentPillText}/${selectedClass} 1`;
+  pillEl.textContent = newPillText;
+
+  const dieType = window.CLASS_TEMPLATES?.[selectedClass]?.hitDie || 'd8';
+  if (!state.CHARACTER_STATE.hitDice) state.CHARACTER_STATE.hitDice = [];
+  const existing = state.CHARACTER_STATE.hitDice.find(d => d.die === dieType);
+  if (existing) { existing.count++; } else { state.CHARACTER_STATE.hitDice.push({ die: dieType, count: 1, spent: 0 }); }
+
+  const newSlots = computeSpellSlots(newPillText);
+  if (newSlots) {
+    [1,2,3,4,5,6,7,8,9].forEach(lv => {
+      if (newSlots[lv]) {
+        if (!state.spellSlotsState[lv]) state.spellSlotsState[lv] = { max: 0, used: 0 };
+        state.spellSlotsState[lv].max = newSlots[lv].max;
+      }
+    });
+    renderSpellSlots();
+  }
+  _syncPactSlots(newPillText);
+  renderHitDice();
+  addCombatLog(`⬆ Multiclase iniciada: ${newPillText}`);
+  showToast(`✦ ${newPillText} — configurá el recurso de clase si es necesario`);
+  window.saveToLocal?.();
+  modal?.remove();
+}
+
+export function _handleLevelUpConfirm() {
+  const modal = document.getElementById('levelUpModal');
+  if ((modal?.dataset.mode || 'subir') === 'nueva') {
+    _confirmNewMulticlass(modal?.dataset.pillText || '');
+  } else {
+    modal?.remove();
+  }
+}
+
 export function openLevelUpAssistant(newLevel) {
   const existing = document.getElementById('levelUpModal');
   if (existing) existing.remove();
@@ -215,13 +324,64 @@ export function openLevelUpAssistant(newLevel) {
       </div>
     </div>`;
 
+  // ── Mode selector y sección nueva clase (solo para clase única)
+  const modeSelectorHTML = !isMulti ? `
+    <div style="display:flex;gap:0;margin-bottom:16px;border-radius:6px;overflow:hidden;border:1px solid rgba(201,168,76,0.4);">
+      <button id="lvModeSubir" onclick="switchLevelUpMode('subir')"
+        style="flex:1;padding:8px 4px;background:rgba(201,168,76,0.85);color:#1a1209;border:none;cursor:pointer;font-family:'Cinzel',serif;font-size:11px;letter-spacing:0.5px;transition:all 0.2s;">
+        ▲ Subir ${classMeta || 'clase actual'}
+      </button>
+      <button id="lvModeNueva" onclick="switchLevelUpMode('nueva')"
+        style="flex:1;padding:8px 4px;background:transparent;color:var(--gold);border:none;cursor:pointer;font-family:'Cinzel',serif;font-size:11px;letter-spacing:0.5px;transition:all 0.2s;">
+        ✦ Nueva clase
+      </button>
+    </div>` : '';
+
+  let sectionNuevaHTML = '';
+  if (!isMulti) {
+    const otherClasses  = ALL_CLASSES.filter(c => c !== classMeta);
+    const newClassCards = otherClasses.map(c => {
+      const die = window.CLASS_TEMPLATES?.[c]?.hitDie || 'd8';
+      return `<div class="lv-new-class-card" id="lvNewCard_${c}" onclick="selectNewMulticlassClass('${c}')"
+        style="padding:8px 4px;border:1px solid rgba(201,168,76,0.3);border-radius:6px;cursor:pointer;text-align:center;transition:all 0.2s;user-select:none;">
+        <div style="font-family:'Cinzel',serif;font-size:12px;color:var(--gold);">${c}</div>
+        <div style="font-size:10px;color:var(--text-muted);margin-top:2px;">${die}</div>
+      </div>`;
+    }).join('');
+    sectionNuevaHTML = `
+    <div id="lvSectionNueva" style="display:none">
+      <div style="font-size:11px;color:var(--text-muted);text-align:center;letter-spacing:1px;margin-bottom:8px;">ELEGÍ LA NUEVA CLASE</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:14px;">${newClassCards}</div>
+      <div id="lvHpSectionNueva" style="opacity:0.4;pointer-events:none;">
+        <div class="lv-row" style="align-items:flex-start;">
+          <span class="lv-label">❤ PG nueva clase</span>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+            <div id="lvHpResultNueva" style="font-family:'Cinzel',serif;font-size:13px;color:var(--text-muted);">— Seleccioná una clase</div>
+            <div style="display:flex;gap:6px;">
+              <button id="lvRollBtnNueva" class="btn btn-sm">🎲 Tirar dado</button>
+              <button id="lvAvgBtnNueva" class="btn btn-sm">Promedio</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:10px;padding:8px;border-radius:6px;background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.15);">
+        <span style="font-size:11px;color:var(--text-muted);">⚠ El recurso de la nueva clase deberá configurarse manualmente.</span>
+      </div>
+    </div>`;
+  }
+
+  const secSubirOpen  = !isMulti ? '<div id="lvSectionSubir">' : '';
+  const secSubirClose = !isMulti ? '</div>' : '';
+
   // ── Botón Listo
   const confirmFn = isMulti
     ? `_confirmMulticlassLevelUp('${pillText.replace(/\\/g,'\\\\').replace(/'/g,"\\'")}')`
-    : `document.getElementById('levelUpModal').remove()`;
+    : `_handleLevelUpConfirm()`;
 
   const modal = document.createElement('div');
   modal.id = 'levelUpModal';
+  modal.dataset.pillText = pillText;
+  modal.dataset.mode     = 'subir';
   modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:9998;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);';
   modal.innerHTML = `
     <div style="background:var(--bg-card);border:2px solid var(--gold);border-radius:12px;padding:30px;max-width:460px;width:92%;box-shadow:0 0 80px rgba(201,168,76,0.3);font-family:'IM Fell English',serif;">
@@ -230,8 +390,10 @@ export function openLevelUpAssistant(newLevel) {
         <div style="font-size:13px;color:var(--text-muted);margin-top:6px;">Aplica los cambios de subida de nivel</div>
       </div>
 
+      ${modeSelectorHTML}
       ${classSelectionHTML}
 
+      ${secSubirOpen}
       <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:20px;">
         <div class="lv-row"><span class="lv-label">🛡 Bonif. Competencia</span><span class="lv-val">+${pb}</span></div>
         ${slotsHTML}
@@ -239,9 +401,12 @@ export function openLevelUpAssistant(newLevel) {
         ${asiHTML}
         ${hpSection}
       </div>
+      ${secSubirClose}
+
+      ${sectionNuevaHTML}
 
       <div style="display:flex;gap:8px;justify-content:flex-end;">
-        <button class="btn btn-sm" onclick="${confirmFn}">✓ Listo</button>
+        <button id="lvConfirmBtn" class="btn btn-sm" onclick="${confirmFn}">✓ Listo</button>
       </div>
     </div>`;
   document.body.appendChild(modal);
@@ -323,3 +488,7 @@ window.applyLevelUpHP             = applyLevelUpHP;
 window.applyClassTemplate         = applyClassTemplate;
 window.getSlotTableForLevel       = getSlotTableForLevel;
 window._confirmMulticlassLevelUp  = _confirmMulticlassLevelUp;
+window.switchLevelUpMode          = switchLevelUpMode;
+window.selectNewMulticlassClass   = selectNewMulticlassClass;
+window._confirmNewMulticlass      = _confirmNewMulticlass;
+window._handleLevelUpConfirm      = _handleLevelUpConfirm;
