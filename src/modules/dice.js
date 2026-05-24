@@ -460,6 +460,73 @@ function rollAttackDamage(i, isCrit = false) {
     if (d) { d.innerHTML = DEFAULT_DIE_CONTENT; d.classList.remove('spinning'); }
   }
 
+  function _showDamageAnimation(attackIndex, isCrit) {
+    const atk = state.attacks[attackIndex];
+    if (!atk) { stage.classList.remove('open'); _resetDie(); return; }
+
+    const dmg = parseDamageString(atk.damage);
+    const mult = isCrit ? 2 : 1;
+    const rageBonus = getRageDamageBonus(atk);
+    const magicBonus = atk.magicBonus || 0;
+    const baseBonus = dmg.bonus + rageBonus + magicBonus;
+
+    const { total: diceTotal, parts } = rollAllDiceGroups(dmg.groups, mult);
+    let totalDmg = Math.max(0, diceTotal + baseBonus);
+    let detail = parts.join(' + ');
+    const bonusStr = formatDamageBonus(baseBonus);
+    if (bonusStr) detail += ` ${bonusStr}`;
+    if (rageBonus) detail += ` (${state.CHARACTER_STATE.classResource?.name || 'Recurso'})`;
+    if (magicBonus) detail += ` [+${magicBonus}✦]`;
+
+    for (const ed of (atk.extraDamage || [])) {
+      const edDmg = parseDamageString(ed.dice || '1d6');
+      const { total: edTotal, parts: edParts } = rollAllDiceGroups(edDmg.groups, mult);
+      totalDmg += edTotal;
+      detail += ` + ${edParts.join('+')} ${ed.type}`;
+    }
+
+    const primarySides = dmg.primary?.sides || 6;
+    const svg = DICE_SVGS[primarySides] || DICE_SVGS[6];
+    const die = document.getElementById('rollDie');
+    const lbl = document.getElementById('rollLabel');
+    const brk = document.getElementById('rollBreakdown');
+    const tag = document.getElementById('rollTag');
+
+    stage.classList.remove('crit', 'fumble');
+    die.innerHTML = svg + '<div class="roll-num" id="rollNum">?</div>';
+    lbl.textContent = `Daño — ${atk.name}`;
+    brk.textContent = '';
+    tag.textContent = isCrit ? '✦ CRÍTICO' : '';
+    if (isCrit) stage.classList.add('crit');
+
+    const dieInner = die.querySelector('svg') || die;
+    dieInner.classList.remove('spinning');
+    void dieInner.offsetHeight;
+    dieInner.classList.add('spinning');
+
+    const rollNumEl = die.querySelector('.roll-num');
+    rollNumEl.textContent = '?';
+    let flickI = 0;
+    const flicker = setInterval(() => {
+      rollNumEl.textContent = Math.ceil(Math.random() * primarySides);
+      if (++flickI > 15) clearInterval(flicker);
+    }, 50);
+
+    setTimeout(() => {
+      clearInterval(flicker);
+      rollNumEl.textContent = totalDmg;
+      brk.innerHTML = `${detail} = <strong style="color:var(--gold-light);font-size:24px;">${totalDmg}</strong>`;
+      addCombatLog(
+        `⚔ Daño <em>${escapeAttr(atk.name)}</em>${isCrit ? ' ✦ CRÍTICO' : ''}: ${detail} = ` +
+        `<strong style="color:var(--gold);font-size:15px;">${totalDmg}</strong> · ` +
+        `<button class="log-apply-btn" onclick="applyDamageAmount(${totalDmg},{physical:${atk.melee !== false}});this.parentElement.querySelector('.log-apply-btn').remove()">← Aplicar</button>`
+      );
+      showToast(`${isCrit ? '✦ CRÍTICO · ' : ''}Daño: ${totalDmg}`);
+    }, 800);
+
+    setTimeout(() => { stage.classList.remove('open'); _resetDie(); }, 3200);
+  }
+
   // ── Master cinematic roll ─────────────────────
   window.LL_cinematicRoll = function(opts) {
     opts = opts || {};
@@ -588,9 +655,7 @@ function rollAttackDamage(i, isCrit = false) {
           dmgBtn.addEventListener('click', e => {
             e.stopPropagation();
             brk.querySelectorAll('.roll-dmg-btn,.roll-skip-btn').forEach(b => b.remove());
-            stage.classList.remove('open');
-            _resetDie();
-            rollAttackDamage(i, result.crit);
+            _showDamageAnimation(i, result.crit);
           });
 
           const skipBtn = document.createElement('button');
