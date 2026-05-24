@@ -97,7 +97,11 @@ export function deleteRosterCharacter(key) {
 }
 
 export function clearSave() {
-  localStorage.removeItem(getSaveKey());
+  const key = getSaveKey();
+  localStorage.removeItem(key);
+  localStorage.removeItem(_imgKey(key, 'portrait'));
+  localStorage.removeItem(_imgKey(key, 'bgImage'));
+  localStorage.removeItem(DEFAULT_KEY);
   localStorage.removeItem(KEY_POINTER);
   setSaveKey(DEFAULT_KEY);
   showToast('Datos borrados');
@@ -106,7 +110,11 @@ export function clearSave() {
 
 export function newSheet() {
   if (!confirm('¿Crear una ficha en blanco?\nSe perderán todos los datos actuales.')) return;
-  localStorage.removeItem(getSaveKey());
+  const key = getSaveKey();
+  localStorage.removeItem(key);
+  localStorage.removeItem(_imgKey(key, 'portrait'));
+  localStorage.removeItem(_imgKey(key, 'bgImage'));
+  localStorage.removeItem(DEFAULT_KEY);
   localStorage.removeItem(KEY_POINTER);
   setSaveKey(DEFAULT_KEY);
   location.reload();
