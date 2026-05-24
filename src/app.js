@@ -493,6 +493,7 @@ function toggleEditMode() {
   _renderInvFn();
   renderTraits();
   renderHitDice();
+  renderSpellBook();
 
   // Hacer editables todos los campos de texto libre + XP
   [
