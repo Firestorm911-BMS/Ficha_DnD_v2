@@ -1124,7 +1124,24 @@
   <div class="spell-modal-box">
     <h3>✦ Añadir / Editar Conjuro</h3>
     <div class="form-row">
-      <div style="flex:1;"><label>📚 Preset PHB</label><select id="smPreset" onchange="onSpellPresetChange()"><option value="">— Elegir preset —</option></select></div>
+      <div style="flex:1;">
+        <label>⚔ Clase</label>
+        <select id="smSourceClass" onchange="onSpellClassChange()">
+          <option value="">— Todas —</option>
+          <option>Bardo</option>
+          <option>Clérigo</option>
+          <option>Druida</option>
+          <option>Explorador</option>
+          <option>Hechicero</option>
+          <option>Mago</option>
+          <option>Paladín</option>
+          <option>Brujo</option>
+        </select>
+      </div>
+      <div style="flex:2;">
+        <label>📚 Hechizo base PHB</label>
+        <select id="smPreset" onchange="onSpellPresetChange()"><option value="">— Elegir hechizo —</option></select>
+      </div>
     </div>
     <div class="form-row">
       <div style="flex:2;"><label>Nombre</label><input id="smName" placeholder="Nombre del conjuro"></div>

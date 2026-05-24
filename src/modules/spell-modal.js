@@ -1,56 +1,128 @@
 import { state } from '../state.js';
 import { showToast } from './toast-log.js';
 
-let _editingSpellId = null;
-let _spellPresetsData = null;   // cache: { "0": [...spells], ..., "9": [...spells] }
+let _editingSpellId  = null;
+let _spellPresetsData = null;   // cache: spells.json { "0":[...], ..., "9":[...] }
 
 export function addSpell()   { openSpellModal(null, 1); }
 export function addCantrip() { openSpellModal(null, 0); }
 
-// ── Preset loading ──────────────────────────────────────────────────────────
+// ── Preset PHB (spells.json) ────────────────────────────────────────────────
 
 async function _loadSpellPresets() {
-  if (_spellPresetsData) { _buildSpellPresetOptions(); return; }
+  if (_spellPresetsData) { _buildPhbOptions(); return; }
   try {
     const res = await fetch('src/data/spells.json');
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     _spellPresetsData = await res.json();
-    _buildSpellPresetOptions();
+    _buildPhbOptions();
   } catch (e) {
     console.warn('[spell-modal] No se pudo cargar spells.json:', e);
   }
 }
 
-function _buildSpellPresetOptions() {
+/** Rellena #smPreset con todos los hechizos de spells.json (por nivel). */
+function _buildPhbOptions() {
   const sel = document.getElementById('smPreset');
   if (!sel || sel.dataset.built) return;
   const LEVEL_LABELS = [
     'Trucos (0)', 'Nivel 1', 'Nivel 2', 'Nivel 3', 'Nivel 4',
-    'Nivel 5', 'Nivel 6', 'Nivel 7', 'Nivel 8', 'Nivel 9',
+    'Nivel 5',    'Nivel 6', 'Nivel 7', 'Nivel 8', 'Nivel 9',
   ];
-  let html = '<option value="">— Elegir preset —</option>';
+  let html = '<option value="">— Elegir hechizo —</option>';
   for (let lv = 0; lv <= 9; lv++) {
     const spells = _spellPresetsData?.[String(lv)];
     if (!spells?.length) continue;
     html += `<optgroup label="${LEVEL_LABELS[lv]}">`;
     spells.forEach((sp, idx) => {
-      html += `<option value="${lv}|${idx}">${sp.name}</option>`;
+      html += `<option value="phb|${lv}|${idx}">${sp.name}</option>`;
     });
     html += '</optgroup>';
   }
   sel.innerHTML = html;
-  sel.dataset.built = '1';
+  sel.dataset.built  = '1';
+  sel.dataset.source = 'phb';
 }
 
+// ── Selector de clase → hechizos de SPELL_PRESETS ───────────────────────────
+
+/** Cambia #smPreset al listado de hechizos de la clase elegida. */
+export function onSpellClassChange() {
+  const cls     = document.getElementById('smSourceClass')?.value || '';
+  const presetSel = document.getElementById('smPreset');
+  if (!presetSel) return;
+
+  if (!cls) {
+    // Sin clase → volver al listado PHB completo
+    delete presetSel.dataset.built;
+    delete presetSel.dataset.source;
+    delete presetSel.dataset.cls;
+    _loadSpellPresets();
+    return;
+  }
+
+  const data = window.getSpellsForClass?.(cls);
+  if (!data) {
+    presetSel.innerHTML = '<option value="">— Sin datos para esta clase —</option>';
+    return;
+  }
+
+  let html = '<option value="">— Elegir hechizo —</option>';
+  if (data.cantrips.length) {
+    html += '<optgroup label="Trucos">';
+    data.cantrips.forEach((sp, idx) => {
+      html += `<option value="class|cantrip|${idx}">${sp.name}</option>`;
+    });
+    html += '</optgroup>';
+  }
+  const byLevel = {};
+  data.spells.forEach((sp, idx) => {
+    (byLevel[sp.level] ??= []).push({ sp, idx });
+  });
+  Object.keys(byLevel).sort((a, b) => a - b).forEach(lv => {
+    html += `<optgroup label="Nivel ${lv}">`;
+    byLevel[lv].forEach(({ sp, idx }) => {
+      html += `<option value="class|spell|${idx}">${sp.name}</option>`;
+    });
+    html += '</optgroup>';
+  });
+
+  presetSel.innerHTML    = html;
+  presetSel.dataset.source = 'class';
+  presetSel.dataset.cls    = cls;
+  delete presetSel.dataset.built;
+}
+
+/** Rellena el formulario con el hechizo elegido en #smPreset. */
 export function onSpellPresetChange() {
   const sel = document.getElementById('smPreset');
   if (!sel?.value) return;
-  const [lv, idx] = sel.value.split('|').map(Number);
-  const sp = _spellPresetsData?.[String(lv)]?.[idx];
+
+  let sp = null;
+
+  if (sel.dataset.source === 'class') {
+    // Datos desde SPELL_PRESETS (via getSpellsForClass)
+    const cls  = sel.dataset.cls;
+    const data = window.getSpellsForClass?.(cls);
+    if (!data) return;
+    const [, type, rawIdx] = sel.value.split('|');
+    const idx = parseInt(rawIdx);
+    sp = type === 'cantrip'
+      ? { ...data.cantrips[idx], level: 0 }
+      : { ...data.spells[idx] };
+  } else {
+    // Datos desde spells.json (PHB list)
+    const [, lv, idx] = sel.value.split('|');
+    sp = _spellPresetsData?.[lv]?.[parseInt(idx)];
+  }
   if (!sp) return;
 
+  _fillFormFromSpell(sp);
+}
+
+function _fillFormFromSpell(sp) {
   document.getElementById('smName').value       = sp.name;
-  document.getElementById('smLevel').value      = lv;
+  document.getElementById('smLevel').value      = sp.level ?? 0;
   document.getElementById('smSchool').value     = sp.school      || '';
   document.getElementById('smCastTime').value   = sp.castTime    || '1 acción';
   document.getElementById('smRange').value      = sp.range       || '';
@@ -59,11 +131,11 @@ export function onSpellPresetChange() {
   document.getElementById('smConc').checked     = sp.concentration || false;
   document.getElementById('smRitual').checked   = sp.ritual       || false;
   const saveEl = document.getElementById('smSave');
-  if (saveEl) saveEl.value = sp.save || '';
+  if (saveEl) saveEl.value = sp.save   || '';
   const atkEl  = document.getElementById('smAttack');
   if (atkEl)  atkEl.value  = sp.attack || '';
   document.getElementById('smDesc').value       = sp.desc        || '';
-  // smCastAttr queda como está — no está en los datos del preset
+  // smCastAttr y smSourceClass no se tocan aquí (el usuario los controla)
 }
 
 // ── Modal open / save / close ───────────────────────────────────────────────
@@ -73,11 +145,21 @@ export function openSpellModal(id = null, forceLevel = null) {
   if (!modal) return;
   _editingSpellId = id;
   const spell = id ? state.spells.find(s => s.id === id) : null;
-  const lv = spell?.level ?? (forceLevel !== null ? forceLevel : 1);
+  const lv    = spell?.level ?? (forceLevel !== null ? forceLevel : 1);
 
-  // Resetear el selector de presets
+  // Resetear selectors
+  const clsSel    = document.getElementById('smSourceClass');
   const presetSel = document.getElementById('smPreset');
+  if (clsSel)    clsSel.value    = spell?.sourceClass || '';
   if (presetSel) presetSel.value = '';
+
+  // Repoblar #smPreset según la clase que tenga el conjuro (si hay)
+  if (clsSel?.value) {
+    onSpellClassChange();
+  } else {
+    delete presetSel?.dataset?.built;
+    _loadSpellPresets();
+  }
 
   document.getElementById('smName').value       = spell?.name         || '';
   document.getElementById('smLevel').value      = lv;
@@ -93,9 +175,6 @@ export function openSpellModal(id = null, forceLevel = null) {
   document.getElementById('smCastAttr').value   = spell?.castingAttr  || '';
   document.getElementById('smDesc').value       = spell?.desc         || '';
 
-  // Cargar presets en segundo plano (idempotente)
-  _loadSpellPresets();
-
   modal.classList.add('open');
   setTimeout(() => document.getElementById('smName').focus(), 50);
 }
@@ -103,6 +182,7 @@ export function openSpellModal(id = null, forceLevel = null) {
 export function saveSpellModal() {
   const name = document.getElementById('smName').value.trim();
   if (!name) { showToast('El nombre es obligatorio'); return; }
+  const sourceClass = document.getElementById('smSourceClass')?.value?.trim() || null;
   const data = {
     name,
     level:         parseInt(document.getElementById('smLevel').value) || 0,
@@ -116,6 +196,7 @@ export function saveSpellModal() {
     save:          document.getElementById('smSave').value || null,
     attack:        document.getElementById('smAttack').value || null,
     castingAttr:   document.getElementById('smCastAttr').value || null,
+    sourceClass:   sourceClass || null,
     desc:          document.getElementById('smDesc').value.trim(),
     prepared:      true,
   };
@@ -144,3 +225,4 @@ window.saveSpellModal       = saveSpellModal;
 window.closeSpellModal      = closeSpellModal;
 // window bridge — eliminar cuando se migre el HTML
 window.onSpellPresetChange  = onSpellPresetChange;
+window.onSpellClassChange   = onSpellClassChange;

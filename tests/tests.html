@@ -55,6 +55,7 @@
     <select id="smAttack"><option value=""></option><option value="ranged">ranged</option></select>
     <select id="smCastAttr"><option value=""></option><option value="INT">INT</option></select>
     <textarea id="smDesc"></textarea>
+    <select id="smSourceClass"><option value="">—</option><option value="Mago">Mago</option></select>
     <select id="smPreset"><option value="">—</option></select>
   </div>
 
@@ -626,6 +627,17 @@
         const sp = state.spells[0];
         assert(sp !== undefined,      'debe existir el conjuro guardado');
         assertEqual(sp.ritual, false, 'ritual debe ser false');
+      });
+
+      test('saveSpellModal guarda sourceClass cuando se elige clase', () => {
+        state.spells.length = 0;
+        document.getElementById('smSourceClass').value = 'Mago';
+        _fillSpellForm({ smName: 'Misil Mágico', smLevel: '1' });
+        saveSpellModal();
+        const sp = state.spells[0];
+        assert(sp !== undefined,               'debe existir el conjuro');
+        assertEqual(sp.sourceClass, 'Mago',    'sourceClass debe ser Mago');
+        document.getElementById('smSourceClass').value = '';
       });
 
       test('saveSpellModal guarda ritual:true cuando el checkbox está marcado', () => {

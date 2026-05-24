@@ -428,6 +428,29 @@ export function renderSpellBook() {
   }
 }
 
+// Colores por clase — usados en el badge de sourceClass de cada tarjeta
+const CLASS_COLORS = {
+  'Bardo':      '#f472b6',
+  'Clérigo':    '#fbbf24',
+  'Druida':     '#4ade80',
+  'Explorador': '#34d399',
+  'Hechicero':  '#f87171',
+  'Mago':       '#818cf8',
+  'Paladín':    '#cbd5e1',
+  'Brujo':      '#c084fc',
+};
+
+/** Devuelve los conjuros de una clase desde SPELL_PRESETS. */
+export function getSpellsForClass(className) {
+  const preset = SPELL_PRESETS[className];
+  if (!preset?.caster) return null;
+  return {
+    cantrips: preset.cantrips || [],
+    spells:   preset.spells   || [],
+    attr:     preset.attr     || '',
+  };
+}
+
 function buildSpellCard(spell) {
   const card = document.createElement('div');
   const isConc = state.concentrationSpell?.id === spell.id;
@@ -437,12 +460,14 @@ function buildSpellCard(spell) {
   card.dataset.spellId = spell.id;
 
   const lvlLabel = spell.level === 0 ? 'Truco' : `Nv ${spell.level}`;
+  const srcColor = spell.sourceClass ? (CLASS_COLORS[spell.sourceClass] || 'var(--text-muted)') : null;
   const tags = [
     spell.concentration ? `<span class="spell-tag conc">⚡ Conc.</span>` : '',
     spell.save   ? `<span class="spell-tag save">TS ${spell.save}</span>` : '',
     spell.attack ? `<span class="spell-tag atk">${spell.attack==='ranged'?'🎯':'⚔'} Atq.</span>` : '',
     spell.castingAttr ? `<span class="spell-tag" style="border-color:var(--gold-dark);color:var(--text-muted);font-size:9px;">${spell.castingAttr}</span>` : '',
     isConc       ? `<span class="spell-tag conc" style="animation:hpPulse 1.2s ease-in-out infinite">✦ Activo</span>` : '',
+    srcColor     ? `<span class="spell-tag" style="border-color:${srcColor};color:${srcColor};font-size:9px;">${escapeAttr(spell.sourceClass)}</span>` : '',
   ].join('');
 
   card.innerHTML = `
@@ -511,6 +536,7 @@ export function renderConcentration() {
 }
 
 // ── Window bridge ──────────────────────────────────────────────────────────
+window.getSpellsForClass  = getSpellsForClass;
 window.loadSpellPreset    = loadSpellPreset;
 window.toggleSpellFilter  = toggleSpellFilter;
 window.renderSpellBook    = renderSpellBook;
