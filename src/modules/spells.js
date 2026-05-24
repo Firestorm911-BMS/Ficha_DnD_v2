@@ -417,9 +417,14 @@ export function renderSpellBook() {
   spellCont.innerHTML = '';
   if (regs.length === 0) spellCont.innerHTML = `<div class="spell-empty">${_spellFilter==='prepared'?'Sin conjuros preparados':'Sin conjuros — añade uno'}</div>`;
   else {
-    // Nivel máximo de ranura disponible (0 = sin ranuras / no lanzador)
-    const maxSlotLevel = [1,2,3,4,5,6,7,8,9]
-      .reduce((acc, i) => (state.spellSlotsState[i]?.max || 0) > 0 ? Math.max(acc, i) : acc, 0);
+    // Nivel máximo de ranura disponible (0 = sin ranuras / no lanzador).
+    // Se incluyen pact slots del Brujo (pactSlotsState) porque no van a spellSlotsState.
+    const pactContrib = (state.pactSlotsState?.max > 0) ? (state.pactSlotsState?.level || 0) : 0;
+    const maxSlotLevel = Math.max(
+      [1,2,3,4,5,6,7,8,9].reduce((acc, i) =>
+        (state.spellSlotsState[i]?.max || 0) > 0 ? Math.max(acc, i) : acc, 0),
+      pactContrib
+    );
 
     const levels = [...new Set(regs.map(s=>s.level))].sort((a,b)=>a-b);
     levels
