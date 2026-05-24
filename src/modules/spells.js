@@ -460,7 +460,8 @@ function buildSpellCard(spell) {
         ${spell.attack ? `<button class="btn btn-sm" onclick="rollSpellAttack('${spell.id}')">${spell.attack==='ranged'?'🎯':'⚔'} Tirar ataque</button>` : ''}
         ${spell.concentration&&!isConc ? `<button class="btn btn-sm btn-primary" onclick="setConcentration('${spell.id}')">⚡ Concentrarme</button>` : ''}
         ${isConc ? `<button class="btn btn-sm" style="border-color:#e74c3c;color:#e74c3c;" onclick="breakConcentration()">✕ Romper concentración</button>` : ''}
-        ${editMode ? `<button class="btn btn-sm" onclick="openSpellModal('${spell.id}')">✎ Editar</button><button class="btn btn-sm" onclick="deleteSpell('${spell.id}')">✕ Eliminar</button>` : ''}
+        <button class="btn btn-sm" onclick="openSpellModal('${spell.id}')">✎ Editar</button>
+        ${editMode ? `<button class="btn btn-sm" onclick="deleteSpell('${spell.id}')">✕ Eliminar</button>` : ''}
       </div>
     </div>`;
   return card;
