@@ -157,6 +157,42 @@ export function renderRage() {
 
   document.body.classList.toggle('rage-active', state.rageActive);
   window.renderAttacks?.();
+  _renderExtraResources();
+}
+
+function _renderExtraResources() {
+  const card = document.getElementById('rageCard');
+  if (!card) return;
+  const extras = state.CHARACTER_STATE.extraClassResources || [];
+
+  let container = document.getElementById('extraResourcesContainer');
+  if (!container) {
+    container = document.createElement('div');
+    container.id = 'extraResourcesContainer';
+    card.appendChild(container);
+  }
+
+  if (extras.length === 0) { container.style.display = 'none'; return; }
+  container.style.display = '';
+  container.innerHTML = extras.map((r, idx) => {
+    const maxUses = r.maxUses || 0;
+    const spent   = Math.min(r.usesSpent || 0, maxUses);
+    const avail   = maxUses - spent;
+    const rIcon   = r.icon  || '⚡';
+    const rName   = r.name  || 'Recurso';
+    const recText = r.recovery === 'short' ? ' · desc. corto' : r.recovery === 'long' ? ' · desc. largo' : r.recovery === 'turn' ? ' · por turno' : '';
+    const pips    = Array.from({length: maxUses}, (_, i) =>
+      `<div class="pip ${i < avail ? 'available' : 'used'}" onclick="toggleExtraResourcePip(${idx},this)" style="cursor:pointer;"></div>`
+    ).join('');
+    return `
+      <div style="margin-top:8px;padding:8px 2px;border-top:1px solid rgba(201,168,76,0.18);">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+          <span style="font-size:12px;color:var(--text-muted);">${rIcon} ${rName}</span>
+          <span style="font-size:11px;color:var(--text-muted);">${avail}/${maxUses}${recText}</span>
+        </div>
+        <div style="display:flex;gap:4px;flex-wrap:wrap;">${pips}</div>
+      </div>`;
+  }).join('');
 }
 
 export function toggleRage() {
@@ -202,6 +238,28 @@ export function toggleRagePip(el) {
   window.saveToLocal?.();
 }
 
+export function addExtraResource(res) {
+  if (!state.CHARACTER_STATE.extraClassResources) state.CHARACTER_STATE.extraClassResources = [];
+  const idx = state.CHARACTER_STATE.extraClassResources.findIndex(r => r.name === res.name);
+  if (idx >= 0) {
+    state.CHARACTER_STATE.extraClassResources[idx] = { usesSpent: 0, ...res };
+  } else {
+    state.CHARACTER_STATE.extraClassResources.push({ usesSpent: 0, ...res });
+  }
+  renderRage();
+}
+
+export function toggleExtraResourcePip(idx, el) {
+  const extras = state.CHARACTER_STATE.extraClassResources;
+  if (!extras?.[idx]) return;
+  const r       = extras[idx];
+  const maxUses = r.maxUses || 0;
+  const spent   = r.usesSpent || 0;
+  r.usesSpent   = el.classList.contains('available') ? Math.min(maxUses, spent + 1) : Math.max(0, spent - 1);
+  renderRage();
+  window.saveToLocal?.();
+}
+
 export function resetRageState() {
   // Termina el estado activo pero NO recupera usos — eso requiere descanso largo
   state.rageActive = false;
@@ -209,10 +267,12 @@ export function resetRageState() {
 }
 
 // ── Window bridge ──────────────────────────────────────────────────────────
-window.getResourceScale   = getResourceScale;
-window.calcResourceMaxUses = calcResourceMaxUses;
-window.getRageDamageBonus = getRageDamageBonus;
-window.renderRage         = renderRage;
-window.toggleRage         = toggleRage;
-window.toggleRagePip      = toggleRagePip;
-window.resetRageState     = resetRageState;
+window.getResourceScale      = getResourceScale;
+window.calcResourceMaxUses   = calcResourceMaxUses;
+window.getRageDamageBonus    = getRageDamageBonus;
+window.renderRage            = renderRage;
+window.toggleRage            = toggleRage;
+window.toggleRagePip         = toggleRagePip;
+window.resetRageState        = resetRageState;
+window.addExtraResource      = addExtraResource;
+window.toggleExtraResourcePip = toggleExtraResourcePip;

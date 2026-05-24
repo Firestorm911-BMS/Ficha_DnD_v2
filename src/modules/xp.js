@@ -92,6 +92,18 @@ export function addXP() {
         renderRage();
       }
     }
+    if (CHARACTER_STATE.extraClassResources?.length) {
+      CHARACTER_STATE.extraClassResources.forEach(r => {
+        if (!r.className) return;
+        const escaped = r.className.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const m = classTextLU.match(new RegExp(`(?:^|\\/)\\s*${escaped}\\s+(\\d+)`));
+        if (m) {
+          const newUses = calcResourceMaxUses(r.className, parseInt(m[1]) || 1);
+          if (newUses !== null) r.maxUses = newUses;
+        }
+      });
+      renderRage();
+    }
     const newSlotsLU = computeSpellSlots(classTextLU);
     if (newSlotsLU) {
       [1,2,3,4,5,6,7,8,9].forEach(lv => {

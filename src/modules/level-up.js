@@ -219,14 +219,13 @@ export function _confirmNewMulticlass(currentPillText) {
   _syncPactSlots(newPillText);
   renderHitDice();
 
-  // Aplicar recurso de la nueva clase (nivel 1) sin tocar hitDice
+  // Agregar recurso de la nueva clase al array de extras (sin tocar el primario)
   const newTemplate = window.CLASS_TEMPLATES?.[selectedClass];
-  if (newTemplate?.resource) {
-    state.CHARACTER_STATE.classResource = { ...newTemplate.resource };
+  if (newTemplate?.resource?.name) {
     const scaledUses = getResourceScale(selectedClass, 1);
-    if (scaledUses !== null) state.CHARACTER_STATE.classResource.maxUses = scaledUses;
-    state.CHARACTER_STATE.rageUsesSpent = 0;
-    renderRage();
+    const extraRes   = { ...newTemplate.resource, usesSpent: 0, className: selectedClass };
+    if (scaledUses !== null) extraRes.maxUses = scaledUses;
+    window.addExtraResource?.(extraRes);
   }
 
   addCombatLog(`⬆ Multiclase iniciada: ${newPillText}`);

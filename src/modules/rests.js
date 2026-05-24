@@ -16,6 +16,9 @@ export function shortRest() {
   if ((state.CHARACTER_STATE.classResource?.recovery || '') === 'short') {
     state.CHARACTER_STATE.rageUsesSpent = 0;
   }
+  state.CHARACTER_STATE.extraClassResources?.forEach(r => {
+    if (r.recovery === 'short') r.usesSpent = 0;
+  });
   // Bardo nv.5+: Inspiración Bárdica se recupera en descanso corto
   const _classText = document.querySelector('.hero-pill[data-field="class"] .meta-value')?.textContent?.trim() || '';
   const _bardMatch = _classText.split('/').map(p => p.trim().match(/^Bardo\s+(\d+)$/)).find(Boolean);
@@ -44,6 +47,7 @@ export function longRest() {
   window.setHP?.(max, 0);
   const recovery = state.CHARACTER_STATE.classResource?.recovery || 'long';
   if (recovery === 'long' || recovery === 'short') state.CHARACTER_STATE.rageUsesSpent = 0;
+  state.CHARACTER_STATE.extraClassResources?.forEach(r => { r.usesSpent = 0; });
   resetRageState();
   window.resetTraitUses?.('long');
   resetDeathSaves();

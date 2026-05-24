@@ -1329,7 +1329,7 @@ import { showToast } from './modules/toast-log.js';
               const scaledExtra = { ...extraToAdd };
               const uses = window.calcResourceMaxUses?.(extraClassName, extraClassLevel);
               if (uses !== null) scaledExtra.maxUses = uses;
-              window.addExtraResource?.(scaledExtra);
+              window.addExtraResource?.({ ...scaledExtra, className: extraClassName });
             }
           }
         }

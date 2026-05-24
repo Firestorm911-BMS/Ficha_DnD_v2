@@ -32,6 +32,7 @@ export const state = {
       damageBonus: 0, physResist: false,
       effects: []
     },
+    extraClassResources: [],
     // Tema activo
     classThemeIndex: 4,
     customBg: '#070e07',
