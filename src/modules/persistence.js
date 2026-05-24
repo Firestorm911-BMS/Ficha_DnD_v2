@@ -351,10 +351,10 @@ export function loadState(directData) {
         const el = g(id);
         if (el) {
           const plain = String(raw)
+            .replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&')
             .replace(/<br\s*\/?>/gi, '\n')
             .replace(/<\/div>/gi, '\n')
             .replace(/<[^>]+>/g, '')
-            .replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&')
             .replace(/\n{3,}/g, '\n\n')
             .trim();
           el.textContent = plain;
