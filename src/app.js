@@ -641,7 +641,7 @@ document.addEventListener('keydown', e => {
   window.nextTurn?.();
 });
 
-// Easter egg: Código Konami → Tema EVA-01
+// Easter egg: Código Konami → Tema EVA-01 (desktop)
 (function () {
   const SEQ = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
   let _k = 0;
@@ -649,6 +649,22 @@ document.addEventListener('keydown', e => {
     _k = (e.key === SEQ[_k]) ? _k + 1 : (e.key === SEQ[0] ? 1 : 0);
     if (_k < SEQ.length) return;
     _k = 0;
+    applyClassTheme(12);
+    showToast('⚡ UNIDAD-01 ACTIVADA — CAMPO AT AL MÁXIMO ⚡');
+  });
+})();
+
+// Easter egg: 7 tiradas del d20 en ≤5 s → Tema EVA-01 (mobile)
+(function () {
+  let _count = 0, _timer = null;
+  document.addEventListener('click', e => {
+    if (!e.target.closest('[data-sides="20"]')) return;
+    _count++;
+    clearTimeout(_timer);
+    _timer = setTimeout(() => { _count = 0; }, 5000);
+    if (_count < 7) return;
+    _count = 0;
+    clearTimeout(_timer);
     applyClassTheme(12);
     showToast('⚡ UNIDAD-01 ACTIVADA — CAMPO AT AL MÁXIMO ⚡');
   });
