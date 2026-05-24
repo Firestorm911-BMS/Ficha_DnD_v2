@@ -626,6 +626,7 @@ function rollAttackDamage(i, isCrit = false) {
       label: `⚔ ${atk.name}`,
       mod: mod,
       stageDuration: 0,
+      noSpin: true,
       onComplete: function(result) {
         const brk = document.getElementById('rollBreakdown');
         if (!brk) return;
