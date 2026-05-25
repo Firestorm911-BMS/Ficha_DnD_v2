@@ -90,22 +90,22 @@ const CLASS_SAVE_PROFS = {
 
 
 const SPECIES_DATA = {
-  'Enano de Colinas':     { speed: '7.5m',  sight: 'Oscuridad 18m',  trait: '+1 SAB, +1 PG por nivel. Resistencia al veneno.' },
-  'Enano de Montañas':    { speed: '7.5m',  sight: 'Oscuridad 18m',  trait: '+2 FUE. Competencia con armaduras ligeras y medias.' },
-  'Elfo Alto':            { speed: '9m',    sight: 'Oscuridad 18m',  trait: '+1 INT. Un truco de mago. Idioma adicional.' },
-  'Elfo de los Bosques':  { speed: '10.5m', sight: 'Oscuridad 18m',  trait: 'Velocidad extra. Puede esconderse en terreno natural incluso cuando es observado.' },
-  'Drow (Elfo Oscuro)':   { speed: '9m',    sight: 'Oscuridad 36m',  trait: 'Magia innata. Desventaja bajo luz solar directa.' },
-  'Mediano Pie Ligero':   { speed: '7.5m',  sight: 'Normal',         trait: 'Suerte (relanzar 1s). Puede esconderse tras criaturas más grandes.' },
-  'Mediano Robusto':      { speed: '7.5m',  sight: 'Normal',         trait: '+1 CON. Resistencia al veneno. Suerte.' },
-  'Humano Estándar':      { speed: '9m',    sight: 'Normal',         trait: '+1 a todos los atributos. Un idioma adicional.' },
-  'Humano Variante':      { speed: '9m',    sight: 'Normal',         trait: '+1 a dos atributos. Una competencia y una dote a nivel 1.' },
-  'Dracónido':            { speed: '9m',    sight: 'Normal',         trait: '+2 FUE, +1 CAR. Arma de soplo y resistencia según linaje.' },
-  'Gnomo de las Rocas':   { speed: '7.5m',  sight: 'Oscuridad 18m',  trait: '+2 INT, +1 CON. Herramientas de artesano. Ventaja vs. magia.' },
-  'Gnomo de los Bosques': { speed: '7.5m',  sight: 'Oscuridad 18m',  trait: '+2 INT, +1 DES. Habla con animales pequeños. Truco de ilusión mayor.' },
-  'Semi-Elfo':            { speed: '9m',    sight: 'Oscuridad 18m',  trait: '+2 CAR, +1 a dos atributos. Dos competencias. Resistencia a encantamientos.' },
-  'Semi-Orco':            { speed: '9m',    sight: 'Oscuridad 18m',  trait: 'Resistencia feroz (sobrevive con 1 PG una vez). +1 dado en críticos.' },
-  'Tiefling':             { speed: '9m',    sight: 'Oscuridad 18m',  trait: '+1 INT, +2 CAR. Resistencia al fuego. Magia infernal innata.' },
-  'Personalizado':        { speed: '—',     sight: '—',              trait: 'Especie de campaña o personalizada.' }
+  'Enano de Colinas':     { speed: '25 ft',  sight: 'Oscuridad 60 ft',  trait: '+1 SAB, +1 PG por nivel. Resistencia al veneno.' },
+  'Enano de Montañas':    { speed: '25 ft',  sight: 'Oscuridad 60 ft',  trait: '+2 FUE. Competencia con armaduras ligeras y medias.' },
+  'Elfo Alto':            { speed: '30 ft',  sight: 'Oscuridad 60 ft',  trait: '+1 INT. Un truco de mago. Idioma adicional.' },
+  'Elfo de los Bosques':  { speed: '35 ft',  sight: 'Oscuridad 60 ft',  trait: 'Velocidad extra. Puede esconderse en terreno natural incluso cuando es observado.' },
+  'Drow (Elfo Oscuro)':   { speed: '30 ft',  sight: 'Oscuridad 120 ft', trait: 'Magia innata. Desventaja bajo luz solar directa.' },
+  'Mediano Pie Ligero':   { speed: '25 ft',  sight: 'Normal',           trait: 'Suerte (relanzar 1s). Puede esconderse tras criaturas más grandes.' },
+  'Mediano Robusto':      { speed: '25 ft',  sight: 'Normal',           trait: '+1 CON. Resistencia al veneno. Suerte.' },
+  'Humano Estándar':      { speed: '30 ft',  sight: 'Normal',           trait: '+1 a todos los atributos. Un idioma adicional.' },
+  'Humano Variante':      { speed: '30 ft',  sight: 'Normal',           trait: '+1 a dos atributos. Una competencia y una dote a nivel 1.' },
+  'Dracónido':            { speed: '30 ft',  sight: 'Normal',           trait: '+2 FUE, +1 CAR. Arma de soplo y resistencia según linaje.' },
+  'Gnomo de las Rocas':   { speed: '25 ft',  sight: 'Oscuridad 60 ft',  trait: '+2 INT, +1 CON. Herramientas de artesano. Ventaja vs. magia.' },
+  'Gnomo de los Bosques': { speed: '25 ft',  sight: 'Oscuridad 60 ft',  trait: '+2 INT, +1 DES. Habla con animales pequeños. Truco de ilusión mayor.' },
+  'Semi-Elfo':            { speed: '30 ft',  sight: 'Oscuridad 60 ft',  trait: '+2 CAR, +1 a dos atributos. Dos competencias. Resistencia a encantamientos.' },
+  'Semi-Orco':            { speed: '30 ft',  sight: 'Oscuridad 60 ft',  trait: 'Resistencia feroz (sobrevive con 1 PG una vez). +1 dado en críticos.' },
+  'Tiefling':             { speed: '30 ft',  sight: 'Oscuridad 60 ft',  trait: '+1 INT, +2 CAR. Resistencia al fuego. Magia infernal innata.' },
+  'Personalizado':        { speed: '—',      sight: '—',                trait: 'Especie de campaña o personalizada.' }
 };
 
 // ═══════════════════════════════════════════════

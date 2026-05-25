@@ -692,6 +692,49 @@
     });
 
     // ══════════════════════════════════════════
+    //  FEAT-20 — Migración metros → pies (v3→v4)
+    // ══════════════════════════════════════════
+    section('FEAT-20 — Migración de velocidad metros → pies');
+
+    test('migrateState v3→v4: "9m" → "30 ft" (valor más común)', () => {
+      const r = window.migrateState({ version: 3, statSpeed: '9m' });
+      assertEqual(r.statSpeed, '30 ft');
+      assertEqual(r.version, 4);
+    });
+
+    test('migrateState v3→v4: "9" (numérico sin unidad del wizard antiguo) → "30 ft"', () => {
+      const r = window.migrateState({ version: 3, statSpeed: '9' });
+      assertEqual(r.statSpeed, '30 ft');
+    });
+
+    test('migrateState v3→v4: "7.5m" → "25 ft" (enano/mediano/gnomo)', () => {
+      const r = window.migrateState({ version: 3, statSpeed: '7.5m' });
+      assertEqual(r.statSpeed, '25 ft');
+    });
+
+    test('migrateState v3→v4: "10.5m" → "35 ft" (elfo de bosques)', () => {
+      const r = window.migrateState({ version: 3, statSpeed: '10.5m' });
+      assertEqual(r.statSpeed, '35 ft');
+    });
+
+    test('migrateState v3→v4: "30 ft" ya migrado → se deja intacto', () => {
+      const r = window.migrateState({ version: 3, statSpeed: '30 ft' });
+      assertEqual(r.statSpeed, '30 ft');
+    });
+
+    test('migrateState v3→v4: statSpeed null → no lanza error y sube version', () => {
+      const r = window.migrateState({ version: 3, statSpeed: null });
+      assertEqual(r.version, 4);
+      assertEqual(r.statSpeed, null);
+    });
+
+    test('migrateState v4: no modifica velocidad ya en v4', () => {
+      const r = window.migrateState({ version: 4, statSpeed: '25 ft' });
+      assertEqual(r.statSpeed, '25 ft');
+      assertEqual(r.version, 4);
+    });
+
+    // ══════════════════════════════════════════
     //  FEAT-15 — Lore en armas y conjuros
     // ══════════════════════════════════════════
     section('FEAT-15 — Lore en armas y conjuros');

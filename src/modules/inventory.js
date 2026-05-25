@@ -196,7 +196,7 @@ export function renderInventory() {
     footer.className = 'inv-footer';
     list.parentElement.appendChild(footer);
   }
-  const speedNote = speedBonus ? ` · <span style="color:var(--gold)">+${speedBonus} vel. desde equipo</span>` : '';
+  const speedNote = speedBonus ? ` · <span style="color:var(--gold)">+${speedBonus} ft vel. desde equipo</span>` : '';
   footer.innerHTML = `<span>Carga total: <strong>${totalWeight % 1 === 0 ? totalWeight : totalWeight.toFixed(1)} lb</strong></span>${speedNote}`;
 
   updateArmorClass();

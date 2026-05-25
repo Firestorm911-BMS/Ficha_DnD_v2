@@ -2,8 +2,8 @@
   {
     "id": "Enano",
     "nombre": "Enano",
-    "speed": 7.5,
-    "vision": "Oscuridad 18m",
+    "speed": 25,
+    "vision": "Oscuridad 60 ft",
     "abilityBonus": { "CON": 2 },
     "traits": [
       "Resistencia al veneno (ventaja en TS y resistencia al daño por veneno)",
@@ -33,8 +33,8 @@
   {
     "id": "Elfo",
     "nombre": "Elfo",
-    "speed": 9,
-    "vision": "Oscuridad 18m",
+    "speed": 30,
+    "vision": "Oscuridad 60 ft",
     "abilityBonus": { "DEX": 2 },
     "traits": [
       "Ancestro feérico (ventaja en TS contra ser hechizado; inmune a magia de sueño)",
@@ -58,11 +58,11 @@
         "id": "Elfo de los Bosques",
         "nombre": "Elfo de los Bosques",
         "abilityBonus": { "WIS": 1 },
-        "speed": 10.5,
+        "speed": 35,
         "traits": [
           "Entrenamiento con armas élficas (espadas largas, estoques, arcos cortos, arcos largos)",
           "Máscara del bosque (esconderse incluso cuando solo ligeramente oscurecido por follaje, lluvia, nieve, niebla o fenómenos naturales)",
-          "Velocidad 10.5m"
+          "Velocidad 35 ft"
         ],
         "desc": "Sigilosos y ágiles. Guardianes de los bosques, maestros del camouflaje y la flecha."
       },
@@ -70,9 +70,9 @@
         "id": "Drow",
         "nombre": "Drow (Elfo Oscuro)",
         "abilityBonus": { "CHA": 1 },
-        "vision": "Oscuridad superior 36m",
+        "vision": "Oscuridad superior 120 ft",
         "traits": [
-          "Visión superior en la oscuridad (36m)",
+          "Visión superior en la oscuridad (120 ft)",
           "Sensibilidad a la luz solar (desventaja en ataques y Percepción bajo luz solar directa)",
           "Magia drow: Luces danzantes (truco). Fuego de hadas (nivel 3). Oscuridad (nivel 5).",
           "Entrenamiento con armas drow (estoques, ballesta de mano, espadas cortas)"
@@ -85,7 +85,7 @@
   {
     "id": "Mediano",
     "nombre": "Mediano",
-    "speed": 7.5,
+    "speed": 25,
     "vision": "Normal",
     "abilityBonus": { "DEX": 2 },
     "traits": [
@@ -115,7 +115,7 @@
   {
     "id": "Humano",
     "nombre": "Humano",
-    "speed": 9,
+    "speed": 30,
     "vision": "Normal",
     "abilityBonus": {},
     "traits": [],
@@ -141,7 +141,7 @@
   {
     "id": "Dracónido",
     "nombre": "Dracónido",
-    "speed": 9,
+    "speed": 30,
     "vision": "Normal",
     "abilityBonus": { "STR": 2, "CHA": 1 },
     "traits": [
@@ -150,24 +150,24 @@
     ],
     "languages": ["Común", "Dracónico"],
     "subraces": [
-      { "id": "Ancestro Negro",   "nombre": "Negro  (Ácido)",      "traits": ["Soplo: línea 1.5×9m — TS DEX. Resistencia al ácido."],      "desc": "Dragones negros, señores de los pantanos. Soplo de ácido corrosivo." },
-      { "id": "Ancestro Azul",    "nombre": "Azul  (Relámpago)",   "traits": ["Soplo: línea 1.5×9m — TS DEX. Resistencia al relámpago."],   "desc": "Dragones del desierto. Soplo de relámpago devastador." },
-      { "id": "Ancestro Cobre",   "nombre": "Cobre  (Ácido)",      "traits": ["Soplo: línea 1.5×9m — TS DEX. Resistencia al ácido."],       "desc": "Dragones traviesos y bromistas. Soplo de ácido." },
-      { "id": "Ancestro Dorado",  "nombre": "Dorado  (Fuego)",     "traits": ["Soplo: cono 4.5m — TS DEX. Resistencia al fuego."],          "desc": "Los más nobles de los dragones metálicos. Soplo de fuego cegador." },
-      { "id": "Ancestro Latón",   "nombre": "Latón  (Fuego)",      "traits": ["Soplo: línea 1.5×9m — TS DEX. Resistencia al fuego."],       "desc": "Dragones parlanchines y amigables. Soplo de fuego en línea." },
-      { "id": "Ancestro Plateado","nombre": "Plateado  (Frío)",    "traits": ["Soplo: cono 4.5m — TS CON. Resistencia al frío."],           "desc": "Dragones guardianes. Soplo de frío paralizante." },
-      { "id": "Ancestro Bronce",  "nombre": "Bronce  (Relámpago)", "traits": ["Soplo: línea 1.5×9m — TS DEX. Resistencia al relámpago."],   "desc": "Dragones curiosos y aventureros. Soplo de relámpago." },
-      { "id": "Ancestro Verde",   "nombre": "Verde  (Veneno)",     "traits": ["Soplo: cono 4.5m — TS CON. Resistencia al veneno."],         "desc": "Dragones manipuladores del bosque. Soplo de nube venenosa." },
-      { "id": "Ancestro Rojo",    "nombre": "Rojo  (Fuego)",       "traits": ["Soplo: cono 4.5m — TS DEX. Resistencia al fuego."],          "desc": "Los más temidos de todos. Soplo de llamas ardientes." },
-      { "id": "Ancestro Blanco",  "nombre": "Blanco  (Frío)",      "traits": ["Soplo: cono 4.5m — TS CON. Resistencia al frío."],           "desc": "Dragones primitivos de las regiones árticas. Soplo de frío." }
+      { "id": "Ancestro Negro",    "nombre": "Negro  (Ácido)",      "traits": ["Soplo: línea 5×30 ft — TS DEX. Resistencia al ácido."],      "desc": "Dragones negros, señores de los pantanos. Soplo de ácido corrosivo." },
+      { "id": "Ancestro Azul",     "nombre": "Azul  (Relámpago)",   "traits": ["Soplo: línea 5×30 ft — TS DEX. Resistencia al relámpago."],   "desc": "Dragones del desierto. Soplo de relámpago devastador." },
+      { "id": "Ancestro Cobre",    "nombre": "Cobre  (Ácido)",      "traits": ["Soplo: línea 5×30 ft — TS DEX. Resistencia al ácido."],       "desc": "Dragones traviesos y bromistas. Soplo de ácido." },
+      { "id": "Ancestro Dorado",   "nombre": "Dorado  (Fuego)",     "traits": ["Soplo: cono 15 ft — TS DEX. Resistencia al fuego."],          "desc": "Los más nobles de los dragones metálicos. Soplo de fuego cegador." },
+      { "id": "Ancestro Latón",    "nombre": "Latón  (Fuego)",      "traits": ["Soplo: línea 5×30 ft — TS DEX. Resistencia al fuego."],       "desc": "Dragones parlanchines y amigables. Soplo de fuego en línea." },
+      { "id": "Ancestro Plateado", "nombre": "Plateado  (Frío)",    "traits": ["Soplo: cono 15 ft — TS CON. Resistencia al frío."],           "desc": "Dragones guardianes. Soplo de frío paralizante." },
+      { "id": "Ancestro Bronce",   "nombre": "Bronce  (Relámpago)", "traits": ["Soplo: línea 5×30 ft — TS DEX. Resistencia al relámpago."],   "desc": "Dragones curiosos y aventureros. Soplo de relámpago." },
+      { "id": "Ancestro Verde",    "nombre": "Verde  (Veneno)",     "traits": ["Soplo: cono 15 ft — TS CON. Resistencia al veneno."],         "desc": "Dragones manipuladores del bosque. Soplo de nube venenosa." },
+      { "id": "Ancestro Rojo",     "nombre": "Rojo  (Fuego)",       "traits": ["Soplo: cono 15 ft — TS DEX. Resistencia al fuego."],          "desc": "Los más temidos de todos. Soplo de llamas ardientes." },
+      { "id": "Ancestro Blanco",   "nombre": "Blanco  (Frío)",      "traits": ["Soplo: cono 15 ft — TS CON. Resistencia al frío."],           "desc": "Dragones primitivos de las regiones árticas. Soplo de frío." }
     ],
     "desc": "Orgullosos humanoides de linaje dracónico. Portadores de un soplo devastador y resistencia elemental."
   },
   {
     "id": "Gnomo",
     "nombre": "Gnomo",
-    "speed": 7.5,
-    "vision": "Oscuridad 18m",
+    "speed": 25,
+    "vision": "Oscuridad 60 ft",
     "abilityBonus": { "INT": 2 },
     "traits": [
       "Astucia gnómica (ventaja en TS de INT, SAB y CAR contra magia)"
@@ -200,8 +200,8 @@
   {
     "id": "Semi-Elfo",
     "nombre": "Semi-Elfo",
-    "speed": 9,
-    "vision": "Oscuridad 18m",
+    "speed": 30,
+    "vision": "Oscuridad 60 ft",
     "abilityBonus": { "CHA": 2, "_choose2": 1 },
     "traits": [
       "+2 CAR y +1 a dos atributos a elección (no CAR)",
@@ -215,8 +215,8 @@
   {
     "id": "Semi-Orco",
     "nombre": "Semi-Orco",
-    "speed": 9,
-    "vision": "Oscuridad 18m",
+    "speed": 30,
+    "vision": "Oscuridad 60 ft",
     "abilityBonus": { "STR": 2, "CON": 1 },
     "traits": [
       "Amenazador (competencia en Intimidar)",
@@ -230,8 +230,8 @@
   {
     "id": "Tiefling",
     "nombre": "Tiefling",
-    "speed": 9,
-    "vision": "Oscuridad 18m",
+    "speed": 30,
+    "vision": "Oscuridad 60 ft",
     "abilityBonus": { "INT": 1, "CHA": 2 },
     "traits": [
       "Resistencia infernal (resistencia al daño por fuego)",

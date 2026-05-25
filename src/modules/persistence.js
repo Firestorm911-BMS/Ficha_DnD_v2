@@ -146,6 +146,31 @@ export function migrateState(raw) {
     raw.trackerEntries ??= [];
     raw.version         = 3;
   }
+  if (v < 4) {
+    // Convertir velocidad de metros a pies (PHB oficial en inglés).
+    // Valores < 2 reconocidos: número solo ("9", "7.5") o con sufijo "m" ("9m").
+    // Valores con "ft" ya están migrados; cualquier otro texto se deja como está.
+    if (raw.statSpeed != null) {
+      const s = String(raw.statSpeed).trim();
+      if (!s.includes('ft')) {
+        // Tabla de valores PHB conocidos (metros → pies discretos del reglamento)
+        const known = { '6': 20, '6m': 20, '7.5': 25, '7.5m': 25, '9': 30, '9m': 30,
+                        '10.5': 35, '10.5m': 35, '12': 40, '12m': 40, '15': 50, '15m': 50 };
+        if (known[s] !== undefined) {
+          raw.statSpeed = known[s] + ' ft';
+        } else {
+          // Conversión genérica para cualquier otro valor métrico ("Xm")
+          const mMatch = s.match(/^([\d.]+)\s*m$/);
+          if (mMatch) {
+            const feet = Math.round(parseFloat(mMatch[1]) * 3.28084 / 5) * 5;
+            raw.statSpeed = feet + ' ft';
+          }
+          // Si no coincide con nada (texto libre del usuario) → se deja sin tocar
+        }
+      }
+    }
+    raw.version = 4;
+  }
   return raw;
 }
 

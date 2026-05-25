@@ -453,7 +453,7 @@ import { showToast } from './modules/toast-log.js';
     el.innerHTML = `
       <div style="font-family:Cinzel,serif;font-size:12px;color:var(--gold);margin-bottom:6px;letter-spacing:1px;">${esc(sub ? sub.nombre : race.nombre)}</div>
       <div style="margin-bottom:4px;"><strong style="color:var(--text-primary);">Atributos:</strong> ${bonStr || '—'}</div>
-      <div style="margin-bottom:4px;"><strong style="color:var(--text-primary);">Velocidad:</strong> ${sub?.speed ?? race.speed}m · <strong>Visión:</strong> ${esc(sub?.vision ?? race.vision)}</div>
+      <div style="margin-bottom:4px;"><strong style="color:var(--text-primary);">Velocidad:</strong> ${sub?.speed ?? race.speed} ft · <strong>Visión:</strong> ${esc(sub?.vision ?? race.vision)}</div>
       <div style="margin-bottom:4px;"><strong style="color:var(--text-primary);">Idiomas:</strong> ${esc(langs)}</div>
       ${traits ? `<ul style="margin:6px 0 0 16px;padding:0;color:var(--text-secondary);font-size:11px;">${traits}</ul>` : ''}
       ${sub?.desc ? `<div style="${css.hint}margin-top:6px;">${esc(sub.desc)}</div>` : ''}`;
@@ -1239,7 +1239,7 @@ import { showToast } from './modules/toast-log.js';
         ${stat('HP', hp, 'var(--green-light, #4caf80)')}
         ${stat('CA', ac, 'var(--blue-light, #4a9ede)')}
         ${stat('Inic', initBonus, 'var(--gold)')}
-        ${stat('Vel', speed + 'm', 'var(--text-primary)')}
+        ${stat('Vel', speed + ' ft', 'var(--text-primary)')}
       </div>
 
       <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:4px;margin-bottom:12px;">${ATTRS.map(scoreCell).join('')}</div>
@@ -1467,7 +1467,7 @@ import { showToast } from './modules/toast-log.js';
     window.setLevelDirect?.(totalLvl);
 
     // ─── Velocidad ───────────────────────────
-    set('statSpeed', speed);
+    set('statSpeed', speed + ' ft');
 
     // ─── Hero pills: clase, trasfondo, especie ───
     const raceLabel = sub ? sub.nombre : (race?.nombre || d.raceId);
