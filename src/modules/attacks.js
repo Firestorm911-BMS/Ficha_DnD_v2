@@ -154,7 +154,9 @@ export function renderAttacks() {
         </div>
       </div>
       <div class="attack-col-delete">
+        <button class="attack-sort-btn" onclick="moveAttack(${i},-1)" title="Subir" ${i === 0 ? 'disabled' : ''}>▲</button>
         <button class="attack-btn" onclick="deleteAttack(${i})">✕</button>
+        <button class="attack-sort-btn" onclick="moveAttack(${i},1)" title="Bajar" ${i === state.attacks.length - 1 ? 'disabled' : ''}>▼</button>
       </div>
       ${atk.lore ? `
       <div class="attack-lore-wrap">
@@ -183,6 +185,14 @@ export function updateAttackField(i, field, value) {
 
 export function deleteAttack(i) {
   state.attacks.splice(i, 1);
+  renderAttacks();
+  window.saveToLocal?.();
+}
+
+export function moveAttack(i, dir) {
+  const j = i + dir;
+  if (j < 0 || j >= state.attacks.length) return;
+  [state.attacks[i], state.attacks[j]] = [state.attacks[j], state.attacks[i]];
   renderAttacks();
   window.saveToLocal?.();
 }
@@ -422,6 +432,7 @@ window.renderAttacks          = renderAttacks;
 window.addAttack              = addAttack;
 window.updateAttackField      = updateAttackField;
 window.deleteAttack           = deleteAttack;
+window.moveAttack             = moveAttack;
 window.getAttackBonus         = getAttackBonus;
 window.formatDamageBonus      = formatDamageBonus;
 window.openAttackModal        = openAttackModal;
