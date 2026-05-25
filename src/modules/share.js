@@ -1,7 +1,7 @@
 import { state } from '../state.js';
 import { showToast, renderCombatLog } from './toast-log.js';
 import { escapeAttr } from './utils.js';
-import { getSaveKey, setSaveKey, makeSaveKey, _imgKey, _saveImages, loadFromLocal, KEY_POINTER } from './persistence.js';
+import { getSaveKey, setSaveKey, makeSaveKey, _imgKey, _saveImages, loadFromLocal, KEY_POINTER, migrateState } from './persistence.js';
 
 const CHARACTER_STATE = state.CHARACTER_STATE;
 let _pendingImport = null;
@@ -59,6 +59,10 @@ export function showJSONReview(data) {
   _pendingImport = data;
   document.getElementById('jsonReviewModal')?.remove();
 
+  // Migrar una copia del dato para mostrar los valores ya convertidos (ej: "9m" → "30 ft")
+  // sin tocar _pendingImport; la migración real corre en loadState al confirmar.
+  const preview = migrateState({ ...data });
+
   const scores = data.scores || {};
   const hp     = data.hp     || {};
   const meta   = data.metaValues || [];
@@ -102,7 +106,7 @@ export function showJSONReview(data) {
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px;">
         ${field('hpMax', 'PG Máximos', parseInt(hp.max)  || 1,   'number')}
         ${field('ac',    'CA',         parseInt(data.statAC)  || 10,  'number')}
-        ${field('speed', 'Velocidad',  data.statSpeed || '9m')}
+        ${field('speed', 'Velocidad',  preview.statSpeed || '30 ft')}
       </div>
 
       <div style="font-family:'Cinzel',serif;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px;">Puntuaciones de característica</div>
@@ -132,7 +136,7 @@ export function confirmJSONImport() {
   const bg    = g('bg')?.value.trim()    || '';
   const hpMax = parseInt(g('hpMax')?.value) || parseInt(_pendingImport.hp?.max) || 1;
   const ac    = parseInt(g('ac')?.value)    || 10;
-  const speed = g('speed')?.value.trim()   || _pendingImport.statSpeed || '9m';
+  const speed = g('speed')?.value.trim()   || _pendingImport.statSpeed || '30 ft';
 
   const scores = {};
   ['STR','DEX','CON','INT','WIS','CHA'].forEach(a => {
