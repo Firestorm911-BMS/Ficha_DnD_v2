@@ -84,6 +84,21 @@ export function changeExhaustion(delta) {
     if (lvl === 0) window.addCombatLog?.('✦ Agotamiento eliminado');
     else if (lvl === 6) window.addCombatLog?.('💀 Agotamiento nivel 6 — el personaje muere');
     else window.addCombatLog?.(`⚠ Agotamiento: nivel ${lvl} — ${EXHAUSTION_EFFECTS[lvl - 1]}`);
+    // Agotamiento Nv.4+: clampear PG actuales al nuevo máximo efectivo (RAW: los PG no pueden
+    // superar el máximo, y el máximo queda a la mitad — PHB 5e p.291 + regla general p.196)
+    if (lvl >= 4) {
+      const curEl = document.getElementById('hpCurrent');
+      const maxEl = document.getElementById('hpMax');
+      const cur  = parseInt(curEl?.textContent) || 0;
+      const max  = parseInt(maxEl?.textContent) || 0;
+      const effectiveMax = Math.max(1, Math.floor(max / 2));
+      if (cur > effectiveMax) {
+        if (curEl) curEl.textContent = String(effectiveMax);
+        window.addCombatLog?.(
+          `💀 Agotamiento Nv.4: PG reducidos ${cur}→${effectiveMax} (máximo a la mitad)`
+        );
+      }
+    }
     // Actualizar HP y velocidad en tiempo real al cambiar el agotamiento
     window.updateHP?.();
     window.__syncBattleStance?.();

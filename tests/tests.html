@@ -770,6 +770,35 @@
       state.CHARACTER_STATE.exhaustion = 0;
     });
 
+    test('Agotamiento Nv4: PG actuales se clampean al nuevo maximo (23/26 → 13/13)', () => {
+      state.CHARACTER_STATE.exhaustion = 3;
+      document.getElementById('hpCurrent').textContent = '23';
+      document.getElementById('hpMax').textContent = '26';
+      // Subir a Nv.4 via changeExhaustion
+      window.changeExhaustion?.(1);
+      assertEqual(state.CHARACTER_STATE.exhaustion, 4);
+      assertEqual(document.getElementById('hpCurrent').textContent, '13',
+        'PG actuales deben clampearse a 26/2=13');
+      // Limpiar
+      state.CHARACTER_STATE.exhaustion = 0;
+      document.getElementById('hpCurrent').textContent = '20';
+      document.getElementById('hpMax').textContent = '20';
+      window.updateHP?.();
+    });
+
+    test('Agotamiento Nv4: PG ya menores al maximo efectivo no se tocan (5/26 → 5/13)', () => {
+      state.CHARACTER_STATE.exhaustion = 3;
+      document.getElementById('hpCurrent').textContent = '5';
+      document.getElementById('hpMax').textContent = '26';
+      window.changeExhaustion?.(1);
+      assertEqual(document.getElementById('hpCurrent').textContent, '5',
+        'PG por debajo del maximo efectivo no deben cambiar');
+      state.CHARACTER_STATE.exhaustion = 0;
+      document.getElementById('hpCurrent').textContent = '20';
+      document.getElementById('hpMax').textContent = '20';
+      window.updateHP?.();
+    });
+
     // ─────────────────────────────────────────────
     //  Resumen
     // ─────────────────────────────────────────────
