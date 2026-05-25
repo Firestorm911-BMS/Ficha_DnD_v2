@@ -100,10 +100,10 @@ export function formatDamageBonus(n) {
 }
 
 export function renderAttacks() {
-  const tbody = document.getElementById('attacksList');
-  if (!tbody) return;
+  const container = document.getElementById('attacksList');
+  if (!container) return;
   normalizeAttacks();
-  tbody.innerHTML = '';
+  container.innerHTML = '';
   const crName = state.CHARACTER_STATE.classResource?.name || 'Recurso';
   const editMode = document.body.classList.contains('edit-mode');
   state.attacks.forEach((atk, i) => {
@@ -119,16 +119,18 @@ export function renderAttacks() {
     for (const ed of (atk.extraDamage || [])) {
       if (ed.dice) extraDmgHtml += `<span class="attack-extra-dmg">+ ${escapeAttr(ed.dice)} <em>${escapeAttr(ed.type || '')}</em></span>`;
     }
-    const tr = document.createElement('tr');
-    tr.className = atk.equipped ? 'attack-equipped' : 'attack-unequipped';
-    tr.innerHTML = `
-      <td>
+    const card = document.createElement('div');
+    card.className = 'attack-card ' + (atk.equipped ? 'attack-equipped' : 'attack-unequipped');
+    card.innerHTML = `
+      <div class="attack-col-name">
         <span class="attack-name" contenteditable="${editMode ? 'true' : 'false'}" oninput="updateAttackField(${i}, 'name', this.textContent)">${escapeAttr(atk.name)}</span>
         <span class="attack-meta">${atk.ability} ${atk.proficient ? '+ comp.' : ''}</span>
         ${stateTag}
-      </td>
-      <td><span class="roll-badge" onclick="rollAttack(${i})">${signed(getAttackBonus(atk))}</span></td>
-      <td>
+      </div>
+      <div class="attack-col-bonus">
+        <span class="roll-badge" onclick="rollAttack(${i})">${signed(getAttackBonus(atk))}</span>
+      </div>
+      <div class="attack-col-damage">
         <span class="attack-damage-text">${escapeAttr(atk.damage)} ${escapeAttr(atk.type || '')}</span>
         ${magicTag}
         ${atk.properties?.length ? `<span class="attack-props">${atk.properties.join(' · ')}</span>` : ''}
@@ -139,23 +141,19 @@ export function renderAttacks() {
           <button type="button" class="attack-mini-btn" onclick="rollAttackDamage(${i}, true)">Crítico</button>
           <button type="button" class="attack-mini-btn attack-edit-btn" onclick="openAttackModal(${i})">✎ Editar</button>
         </div>
-      </td>
-      <td><button class="attack-btn" onclick="deleteAttack(${i})">✕</button></td>
+      </div>
+      <div class="attack-col-delete">
+        <button class="attack-btn" onclick="deleteAttack(${i})">✕</button>
+      </div>
+      ${atk.lore ? `
+      <div class="attack-lore-wrap">
+        <details class="attack-lore-details">
+          <summary class="attack-lore-summary">📖 Lore / Historia</summary>
+          <p class="attack-lore-text">${escapeAttr(atk.lore)}</p>
+        </details>
+      </div>` : ''}
     `;
-    tbody.appendChild(tr);
-    // Lore row — fila separada con colspan para imitar estilo de tarjeta de conjuro
-    if (atk.lore) {
-      const loreTr = document.createElement('tr');
-      loreTr.className = 'attack-lore-row';
-      loreTr.innerHTML = `
-        <td colspan="4" class="attack-lore-cell">
-          <details class="attack-lore-details">
-            <summary class="attack-lore-summary">📖 Lore / Historia</summary>
-            <p class="attack-lore-text">${escapeAttr(atk.lore)}</p>
-          </details>
-        </td>`;
-      tbody.appendChild(loreTr);
-    }
+    container.appendChild(card);
   });
 }
 

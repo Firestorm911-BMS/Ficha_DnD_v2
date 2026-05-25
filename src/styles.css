@@ -3980,11 +3980,13 @@ body.rage-active::before {
   .bs-value { font-size: 28px; }
 }
 
-/* Polished attacks table — compact battle cards */
-.attacks-table { display: block; }
-.attacks-table thead { display: none; }
-.attacks-table tbody { display: flex; flex-direction: column; gap: 8px; }
-.attacks-table tr {
+/* Polished attack cards — div-based, lore spans full width */
+.attacks-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.attack-card {
   display: grid;
   grid-template-columns: 1.2fr 56px 1.6fr 28px;
   gap: 8px;
@@ -3995,41 +3997,46 @@ body.rage-active::before {
   padding: 10px 12px;
   transition: all 0.2s;
 }
-.attacks-table tr.attack-unequipped {
+.attack-card.attack-unequipped {
   opacity: 0.68;
 }
-.attacks-table tr:hover {
+.attack-card:hover {
   border-left-color: var(--gold);
   background: linear-gradient(135deg, rgba(40,28,15,0.85) 0%, rgba(60,40,20,0.6) 100%);
   transform: translateX(2px);
 }
-.attacks-table tr:hover td { background: transparent !important; }
-.attacks-table td {
-  border-bottom: none !important;
-  padding: 4px 6px !important;
-  font-family: 'IM Fell English', serif;
-}
-.attacks-table td:nth-child(1) {
+.attack-col-name {
   font-family: 'Cinzel', serif;
   font-size: 13px;
   color: var(--gold-light);
   font-weight: 600;
   letter-spacing: 0.5px;
+  padding: 4px 6px;
 }
-.attacks-table td:nth-child(2) {
+.attack-col-bonus {
   text-align: center;
   font-family: 'Cinzel Decorative', serif;
   font-size: 18px;
   color: var(--gold);
-  background: rgba(201,168,76,0.08) !important;
+  background: rgba(201,168,76,0.08);
   border: 1px solid rgba(201,168,76,0.2);
-  padding: 4px !important;
+  padding: 4px;
 }
-.attacks-table td:nth-child(3) {
+.attack-col-damage {
   font-size: 13px;
   color: var(--text-secondary);
+  font-family: 'IM Fell English', serif;
+  padding: 4px 6px;
 }
-.attacks-table .attack-btn {
+.attack-col-delete {
+  padding: 4px;
+}
+/* Lore — última fila del grid, ocupa todo el ancho */
+.attack-lore-wrap {
+  grid-column: 1 / -1;
+  padding: 2px 6px 4px;
+}
+.attack-card .attack-btn {
   width: 32px; height: 32px;
   background: linear-gradient(135deg, var(--gold-dark), var(--gold)) !important;
   color: #1a1a1a !important;
@@ -4038,11 +4045,11 @@ body.rage-active::before {
   transition: all 0.2s;
   font-size: 14px !important;
 }
-.attacks-table .attack-btn:hover {
+.attack-card .attack-btn:hover {
   transform: scale(1.15) rotate(15deg);
   box-shadow: 0 0 16px var(--gold-glow);
 }
-.attacks-table .attack-btn:active {
+.attack-card .attack-btn:active {
   transform: scale(0.9);
   box-shadow: 0 0 20px var(--gold-glow);
   background: linear-gradient(135deg, var(--gold), var(--gold-light)) !important;
@@ -5418,12 +5425,7 @@ input[type="range"] { min-height: 20px; }
 
 /* ─── FEAT-15: Lore fields — attacks & spells (2026-05-24) ─────────────── */
 
-/* Armas — fila separada con colspan="4" */
-.attack-lore-row { border-top: none; }
-.attack-lore-cell {
-  padding: 0 8px 6px 12px !important;
-  background: transparent;
-}
+/* Lore de armas y conjuros */
 .attack-lore-details,
 .spell-lore-details {
   margin-top: 2px;
