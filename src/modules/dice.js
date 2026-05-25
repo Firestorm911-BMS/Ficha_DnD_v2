@@ -129,7 +129,7 @@ function rollPolyhedral(sides, count, bonus, label) {
     addCombatLog(`🎲 ${label}: ${count}d${sides} ${detail}`);
   }, 800);
 
-  setTimeout(() => stage.classList.remove('open'), 2500);
+  // BUG-26: no auto-cerrar — el usuario hace clic para descartar
 }
 
 // window.rollFromChest is defined by the initDiceChestV15 IIFE in app.js (runs after this module)
@@ -524,7 +524,7 @@ function rollAttackDamage(i, isCrit = false) {
       showToast(`${isCrit ? '✦ CRÍTICO · ' : ''}Daño: ${totalDmg}`);
     }, 800);
 
-    setTimeout(() => { stage.classList.remove('open'); _resetDie(); }, 3200);
+    // BUG-26: no auto-cerrar — el usuario hace clic para descartar
   }
 
   // ── Master cinematic roll ─────────────────────
@@ -601,7 +601,8 @@ function rollAttackDamage(i, isCrit = false) {
       addCombatLog(`⚄ ${label}: ${detail}${modStr} = <strong style="color:${color}">${total}${isCrit?' ¡CRÍTICO!':isFumble?' ¡PIFIA!':''}</strong>`);
     }, 950);
 
-    const _stageDur = opts.stageDuration !== undefined ? opts.stageDuration : ((isCrit || isFumble) ? 2900 : 2000);
+    // BUG-26: por defecto no auto-cerrar; solo cerrar si el caller pasa stageDuration > 0 explícitamente
+    const _stageDur = opts.stageDuration !== undefined ? opts.stageDuration : 0;
     if (_stageDur > 0) setTimeout(() => stage.classList.remove('open'), _stageDur);
   };
 
