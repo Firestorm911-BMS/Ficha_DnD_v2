@@ -4060,7 +4060,8 @@ body.rage-active::before {
 /* Lore — última fila del grid, ocupa todo el ancho */
 .attack-lore-wrap {
   grid-column: 1 / -1;
-  padding: 2px 6px 4px;
+  padding: 0 6px 4px;
+  margin-top: -4px;
 }
 .attack-card .attack-btn {
   width: 32px; height: 32px;
@@ -5461,7 +5462,7 @@ input[type="range"] { min-height: 20px; }
 .attack-lore-summary,
 .spell-lore-summary {
   cursor: pointer;
-  font-size: 11px;
+  font-size: 13px;
   color: var(--gold);
   font-family: 'IM Fell English', serif;
   font-style: italic;
