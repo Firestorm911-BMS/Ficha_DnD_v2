@@ -802,3 +802,25 @@ input, select, textarea {
     min-height: 30px;
   }
 }
+
+/* ─── Agotamiento — indicador visual en stats reducidos ─── */
+.exhaustion-reduced-stat {
+  color: #ff5555 !important;
+  text-decoration: line-through;
+  animation: exhaustionCaution 1.8s infinite alternate;
+  cursor: help;
+}
+@keyframes exhaustionCaution {
+  0%   { text-shadow: 0 0 4px rgba(255,77,77,0.25); }
+  100% { text-shadow: 0 0 10px rgba(255,77,77,0.75); }
+}
+
+/* ─── Pip activo de ranura de conjuro — resplandor suave ─── */
+.spell-slots-row .pip.active {
+  box-shadow: 0 0 6px var(--gold-glow), 0 0 12px rgba(201,168,76,0.4);
+  animation: pipActiveGlow 2.5s infinite alternate;
+}
+@keyframes pipActiveGlow {
+  0%   { box-shadow: 0 0 3px var(--gold-glow), 0 0 8px rgba(201,168,76,0.3); }
+  100% { box-shadow: 0 0 8px var(--gold-glow), 0 0 18px rgba(201,168,76,0.6); }
+}

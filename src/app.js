@@ -685,18 +685,38 @@ document.addEventListener('keydown', e => {
     const cur = readNum('hpCurrent', 35);
     const max = readNum('hpMax', 35);
     const ac  = readNum('statAC', 14);
-    const sp  = readNum('statSpeed', 30);
+    const ex  = state.CHARACTER_STATE.exhaustion || 0;
+
+    // Velocidad base: leer de state (no del DOM) para evitar corrupcionar la velocidad base
+    // si se leyera del DOM después de que el display muestre la velocidad reducida.
+    const rawSpeed  = state.CHARACTER_STATE.statSpeed || '9m';
+    const baseSp    = parseInt(rawSpeed.replace(/[^\-0-9]/g, '')) || 9;
+    const spSuffix  = rawSpeed.includes('ft') ? 'ft' : 'm';
+
+    // Efectos de Agotamiento RAW (PHB 5e p.291)
+    const effectiveMax = (ex >= 4) ? Math.max(1, Math.floor(max / 2)) : max;
+    const effectiveSp  = (ex >= 5) ? 0 : (ex >= 2) ? Math.floor(baseSp / 2) : baseSp;
+
     const initText = document.getElementById('statInit')?.textContent?.trim() || '+0';
-    const bs = document.getElementById('bsHp');
+    const bs  = document.getElementById('bsHp');
     const cEl = document.getElementById('bsHpCur');
     const mEl = document.getElementById('bsHpMax');
     const bar = document.getElementById('bsHpBar');
     if (cEl) cEl.textContent = cur;
-    if (mEl) mEl.textContent = max;
+    if (mEl) {
+      mEl.textContent = effectiveMax;
+      if (ex >= 4) {
+        mEl.classList.add('exhaustion-reduced-stat');
+        mEl.title = `Agotamiento Nv.4: Vida máxima reducida a la mitad (base: ${max} PG)`;
+      } else {
+        mEl.classList.remove('exhaustion-reduced-stat');
+        mEl.title = '';
+      }
+    }
     if (bar) {
-      const pct = Math.max(0, Math.min(100, (cur/max)*100));
+      const pct = Math.max(0, Math.min(100, (cur/effectiveMax)*100));
       bar.style.width = pct + '%';
-      const hpState = (typeof hpStateFor === 'function') ? hpStateFor(cur, max) : 'healthy';
+      const hpState = (typeof hpStateFor === 'function') ? hpStateFor(cur, effectiveMax) : 'healthy';
       bar.setAttribute('data-state', hpState);
       bs?.setAttribute('data-hp-state', hpState);
       bar.classList.remove('low','critical');
@@ -704,9 +724,22 @@ document.addEventListener('keydown', e => {
       if (hpState === 'critical' || hpState === 'down') { bar.classList.add('critical'); bs?.classList.add('critical'); }
       else if (hpState === 'wounded') { bar.classList.add('low'); bs?.classList.add('low'); }
     }
-    const acEl = document.getElementById('bsAc'); if (acEl) acEl.textContent = ac;
-    const initEl = document.getElementById('bsInit'); if (initEl) initEl.textContent = initText;
-    const spEl = document.getElementById('bsSpeed'); if (spEl) spEl.textContent = sp;
+    const acEl   = document.getElementById('bsAc');    if (acEl)   acEl.textContent   = ac;
+    const initEl = document.getElementById('bsInit');  if (initEl) initEl.textContent = initText;
+    // Velocidad: actualizar SOLO el overlay (bsSpeed), NUNCA statSpeed (fuente de datos guardada)
+    const spEl = document.getElementById('bsSpeed');
+    if (spEl) {
+      spEl.textContent = effectiveSp + spSuffix;
+      if (ex >= 2) {
+        spEl.classList.add('exhaustion-reduced-stat');
+        spEl.title = ex >= 5
+          ? `Agotamiento Nv.5: Velocidad reducida a 0`
+          : `Agotamiento Nv.2: Velocidad reducida a la mitad (base: ${baseSp}${spSuffix})`;
+      } else {
+        spEl.classList.remove('exhaustion-reduced-stat');
+        spEl.title = '';
+      }
+    }
   }
   window.__syncBattleStance = syncBattleStance;
   ['hpCurrent','hpMax','statAC','statSpeed'].forEach(id => {

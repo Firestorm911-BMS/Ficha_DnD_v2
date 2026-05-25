@@ -62,6 +62,12 @@
     <div id="attackModal"></div>
     <input id="amName">
     <textarea id="amLore"></textarea>
+    <!-- Para syncBattleStance (exhaustion) -->
+    <span id="statSpeed">9m</span>
+    <span id="bsSpeed">9m</span>
+    <span id="bsHpMax">20</span>
+    <div  id="hpBar"></div>
+    <div  id="hpStatus"></div>
   </div>
 
   <div id="results"></div>
@@ -703,6 +709,65 @@
     test('normalizeAttack: lore undefined → string vacío', () => {
       const atk = normalizeAttack({ name: 'Bastón', lore: undefined });
       assertEqual(atk.lore, '');
+    });
+
+    // ══════════════════════════════════════════
+    //  Agotamiento — Efectos Dinámicos RAW (FEAT-18)
+    // ══════════════════════════════════════════
+    section('Agotamiento — Efectos Dinámicos RAW');
+
+    test('Agotamiento Nv0: HP máx sin clase de reducción', () => {
+      state.CHARACTER_STATE.exhaustion = 0;
+      document.getElementById('hpCurrent').textContent = '20';
+      document.getElementById('hpMax').textContent = '20';
+      window.updateHP();
+      assert(!document.getElementById('hpMax').classList.contains('exhaustion-reduced-stat'),
+        'hpMax no debe tener clase de reduccion en Nv.0');
+    });
+
+    test('Agotamiento Nv4: hpMax conserva valor base pero recibe clase visual', () => {
+      state.CHARACTER_STATE.exhaustion = 4;
+      document.getElementById('hpCurrent').textContent = '20';
+      document.getElementById('hpMax').textContent = '20';
+      window.updateHP();
+      assertEqual(document.getElementById('hpMax').textContent, '20');
+      assert(document.getElementById('hpMax').classList.contains('exhaustion-reduced-stat'),
+        'hpMax debe tener clase de reduccion en Nv.4');
+      state.CHARACTER_STATE.exhaustion = 0; window.updateHP();
+    });
+
+    test('Agotamiento Nv1: bsSpeed muestra velocidad normal', () => {
+      state.CHARACTER_STATE.exhaustion = 1;
+      state.CHARACTER_STATE.statSpeed = '9m';
+      window.__syncBattleStance?.();
+      assertEqual(document.getElementById('bsSpeed').textContent, '9m');
+      assert(!document.getElementById('bsSpeed').classList.contains('exhaustion-reduced-stat'),
+        'bsSpeed no debe reducirse en Nv.1');
+      state.CHARACTER_STATE.exhaustion = 0;
+    });
+
+    test('Agotamiento Nv2: bsSpeed = mitad, statSpeed intacto', () => {
+      state.CHARACTER_STATE.exhaustion = 2;
+      state.CHARACTER_STATE.statSpeed = '9m';
+      document.getElementById('statSpeed').textContent = '9m';
+      window.__syncBattleStance?.();
+      assertEqual(document.getElementById('bsSpeed').textContent, '4m');
+      assert(document.getElementById('bsSpeed').classList.contains('exhaustion-reduced-stat'),
+        'bsSpeed debe marcar reduccion en Nv.2');
+      assertEqual(document.getElementById('statSpeed').textContent, '9m',
+        'statSpeed base NO debe modificarse');
+      state.CHARACTER_STATE.exhaustion = 0;
+    });
+
+    test('Agotamiento Nv5: bsSpeed = 0m, statSpeed intacto', () => {
+      state.CHARACTER_STATE.exhaustion = 5;
+      state.CHARACTER_STATE.statSpeed = '9m';
+      document.getElementById('statSpeed').textContent = '9m';
+      window.__syncBattleStance?.();
+      assertEqual(document.getElementById('bsSpeed').textContent, '0m');
+      assertEqual(document.getElementById('statSpeed').textContent, '9m',
+        'statSpeed base NO debe modificarse');
+      state.CHARACTER_STATE.exhaustion = 0;
     });
 
     // ─────────────────────────────────────────────

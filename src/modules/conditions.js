@@ -84,6 +84,9 @@ export function changeExhaustion(delta) {
     if (lvl === 0) window.addCombatLog?.('✦ Agotamiento eliminado');
     else if (lvl === 6) window.addCombatLog?.('💀 Agotamiento nivel 6 — el personaje muere');
     else window.addCombatLog?.(`⚠ Agotamiento: nivel ${lvl} — ${EXHAUSTION_EFFECTS[lvl - 1]}`);
+    // Actualizar HP y velocidad en tiempo real al cambiar el agotamiento
+    window.updateHP?.();
+    window.__syncBattleStance?.();
     window.saveToLocal?.();
   }
 }

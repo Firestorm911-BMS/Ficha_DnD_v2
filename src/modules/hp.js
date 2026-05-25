@@ -34,7 +34,9 @@ export function setHP(current, temp = null) {
 export function syncCombatOverlay() {
   const cur = parseInt(document.getElementById('hpCurrent')?.textContent) || 0;
   const max = parseInt(document.getElementById('hpMax')?.textContent) || 35;
-  const pct = Math.max(0, Math.min(100, (cur / max) * 100));
+  const ex  = state.CHARACTER_STATE.exhaustion || 0;
+  const effectiveMax = (ex >= 4) ? Math.max(1, Math.floor(max / 2)) : max;
+  const pct = Math.max(0, Math.min(100, (cur / effectiveMax) * 100));
   const numEl = document.getElementById('combatHpNum');
   if (numEl) {
     numEl.textContent = cur;
@@ -69,8 +71,11 @@ export function syncCombatOverlay() {
 export function updateHP() {
   const cur = parseInt(document.getElementById('hpCurrent')?.textContent) || 0;
   const max = parseInt(document.getElementById('hpMax')?.textContent) || 35;
-  const pct = Math.max(0, Math.min(100, (cur / max) * 100));
-  const hpState = hpStateFor(cur, max);
+  // Agotamiento Nv.4+ → HP máximo reducido a la mitad (PHB 5e p.291)
+  const ex  = state.CHARACTER_STATE.exhaustion || 0;
+  const effectiveMax = (ex >= 4) ? Math.max(1, Math.floor(max / 2)) : max;
+  const pct     = Math.max(0, Math.min(100, (cur / effectiveMax) * 100));
+  const hpState = hpStateFor(cur, effectiveMax);
 
   const bar = document.getElementById('hpBar');
   if (bar) {
@@ -88,6 +93,19 @@ export function updateHP() {
     status.setAttribute('data-state', hpState);
     status.style.color = '';
   }
+
+  // Indicador visual en el valor de HP máximo (no se modifica el número — solo el estilo)
+  const maxEl = document.getElementById('hpMax');
+  if (maxEl) {
+    if (ex >= 4) {
+      maxEl.classList.add('exhaustion-reduced-stat');
+      maxEl.title = `Agotamiento Nv.4: Vida máxima reducida a la mitad (base: ${max} PG)`;
+    } else {
+      maxEl.classList.remove('exhaustion-reduced-stat');
+      maxEl.title = '';
+    }
+  }
+
   syncCombatOverlay();
   window.saveToLocal?.();
 }
