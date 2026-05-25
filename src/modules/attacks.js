@@ -161,7 +161,7 @@ export function renderAttacks() {
       ${atk.lore ? `
       <div class="attack-lore-wrap">
         <details class="attack-lore-details">
-          <summary class="attack-lore-summary">📖 Lore / Historia</summary>
+          <summary class="attack-lore-summary">📖 Backstory</summary>
           <p class="attack-lore-text">${escapeAttr(atk.lore)}</p>
         </details>
       </div>` : ''}

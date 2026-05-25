@@ -499,7 +499,7 @@ function buildSpellCard(spell) {
     <div class="spell-card-details" style="display:none;">
       <div class="spell-card-meta">${[spell.castTime,spell.range,spell.components,spell.duration].filter(Boolean).map(escapeAttr).join(' · ')}</div>
       <div class="spell-card-desc">${escapeAttr(spell.desc||'')}</div>
-      ${spell.lore ? `<details class="spell-lore-details"><summary class="spell-lore-summary">📖 Lore</summary><p class="spell-lore-text">${escapeAttr(spell.lore)}</p></details>` : ''}
+      ${spell.lore ? `<details class="spell-lore-details"><summary class="spell-lore-summary">📖 Backstory</summary><p class="spell-lore-text">${escapeAttr(spell.lore)}</p></details>` : ''}
       <div class="spell-card-actions">
         ${spell.attack ? `<button class="btn btn-sm" onclick="rollSpellAttack('${spell.id}')">${spell.attack==='ranged'?'🎯':'⚔'} Tirar ataque</button>` : ''}
         ${spell.concentration&&!isConc ? `<button class="btn btn-sm btn-primary" onclick="setConcentration('${spell.id}')">⚡ Concentrarme</button>` : ''}
