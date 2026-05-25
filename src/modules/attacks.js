@@ -78,6 +78,7 @@ export function normalizeAttack(atk = {}) {
     extraDamage: Array.isArray(atk.extraDamage) ? atk.extraDamage : [],
     weight: parseFloat(atk.weight) || 0,
     lore: atk.lore || '',
+    addAbilityMod: atk.addAbilityMod ?? false,   // false = bono ya bakeado en damage string (legacy)
   };
 }
 
@@ -97,6 +98,16 @@ export function formatDamageBonus(n) {
   const value = parseInt(n) || 0;
   if (!value) return '';
   return value > 0 ? `+${value}` : `${value}`;
+}
+
+function _dmgDisplay(atk) {
+  let dice = escapeAttr(atk.damage);
+  if (atk.addAbilityMod && atk.ability !== 'NONE') {
+    const mod = getMod(atk.ability || 'STR');
+    if (mod > 0) dice += `+${mod}`;
+    else if (mod < 0) dice += `${mod}`;
+  }
+  return `${dice} ${escapeAttr(atk.type || '')}`;
 }
 
 export function renderAttacks() {
@@ -131,7 +142,7 @@ export function renderAttacks() {
         <span class="roll-badge" onclick="rollAttack(${i})">${signed(getAttackBonus(atk))}</span>
       </div>
       <div class="attack-col-damage">
-        <span class="attack-damage-text">${escapeAttr(atk.damage)} ${escapeAttr(atk.type || '')}</span>
+        <span class="attack-damage-text">${_dmgDisplay(atk)}</span>
         ${magicTag}
         ${atk.properties?.length ? `<span class="attack-props">${atk.properties.join(' · ')}</span>` : ''}
         ${extraDmgHtml}
@@ -202,6 +213,8 @@ export function openAttackModal(i) {
     document.getElementById('amSyncInventory').checked = false;
     const amLoreEl = document.getElementById('amLore');
     if (amLoreEl) amLoreEl.value = atk.lore || '';
+    const amAMEl = document.getElementById('amAddAbilityMod');
+    if (amAMEl) amAMEl.checked = atk.addAbilityMod ?? false;
     if (presetSel) presetSel.value = '';
     _buildExtraDamageRows(atk.extraDamage || []);
   } else {
@@ -220,6 +233,8 @@ export function openAttackModal(i) {
     document.getElementById('amSyncInventory').checked = true;
     const amLoreElNew = document.getElementById('amLore');
     if (amLoreElNew) amLoreElNew.value = '';
+    const amAMElNew = document.getElementById('amAddAbilityMod');
+    if (amAMElNew) amAMElNew.checked = true;   // nuevas armas: mod dinámico por defecto
     if (presetSel) presetSel.value = '';
     _buildExtraDamageRows([]);
   }
@@ -243,6 +258,8 @@ export function onAttackPresetChange() {
   _setSelectValue('amAbility', w.ability);
   document.getElementById('amMelee').checked = w.melee;
   document.getElementById('amProperties').value = w.props.join(', ');
+  const amAM = document.getElementById('amAddAbilityMod');
+  if (amAM) amAM.checked = true;   // presets PHB: daño sin bono bakeado, usar mod dinámico
   _updateAttackPreview();
 }
 
@@ -278,8 +295,9 @@ export function saveAttackFromModal() {
   const weight = parseFloat(document.getElementById('amWeight')?.value || '0') || 0;
   const syncInventory = document.getElementById('amSyncInventory')?.checked ?? false;
   const lore = document.getElementById('amLore')?.value?.trim() || '';
+  const addAbilityMod = document.getElementById('amAddAbilityMod')?.checked ?? true;
 
-  const atk = { name, damage, type, ability, magicBonus, properties, proficient, equipped, melee, rage, attackBonus: null, extraDamage, weight, lore };
+  const atk = { name, damage, type, ability, magicBonus, properties, proficient, equipped, melee, rage, attackBonus: null, extraDamage, weight, lore, addAbilityMod };
 
   if (_attackModalIndex >= 0 && state.attacks[_attackModalIndex]) {
     state.attacks[_attackModalIndex] = atk;
@@ -381,7 +399,8 @@ function _updateAttackPreview() {
   const attackTotal = abilityMod + profBonus + magicBonus;
   const attackStr = attackTotal >= 0 ? `+${attackTotal}` : `${attackTotal}`;
 
-  const damageBonus = abilityMod + magicBonus;
+  const addAbilityMod = document.getElementById('amAddAbilityMod')?.checked ?? true;
+  const damageBonus = (addAbilityMod ? abilityMod : 0) + magicBonus;
   const bonusStr = damageBonus !== 0 ? (damageBonus > 0 ? `+${damageBonus}` : `${damageBonus}`) : '';
   let damageDisplay = `${damage}${bonusStr} ${type}`;
 

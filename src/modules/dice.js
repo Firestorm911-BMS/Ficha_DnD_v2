@@ -213,9 +213,10 @@ function showDamagePrompt(atk, dmg, isCrit, attackIndex) {
   const mult = isCrit ? 2 : 1;
   const rageBonus = getRageDamageBonus(atk);
   const magicBonus = atk.magicBonus || 0;
+  const abilityMod = atk.addAbilityMod ? getMod(atk.ability || 'STR') : 0;
   const groupsLabel = (dmg.groups || [{ count: dmg.count, sides: dmg.sides }])
     .map(g => `${Math.abs(g.count) * mult}d${g.sides}`).join('+');
-  const bonusLabel = formatDamageBonus(dmg.bonus + rageBonus + magicBonus);
+  const bonusLabel = formatDamageBonus(dmg.bonus + abilityMod + rageBonus + magicBonus);
   const extraLabel = (atk.extraDamage || []).map(ed => `+${ed.dice} ${ed.type}`).join(' ');
   const prompt = document.createElement('div');
   prompt.id = 'damagePrompt';
@@ -249,9 +250,10 @@ function rollAttackDamage(i, isCrit = false) {
   const dmg = parseDamageString(atk.damage);
   const rageBonus = getRageDamageBonus(atk);
   const magicBonus = atk.magicBonus || 0;
+  const abilityMod = atk.addAbilityMod ? getMod(atk.ability || 'STR') : 0;
   const mult = isCrit ? 2 : 1;
   const { total: diceTotal, parts } = rollAllDiceGroups(dmg.groups, mult);
-  const baseBonus = dmg.bonus + rageBonus + magicBonus;
+  const baseBonus = dmg.bonus + abilityMod + rageBonus + magicBonus;
   let total = Math.max(0, diceTotal + baseBonus);
   const bonusStr = formatDamageBonus(baseBonus);
   let detail = parts.join(' + ') + (bonusStr ? ` ${bonusStr}` : '');
@@ -468,7 +470,8 @@ function rollAttackDamage(i, isCrit = false) {
     const mult = isCrit ? 2 : 1;
     const rageBonus = getRageDamageBonus(atk);
     const magicBonus = atk.magicBonus || 0;
-    const baseBonus = dmg.bonus + rageBonus + magicBonus;
+    const abilityMod = atk.addAbilityMod ? getMod(atk.ability || 'STR') : 0;
+    const baseBonus = dmg.bonus + abilityMod + rageBonus + magicBonus;
 
     const { total: diceTotal, parts } = rollAllDiceGroups(dmg.groups, mult);
     let totalDmg = Math.max(0, diceTotal + baseBonus);
@@ -646,8 +649,9 @@ function rollAttackDamage(i, isCrit = false) {
           const mult   = result.crit ? 2 : 1;
           const rageB  = getRageDamageBonus(atk);
           const magicB = atk.magicBonus || 0;
+          const abilMod = atk.addAbilityMod ? getMod(atk.ability || 'STR') : 0;
           const glabel = (dmg.groups || []).map(g => `${Math.abs(g.count) * mult}d${g.sides}`).join('+');
-          const blabel = formatDamageBonus(dmg.bonus + rageB + magicB);
+          const blabel = formatDamageBonus(dmg.bonus + abilMod + rageB + magicB);
 
           const dmgBtn = document.createElement('button');
           dmgBtn.className   = 'btn btn-primary roll-dmg-btn';
