@@ -610,8 +610,10 @@ function rollAttackDamage(i, isCrit = false) {
   };
 
   function _weaponKey(atk) {
-    const n = (atk.name || '').toLowerCase();
-    if (atk.melee === false || /arco|ballesta|honda|dardo/.test(n)) return 'bow';
+    // Prioriza baseWeapon (nombre del preset original) sobre name (puede estar renombrado)
+    if (atk.melee === false) return 'bow';
+    const n = (atk.baseWeapon || atk.name || '').toLowerCase();
+    if (/arco|ballesta|honda|dardo/.test(n))                        return 'bow';
     if (/hacha/.test(n))                                             return 'axe';
     if (/tridente|lanza|pica|alabarda|guadaña|jabalina/.test(n))    return 'spear';
     if (/mazo|maza|porra|garrote|clava/.test(n))                    return 'mace';
@@ -631,6 +633,7 @@ function rollAttackDamage(i, isCrit = false) {
       mod: mod,
       stageDuration: 0,
       noSpin: true,
+      weaponSvg: WEAPON_SVGS[_weaponKey(atk)],
       onComplete: function(result) {
         const brk = document.getElementById('rollBreakdown');
         if (!brk) return;
@@ -746,6 +749,9 @@ function rollAttackDamage(i, isCrit = false) {
 
   updateBadge();
   renderLog();
+
+  // window bridge — necesario para renderAttacks() (attacks.js) que dibuja el icono de fondo
+  window.WEAPON_SVGS = WEAPON_SVGS;
 })();
 
 // ═══════════════════════════════════════════════

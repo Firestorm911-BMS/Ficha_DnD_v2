@@ -7,6 +7,23 @@ import { getEquipmentAttackBonus } from './inventory.js';
 
 const ATTACK_ABILITIES = ['STR', 'DEX', 'CON', 'INT', 'WIS', 'CHA'];
 
+// Mapa de nombre de preset (en minúsculas) → clave de SVG en WEAPON_SVGS (dice.js)
+const WEAPON_TYPE_MAP = {
+  'arco corto': 'bow',       'arco largo': 'bow',        'ballesta ligera': 'bow',
+  'ballesta pesada': 'bow',  'ballesta de mano': 'bow',  'honda': 'bow', 'dardo': 'bow',
+  'hacha de mano': 'axe',    'hacha de batalla': 'axe',  'gran hacha': 'axe',
+  'jabalina': 'spear',       'lanza': 'spear',           'lanza de guerra': 'spear',
+  'pica': 'spear',           'alabarda': 'spear',        'guja': 'spear', 'tridente': 'spear',
+  'garrote': 'mace',         'maza ligera': 'mace',      'maza': 'mace',
+  'gran mazo': 'mace',       'flagelo': 'mace',          'mayal de guerra': 'mace',
+  'pico de guerra': 'mace',  'estrella de mañana': 'mace', 'martillo de guerra': 'mace',
+  'daga': 'dagger',
+  'bastón': 'staff',
+  'látigo': 'whip',
+  'espada larga': 'sword',   'espada corta': 'sword',    'gran espada': 'sword',
+  'rapiera': 'sword',        'cimitarra': 'sword',       'hoz': 'sword',
+};
+
 const DAMAGE_TYPES = [
   'Ácido', 'Contundente', 'Cortante', 'Frío', 'Fuego', 'Fuerza',
   'Necrótico', 'Perforante', 'Psíquico', 'Radiante', 'Relámpago', 'Trueno', 'Veneno',
@@ -56,6 +73,23 @@ const WEAPON_PRESETS = [
 
 let _attackModalIndex = -1;
 
+/** Devuelve la clave del SVG de WEAPON_SVGS para un ataque dado.
+ *  Prioriza atk.baseWeapon (preset original) sobre atk.name (puede estar renombrado). */
+export function getWeaponKey(atk) {
+  if (atk.melee === false) return 'bow';
+  const n = (atk.baseWeapon || atk.name || '').toLowerCase();
+  const exact = WEAPON_TYPE_MAP[n];
+  if (exact) return exact;
+  if (/arco|ballesta|honda|dardo/.test(n)) return 'bow';
+  if (/hacha/.test(n))                                          return 'axe';
+  if (/tridente|lanza|pica|alabarda|guadaña|jabalina/.test(n)) return 'spear';
+  if (/mazo|maza|porra|garrote|clava/.test(n))                 return 'mace';
+  if (/daga|cuchillo/.test(n))                                  return 'dagger';
+  if (/báculo|bastón|cayado/.test(n))                          return 'staff';
+  if (/látigo/.test(n))                                         return 'whip';
+  return 'sword';
+}
+
 export function normalizeAttack(atk = {}) {
   const rawBonus = atk.attackBonus ?? atk.bonus ?? null;
   const parsedBonus = rawBonus !== null
@@ -79,6 +113,7 @@ export function normalizeAttack(atk = {}) {
     weight: parseFloat(atk.weight) || 0,
     lore: atk.lore || '',
     addAbilityMod: atk.addAbilityMod ?? false,   // false = bono ya bakeado en damage string (legacy)
+    baseWeapon: atk.baseWeapon || '',            // nombre del preset original (ej. 'Daga') — vacío si personalizada
   };
 }
 
@@ -130,12 +165,16 @@ export function renderAttacks() {
     for (const ed of (atk.extraDamage || [])) {
       if (ed.dice) extraDmgHtml += `<span class="attack-extra-dmg">+ ${escapeAttr(ed.dice)} <em>${escapeAttr(ed.type || '')}</em></span>`;
     }
+    const weaponKey = getWeaponKey(atk);
+    const weaponSvg = window.WEAPON_SVGS?.[weaponKey] || '';
     const card = document.createElement('div');
     card.className = 'attack-card ' + (atk.equipped ? 'attack-equipped' : 'attack-unequipped');
     card.innerHTML = `
+      ${weaponSvg ? `<div class="attack-card-bg-icon" aria-hidden="true">${weaponSvg}</div>` : ''}
       <div class="attack-col-name">
         <span class="attack-name" contenteditable="${editMode ? 'true' : 'false'}" oninput="updateAttackField(${i}, 'name', this.textContent)">${escapeAttr(atk.name)}</span>
         <span class="attack-meta">${atk.ability} ${atk.proficient ? '+ comp.' : ''}</span>
+        ${atk.baseWeapon ? `<span class="attack-base-tag">${escapeAttr(atk.baseWeapon)}</span>` : ''}
         ${stateTag}
       </div>
       <div class="attack-col-bonus">
@@ -225,6 +264,8 @@ export function openAttackModal(i) {
     if (amLoreEl) amLoreEl.value = atk.lore || '';
     const amAMEl = document.getElementById('amAddAbilityMod');
     if (amAMEl) amAMEl.checked = atk.addAbilityMod ?? false;
+    const amBWEl = document.getElementById('amBaseWeapon');
+    if (amBWEl) amBWEl.value = atk.baseWeapon || '';
     if (presetSel) presetSel.value = '';
     _buildExtraDamageRows(atk.extraDamage || []);
   } else {
@@ -245,6 +286,8 @@ export function openAttackModal(i) {
     if (amLoreElNew) amLoreElNew.value = '';
     const amAMElNew = document.getElementById('amAddAbilityMod');
     if (amAMElNew) amAMElNew.checked = true;   // nuevas armas: mod dinámico por defecto
+    const amBWElNew = document.getElementById('amBaseWeapon');
+    if (amBWElNew) amBWElNew.value = '';
     if (presetSel) presetSel.value = '';
     _buildExtraDamageRows([]);
   }
@@ -260,7 +303,12 @@ export function closeAttackModal() {
 export function onAttackPresetChange() {
   const sel = document.getElementById('amPreset');
   const idx = parseInt(sel?.value);
-  if (isNaN(idx) || idx < 0 || idx >= WEAPON_PRESETS.length) return;
+  const amBW = document.getElementById('amBaseWeapon');
+  if (isNaN(idx) || idx < 0 || idx >= WEAPON_PRESETS.length) {
+    // "— Personalizada —" seleccionada: limpiar arma base
+    if (amBW) amBW.value = '';
+    return;
+  }
   const w = WEAPON_PRESETS[idx];
   document.getElementById('amName').value = w.name;
   document.getElementById('amDamage').value = w.damage;
@@ -270,6 +318,7 @@ export function onAttackPresetChange() {
   document.getElementById('amProperties').value = w.props.join(', ');
   const amAM = document.getElementById('amAddAbilityMod');
   if (amAM) amAM.checked = true;   // presets PHB: daño sin bono bakeado, usar mod dinámico
+  if (amBW) amBW.value = w.name;   // guardar nombre del preset como arma base
   _updateAttackPreview();
 }
 
@@ -306,8 +355,9 @@ export function saveAttackFromModal() {
   const syncInventory = document.getElementById('amSyncInventory')?.checked ?? false;
   const lore = document.getElementById('amLore')?.value?.trim() || '';
   const addAbilityMod = document.getElementById('amAddAbilityMod')?.checked ?? true;
+  const baseWeapon = document.getElementById('amBaseWeapon')?.value?.trim() || '';
 
-  const atk = { name, damage, type, ability, magicBonus, properties, proficient, equipped, melee, rage, attackBonus: null, extraDamage, weight, lore, addAbilityMod };
+  const atk = { name, damage, type, ability, magicBonus, properties, proficient, equipped, melee, rage, attackBonus: null, extraDamage, weight, lore, addAbilityMod, baseWeapon };
 
   if (_attackModalIndex >= 0 && state.attacks[_attackModalIndex]) {
     state.attacks[_attackModalIndex] = atk;
@@ -427,6 +477,7 @@ function _updateAttackPreview() {
 }
 
 // ── Window bridges ─────────────────────────────────────────────────────────
+window.getWeaponKey           = getWeaponKey;
 window.normalizeAttack        = normalizeAttack;
 window.renderAttacks          = renderAttacks;
 window.addAttack              = addAttack;

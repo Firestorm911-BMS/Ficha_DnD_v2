@@ -3996,6 +3996,39 @@ body.rage-active::before {
   border-left: 3px solid var(--gold-dark);
   padding: 10px 12px;
   transition: all 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+/* Icono de arma de fondo — marca de agua decorativa */
+.attack-card-bg-icon {
+  position: absolute;
+  right: 40px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 62px;
+  height: 62px;
+  opacity: 0.06;
+  pointer-events: none;
+  z-index: 0;
+}
+.attack-card-bg-icon svg {
+  width: 100%;
+  height: 100%;
+}
+/* Badge que muestra el nombre del preset base */
+.attack-base-tag {
+  display: inline-block;
+  font-family: 'IM Fell English', serif;
+  font-size: 10px;
+  color: var(--gold-dark);
+  background: rgba(201,168,76,0.08);
+  border: 1px solid rgba(201,168,76,0.18);
+  border-radius: 3px;
+  padding: 1px 5px;
+  letter-spacing: 0.3px;
+  text-transform: none;
+  font-style: italic;
+  margin-top: 2px;
 }
 .attack-card.attack-unequipped {
   opacity: 0.68;
@@ -4012,6 +4045,8 @@ body.rage-active::before {
   font-weight: 600;
   letter-spacing: 0.5px;
   padding: 4px 6px;
+  position: relative;
+  z-index: 1;
 }
 .attack-col-bonus {
   text-align: center;
