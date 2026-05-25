@@ -4912,7 +4912,8 @@ input[type="range"] { min-height: 20px; }
   margin-bottom: 3px;
 }
 .attack-modal-box input,
-.attack-modal-box select {
+.attack-modal-box select,
+.attack-modal-box textarea {
   width: 100%;
   box-sizing: border-box;
   background: var(--bg-deep);
@@ -4924,10 +4925,12 @@ input[type="range"] { min-height: 20px; }
   border-radius: 4px;
 }
 .attack-modal-box input:focus,
-.attack-modal-box select:focus {
+.attack-modal-box select:focus,
+.attack-modal-box textarea:focus {
   outline: none;
   border-color: var(--gold);
 }
+.attack-modal-box textarea { min-height: 72px; resize: vertical; }
 .attack-modal-box .modal-actions {
   display: flex;
   gap: 8px;
