@@ -4002,14 +4002,15 @@ body.rage-active::before {
 /* Icono de arma de fondo — marca de agua decorativa */
 .attack-card-bg-icon {
   position: absolute;
-  right: 40px;
+  right: 36px;
   top: 50%;
   transform: translateY(-50%);
-  width: 62px;
-  height: 62px;
-  opacity: 0.06;
+  width: 72px;
+  height: 72px;
+  opacity: 0.22;
   pointer-events: none;
   z-index: 0;
+  filter: drop-shadow(0 0 6px rgba(201,168,76,0.4));
 }
 .attack-card-bg-icon svg {
   width: 100%;
