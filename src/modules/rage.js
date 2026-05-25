@@ -206,7 +206,7 @@ export function toggleRage() {
     state.CHARACTER_STATE.sneakAttackUsed = !state.CHARACTER_STATE.sneakAttackUsed;
     const used = state.CHARACTER_STATE.sneakAttackUsed;
     addCombatLog(used ? `${rIcon} ${rName} usado este turno` : `${rIcon} ${rName} disponible de nuevo`);
-    renderRage(); window.saveToLocal?.(); return;
+    renderRage(); window.saveState?.(); return;
   }
 
   if (!state.rageActive) {
@@ -223,7 +223,7 @@ export function toggleRage() {
     addCombatLog(`💨 ${rName} terminada`);
   }
   renderRage();
-  window.saveToLocal?.();
+  window.saveState?.();
 }
 
 export function toggleRagePip(el) {
@@ -235,7 +235,7 @@ export function toggleRagePip(el) {
     state.CHARACTER_STATE.rageUsesSpent = Math.max(0, spent - 1);
   }
   renderRage();
-  window.saveToLocal?.();
+  window.saveState?.();
 }
 
 export function addExtraResource(res) {
@@ -257,7 +257,7 @@ export function toggleExtraResourcePip(idx, el) {
   const spent   = r.usesSpent || 0;
   r.usesSpent   = el.classList.contains('available') ? Math.min(maxUses, spent + 1) : Math.max(0, spent - 1);
   renderRage();
-  window.saveToLocal?.();
+  window.saveState?.();
 }
 
 export function resetRageState() {

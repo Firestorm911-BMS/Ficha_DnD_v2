@@ -5414,9 +5414,16 @@ input[type="range"] { min-height: 20px; }
 }
 
 /* ─── FEAT-15: Lore fields — attacks & spells (2026-05-24) ─────────────── */
+
+/* Armas — fila separada con colspan="4" */
+.attack-lore-row { border-top: none; }
+.attack-lore-cell {
+  padding: 0 8px 6px 12px !important;
+  background: transparent;
+}
 .attack-lore-details,
 .spell-lore-details {
-  margin-top: 4px;
+  margin-top: 2px;
 }
 .attack-lore-summary,
 .spell-lore-summary {
@@ -5427,16 +5434,23 @@ input[type="range"] { min-height: 20px; }
   font-style: italic;
   user-select: none;
   list-style: none;
+  opacity: 0.8;
 }
 .attack-lore-summary::-webkit-details-marker,
 .spell-lore-summary::-webkit-details-marker { display: none; }
+.attack-lore-summary:hover,
+.spell-lore-summary:hover { opacity: 1; }
 .attack-lore-text,
 .spell-lore-text {
-  margin: 4px 0 2px 0;
+  margin: 6px 0 4px 0;
   font-size: 11px;
   color: var(--text-secondary);
   font-family: 'IM Fell English', serif;
   font-style: italic;
   white-space: pre-wrap;
-  line-height: 1.45;
+  line-height: 1.5;
+  padding: 6px 10px;
+  border-left: 2px solid var(--gold-dark);
+  background: rgba(201,168,76,0.04);
+  border-radius: 0 4px 4px 0;
 }

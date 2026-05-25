@@ -121,15 +121,11 @@ export function renderAttacks() {
     }
     const tr = document.createElement('tr');
     tr.className = atk.equipped ? 'attack-equipped' : 'attack-unequipped';
-    const loreHtml = atk.lore
-      ? `<details class="attack-lore-details"><summary class="attack-lore-summary">📖 Lore</summary><p class="attack-lore-text">${escapeAttr(atk.lore)}</p></details>`
-      : '';
     tr.innerHTML = `
       <td>
         <span class="attack-name" contenteditable="${editMode ? 'true' : 'false'}" oninput="updateAttackField(${i}, 'name', this.textContent)">${escapeAttr(atk.name)}</span>
         <span class="attack-meta">${atk.ability} ${atk.proficient ? '+ comp.' : ''}</span>
         ${stateTag}
-        ${loreHtml}
       </td>
       <td><span class="roll-badge" onclick="rollAttack(${i})">${signed(getAttackBonus(atk))}</span></td>
       <td>
@@ -147,6 +143,19 @@ export function renderAttacks() {
       <td><button class="attack-btn" onclick="deleteAttack(${i})">✕</button></td>
     `;
     tbody.appendChild(tr);
+    // Lore row — fila separada con colspan para imitar estilo de tarjeta de conjuro
+    if (atk.lore) {
+      const loreTr = document.createElement('tr');
+      loreTr.className = 'attack-lore-row';
+      loreTr.innerHTML = `
+        <td colspan="4" class="attack-lore-cell">
+          <details class="attack-lore-details">
+            <summary class="attack-lore-summary">📖 Lore / Historia</summary>
+            <p class="attack-lore-text">${escapeAttr(atk.lore)}</p>
+          </details>
+        </td>`;
+      tbody.appendChild(loreTr);
+    }
   });
 }
 
