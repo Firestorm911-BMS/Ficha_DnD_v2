@@ -2149,7 +2149,7 @@ body.edit-mode .trait-edit-controls { display: flex; }
 
 .inv-item {
   display: grid;
-  grid-template-columns: 24px 1fr auto auto auto auto;
+  grid-template-columns: 24px 1fr auto auto auto auto auto;
   align-items: center;
   gap: 8px;
   padding: 6px 8px;
@@ -2215,6 +2215,35 @@ body.edit-mode .trait-edit-controls { display: flex; }
 
 .inv-del { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 14px; transition: color 0.2s; }
 .inv-del:hover { color: #e74c3c; }
+
+/* ── Botones de orden (▲▼) ─────────────────── */
+.inv-sort-col {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.inv-sort-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 9px;
+  line-height: 1;
+  padding: 1px 3px;
+  border-radius: 3px;
+  transition: color 0.15s, background 0.15s;
+}
+
+.inv-sort-btn:hover:not(:disabled) {
+  color: var(--gold);
+  background: rgba(201,168,76,0.12);
+}
+
+.inv-sort-btn:disabled {
+  opacity: 0.2;
+  cursor: default;
+}
 
 /* ── Columna de nombre con badges de bono ─── */
 .inv-name-col {

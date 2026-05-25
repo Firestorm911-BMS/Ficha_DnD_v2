@@ -165,6 +165,7 @@ export function renderInventory() {
         ].join('')
       : '';
 
+    const n = state.inventory.length;
     const div = document.createElement('div');
     div.className = `inv-item ${item.equipped ? 'equipped' : ''}${item.qty === 0 ? ' depleted' : ''}`;
     div.innerHTML = `
@@ -177,6 +178,10 @@ export function renderInventory() {
       ${useBtn}
       <button class="inv-equip ${item.equipped ? 'active' : ''}" onclick="toggleInventoryEquipped(${i})" title="${item.equipped ? 'Equipado' : 'No equipado'}">${item.equipped ? 'Eq.' : 'Off'}</button>
       <button class="inv-del" onclick="deleteInvItem(${i})">✕</button>
+      <div class="inv-sort-col">
+        <button class="inv-sort-btn" onclick="moveInventoryItem(${i},-1)" title="Subir" ${i === 0 ? 'disabled' : ''}>▲</button>
+        <button class="inv-sort-btn" onclick="moveInventoryItem(${i}, 1)" title="Bajar" ${i === n - 1 ? 'disabled' : ''}>▼</button>
+      </div>
       ${mechanics}
     `;
     list.appendChild(div);
@@ -233,6 +238,14 @@ export function deleteInvItem(i) {
   window.saveToLocal?.();
 }
 
+export function moveInventoryItem(i, dir) {
+  const j = i + dir;
+  if (j < 0 || j >= state.inventory.length) return;
+  [state.inventory[i], state.inventory[j]] = [state.inventory[j], state.inventory[i]];
+  window.renderInventory?.();
+  window.saveToLocal?.();
+}
+
 // ── Window bridge ──────────────────────────────────────────────────────────
 window.normalizeInventoryItem  = normalizeInventoryItem;
 window.renderInventory         = renderInventory;
@@ -245,3 +258,4 @@ window.deleteInvItem           = deleteInvItem;
 window.useConsumable           = useConsumable;
 window.getEquipmentAttackBonus = getEquipmentAttackBonus;
 window.getEquipmentSpeedBonus  = getEquipmentSpeedBonus;
+window.moveInventoryItem       = moveInventoryItem;
