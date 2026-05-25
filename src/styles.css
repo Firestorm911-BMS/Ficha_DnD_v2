@@ -1741,14 +1741,14 @@ body.edit-mode .hero-pill[data-field="species"] .hero-pill-select  { display: in
 ═══════════════════════════════════════════════ */
 .conditions-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(114px, 1fr));
   gap: 6px;
 }
 
 .condition-tag {
   font-family: 'Cinzel', serif;
   font-size: 11px;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
   text-transform: uppercase;
   padding: 6px 8px;
   border: 1px solid var(--border);
@@ -1756,6 +1756,9 @@ body.edit-mode .hero-pill[data-field="species"] .hero-pill-select  { display: in
   cursor: pointer;
   transition: all 0.25s;
   color: var(--text-muted);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .condition-tag:hover { border-color: var(--gold-dark); color: var(--text-secondary); }
