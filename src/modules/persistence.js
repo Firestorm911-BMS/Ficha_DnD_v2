@@ -314,7 +314,7 @@ export function loadState(directData) {
       window.renderTracker?.();
     }
     if (data.spells && Array.isArray(data.spells)) {
-      state.spells = data.spells;
+      state.spells = data.spells.map(s => ({ ...s, lore: s.lore || '' }));
       window.renderSpellBook?.();
     }
     if (data.spellSlotsState && typeof data.spellSlotsState === 'object') {

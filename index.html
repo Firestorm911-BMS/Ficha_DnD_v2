@@ -1268,6 +1268,8 @@
     </div>
     <label>Descripción</label>
     <textarea id="smDesc" placeholder="Efecto, daño, TS, tirada de ataque…"></textarea>
+    <label style="margin-top:10px;display:block;">📖 Lore / Historia</label>
+    <textarea id="smLore" placeholder="Origen del conjuro, historia personal, cómo lo aprendiste, variantes propias…" style="min-height:72px;"></textarea>
     <div class="modal-actions">
       <button class="btn btn-sm" onclick="closeSpellModal()">Cancelar</button>
       <button class="btn btn-sm btn-primary" onclick="saveSpellModal()">✓ Guardar</button>
@@ -1365,6 +1367,11 @@
         <input type="checkbox" id="amSyncInventory" style="width:auto;accent-color:var(--gold);">
         <label style="margin:0;font-family:'IM Fell English',serif;font-size:13px;color:var(--text-secondary);text-transform:none;letter-spacing:0;">Agregar al equipamiento</label>
       </div>
+    </div>
+
+    <div style="margin-bottom:10px;">
+      <label>📖 Lore / Historia del arma</label>
+      <textarea id="amLore" placeholder="Historia, forja, maldición, propietarios anteriores…" style="min-height:72px;"></textarea>
     </div>
 
     <div id="amPreview" class="am-preview"></div>

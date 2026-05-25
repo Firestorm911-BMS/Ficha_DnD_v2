@@ -5412,3 +5412,31 @@ input[type="range"] { min-height: 20px; }
   color: var(--text-muted);
   margin-top: 2px;
 }
+
+/* ─── FEAT-15: Lore fields — attacks & spells (2026-05-24) ─────────────── */
+.attack-lore-details,
+.spell-lore-details {
+  margin-top: 4px;
+}
+.attack-lore-summary,
+.spell-lore-summary {
+  cursor: pointer;
+  font-size: 11px;
+  color: var(--gold);
+  font-family: 'IM Fell English', serif;
+  font-style: italic;
+  user-select: none;
+  list-style: none;
+}
+.attack-lore-summary::-webkit-details-marker,
+.spell-lore-summary::-webkit-details-marker { display: none; }
+.attack-lore-text,
+.spell-lore-text {
+  margin: 4px 0 2px 0;
+  font-size: 11px;
+  color: var(--text-secondary);
+  font-family: 'IM Fell English', serif;
+  font-style: italic;
+  white-space: pre-wrap;
+  line-height: 1.45;
+}

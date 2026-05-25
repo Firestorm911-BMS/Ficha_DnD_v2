@@ -55,8 +55,13 @@
     <select id="smAttack"><option value=""></option><option value="ranged">ranged</option></select>
     <select id="smCastAttr"><option value=""></option><option value="INT">INT</option></select>
     <textarea id="smDesc"></textarea>
+    <textarea id="smLore"></textarea>
     <select id="smSourceClass"><option value="">—</option><option value="Mago">Mago</option></select>
     <select id="smPreset"><option value="">—</option></select>
+    <!-- Para attackModal: campos de lore -->
+    <div id="attackModal"></div>
+    <input id="amName">
+    <textarea id="amLore"></textarea>
   </div>
 
   <div id="results"></div>
@@ -678,6 +683,26 @@
       const migrated = window.migrateState(raw);
       assertEqual(migrated.trackerEntries.length, 1, 'debe conservar la entrada existente');
       assertEqual(migrated.trackerEntries[0].name, 'Goblin');
+    });
+
+    // ══════════════════════════════════════════
+    //  FEAT-15 — Lore en armas y conjuros
+    // ══════════════════════════════════════════
+    section('FEAT-15 — Lore en armas y conjuros');
+
+    test('normalizeAttack: lore se preserva', () => {
+      const atk = normalizeAttack({ name: 'Espada Maldita', lore: 'Forjada por un demonio en el Abismo.' });
+      assertEqual(atk.lore, 'Forjada por un demonio en el Abismo.');
+    });
+
+    test('normalizeAttack: lore por defecto es string vacío', () => {
+      const atk = normalizeAttack({ name: 'Daga' });
+      assertEqual(atk.lore, '');
+    });
+
+    test('normalizeAttack: lore undefined → string vacío', () => {
+      const atk = normalizeAttack({ name: 'Bastón', lore: undefined });
+      assertEqual(atk.lore, '');
     });
 
     // ─────────────────────────────────────────────

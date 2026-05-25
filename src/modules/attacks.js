@@ -77,6 +77,7 @@ export function normalizeAttack(atk = {}) {
     magicBonus: typeof atk.magicBonus === 'number' ? atk.magicBonus : 0,
     extraDamage: Array.isArray(atk.extraDamage) ? atk.extraDamage : [],
     weight: parseFloat(atk.weight) || 0,
+    lore: atk.lore || '',
   };
 }
 
@@ -120,11 +121,15 @@ export function renderAttacks() {
     }
     const tr = document.createElement('tr');
     tr.className = atk.equipped ? 'attack-equipped' : 'attack-unequipped';
+    const loreHtml = atk.lore
+      ? `<details class="attack-lore-details"><summary class="attack-lore-summary">📖 Lore</summary><p class="attack-lore-text">${escapeAttr(atk.lore)}</p></details>`
+      : '';
     tr.innerHTML = `
       <td>
         <span class="attack-name" contenteditable="${editMode ? 'true' : 'false'}" oninput="updateAttackField(${i}, 'name', this.textContent)">${escapeAttr(atk.name)}</span>
         <span class="attack-meta">${atk.ability} ${atk.proficient ? '+ comp.' : ''}</span>
         ${stateTag}
+        ${loreHtml}
       </td>
       <td><span class="roll-badge" onclick="rollAttack(${i})">${signed(getAttackBonus(atk))}</span></td>
       <td>
@@ -188,6 +193,8 @@ export function openAttackModal(i) {
     document.getElementById('amRage').checked = atk.rage !== false;
     document.getElementById('amWeight').value = atk.weight || 0;
     document.getElementById('amSyncInventory').checked = false;
+    const amLoreEl = document.getElementById('amLore');
+    if (amLoreEl) amLoreEl.value = atk.lore || '';
     if (presetSel) presetSel.value = '';
     _buildExtraDamageRows(atk.extraDamage || []);
   } else {
@@ -204,6 +211,8 @@ export function openAttackModal(i) {
     document.getElementById('amRage').checked = true;
     document.getElementById('amWeight').value = 0;
     document.getElementById('amSyncInventory').checked = true;
+    const amLoreElNew = document.getElementById('amLore');
+    if (amLoreElNew) amLoreElNew.value = '';
     if (presetSel) presetSel.value = '';
     _buildExtraDamageRows([]);
   }
@@ -261,8 +270,9 @@ export function saveAttackFromModal() {
 
   const weight = parseFloat(document.getElementById('amWeight')?.value || '0') || 0;
   const syncInventory = document.getElementById('amSyncInventory')?.checked ?? false;
+  const lore = document.getElementById('amLore')?.value?.trim() || '';
 
-  const atk = { name, damage, type, ability, magicBonus, properties, proficient, equipped, melee, rage, attackBonus: null, extraDamage, weight };
+  const atk = { name, damage, type, ability, magicBonus, properties, proficient, equipped, melee, rage, attackBonus: null, extraDamage, weight, lore };
 
   if (_attackModalIndex >= 0 && state.attacks[_attackModalIndex]) {
     state.attacks[_attackModalIndex] = atk;

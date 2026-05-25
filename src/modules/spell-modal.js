@@ -199,6 +199,8 @@ export function openSpellModal(id = null, forceLevel = null) {
   document.getElementById('smAttack').value     = spell?.attack       || '';
   document.getElementById('smCastAttr').value   = spell?.castingAttr  || '';
   document.getElementById('smDesc').value       = spell?.desc         || '';
+  const smLoreEl = document.getElementById('smLore');
+  if (smLoreEl) smLoreEl.value = spell?.lore || '';
 
   modal.classList.add('open');
   setTimeout(() => document.getElementById('smName').focus(), 50);
@@ -223,6 +225,7 @@ export function saveSpellModal() {
     castingAttr:   document.getElementById('smCastAttr').value || null,
     sourceClass:   sourceClass || null,
     desc:          document.getElementById('smDesc').value.trim(),
+    lore:          document.getElementById('smLore')?.value?.trim() || '',
     prepared:      true,
   };
   if (_editingSpellId) {
