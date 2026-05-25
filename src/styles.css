@@ -3854,13 +3854,6 @@ body.shake-fumble { animation: screenShake .4s cubic-bezier(.36,.07,.19,.97); }
 }
 .adv-chip button.active { background: linear-gradient(135deg, var(--gold-dark), var(--gold)); color: #1a1a1a; font-weight: 700; }
 .adv-chip button:not(.active):hover { color: var(--gold); }
-.adv-chip-hint {
-  position: absolute; top: -18px; left: 50%; transform: translateX(-50%);
-  font-family: 'IM Fell English', serif; font-size: 11px; font-style: italic;
-  color: var(--text-muted); white-space: nowrap;
-  opacity: 0; transition: opacity .2s;
-}
-.adv-chip:hover .adv-chip-hint { opacity: 1; }
 
 /* Make rolls visibly tirables */
 .skill-row, .save-row { transition: background .15s, transform .15s; position: relative; }

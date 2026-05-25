@@ -282,7 +282,6 @@ function rollAttackDamage(i, isCrit = false) {
   const ROLL_KEY = 'dnd-roll-log';
   let rollLog = JSON.parse(localStorage.getItem(ROLL_KEY) || '[]');
   let advMode = 'normal';
-  let _prevAdv = null;
 
   // Inject overlay markup
   const stage = document.createElement('div');
@@ -331,10 +330,9 @@ function rollAttackDamage(i, isCrit = false) {
   advChip.className = 'adv-chip open';
   advChip.id = 'advChip';
   advChip.innerHTML = `
-    <button data-mode="dis"    title="Desventaja (Alt)">Desv.</button>
+    <button data-mode="dis"    title="Desventaja">Desv.</button>
     <button data-mode="normal" class="active">Normal</button>
-    <button data-mode="adv"    title="Ventaja (Shift)">Vent.</button>
-    <span class="adv-chip-hint">Shift = ventaja · Alt = desventaja</span>
+    <button data-mode="adv"    title="Ventaja">Vent.</button>
   `;
   document.body.appendChild(advChip);
   advChip.querySelectorAll('button').forEach(b => {
@@ -729,23 +727,6 @@ function rollAttackDamage(i, isCrit = false) {
     }
   });
 
-  // ── Keyboard: Shift=adv, Alt=dis ──
-  document.addEventListener('keydown', (e) => {
-    if (e.repeat) return;
-    if (e.key === 'Shift' && advMode !== 'adv') {
-      _prevAdv = advMode; advMode = 'adv';
-      advChip.querySelectorAll('button').forEach(x => x.classList.toggle('active', x.dataset.mode === 'adv'));
-    } else if (e.key === 'Alt' && advMode !== 'dis') {
-      _prevAdv = advMode; advMode = 'dis';
-      advChip.querySelectorAll('button').forEach(x => x.classList.toggle('active', x.dataset.mode === 'dis'));
-    }
-  });
-  document.addEventListener('keyup', (e) => {
-    if ((e.key === 'Shift' || e.key === 'Alt') && _prevAdv) {
-      advMode = _prevAdv; _prevAdv = null;
-      advChip.querySelectorAll('button').forEach(x => x.classList.toggle('active', x.dataset.mode === advMode));
-    }
-  });
 
   updateBadge();
   renderLog();
