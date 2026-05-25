@@ -5427,6 +5427,8 @@ input[type="range"] { min-height: 20px; }
 .attack-lore-details,
 .spell-lore-details {
   margin-top: 2px;
+  display: block;
+  width: 100%;
 }
 .attack-lore-summary,
 .spell-lore-summary {
@@ -5445,6 +5447,9 @@ input[type="range"] { min-height: 20px; }
 .spell-lore-summary:hover { opacity: 1; }
 .attack-lore-text,
 .spell-lore-text {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
   margin: 6px 0 4px 0;
   font-size: 11px;
   color: var(--text-secondary);
