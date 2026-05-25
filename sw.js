@@ -1,4 +1,4 @@
-const CACHE = 'dnd-ficha-v25';
+const CACHE = 'dnd-ficha-v26';
 const ASSETS = [
   './index.html',
   './src/app.js',
