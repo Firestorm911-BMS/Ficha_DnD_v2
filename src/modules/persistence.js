@@ -293,7 +293,9 @@ export function loadState(directData) {
     }
     CHARACTER_STATE.extraClassResources = Array.isArray(data.extraClassResources) ? data.extraClassResources : [];
     CHARACTER_STATE.levelHistory = (data.levelHistory && typeof data.levelHistory === 'object') ? data.levelHistory : {};
+    if (data.rageRoundsLeft != null) CHARACTER_STATE.rageRoundsLeft = data.rageRoundsLeft;
     renderRage();
+    window.__renderRageRounds?.();
 
     if (data.unarmedDefFormula) {
       const sel = document.getElementById('unarmedDefSelect');

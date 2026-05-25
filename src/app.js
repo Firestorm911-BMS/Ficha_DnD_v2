@@ -733,23 +733,33 @@ document.addEventListener('keydown', e => {
     `;
     rageCard.appendChild(div);
     const pipsRow = div.querySelector('#rageRoundsPips');
-    let rageRoundsLeft = 10;
+    // Usar CHARACTER_STATE como fuente de verdad para persistir entre recargas
+    if (CHARACTER_STATE.rageRoundsLeft == null) CHARACTER_STATE.rageRoundsLeft = 10;
     function renderRageRounds() {
+      const left = CHARACTER_STATE.rageRoundsLeft ?? 10;
       pipsRow.innerHTML = '';
       for (let i = 0; i < 10; i++) {
         const p = document.createElement('div');
-        p.className = 'rage-round-pip' + (i >= rageRoundsLeft ? ' spent' : '');
+        p.className = 'rage-round-pip' + (i >= left ? ' spent' : '');
         pipsRow.appendChild(p);
       }
     }
     window.__rageRoundConsume = () => {
-      if (rageRoundsLeft > 0) rageRoundsLeft--;
+      const cur = CHARACTER_STATE.rageRoundsLeft ?? 10;
+      if (cur > 0) CHARACTER_STATE.rageRoundsLeft = cur - 1;
       renderRageRounds();
-      if (rageRoundsLeft === 0 && typeof toggleRage === 'function' && state.rageActive) {
-        toggleRage();
+      window.saveState?.();
+      if (CHARACTER_STATE.rageRoundsLeft === 0 && state.rageActive) {
+        window.toggleRage?.();
       }
     };
-    window.__rageRoundReset = () => { rageRoundsLeft = 10; renderRageRounds(); };
+    window.__rageRoundReset = () => {
+      CHARACTER_STATE.rageRoundsLeft = 10;
+      renderRageRounds();
+      window.saveState?.();
+    };
+    // Exponer para que loadState lo llame tras restaurar el estado
+    window.__renderRageRounds = renderRageRounds;
     renderRageRounds();
     setInterval(() => {
       const isOn = state.rageActive;
@@ -757,7 +767,10 @@ document.addEventListener('keydown', e => {
       const isTemporal = cr && cr.physResist;
       div.style.display = isTemporal ? '' : 'none';
       div.classList.toggle('active', isOn && isTemporal);
-      if (!isOn && rageRoundsLeft !== 10) rageRoundsLeft = 10;
+      if (!isOn && (CHARACTER_STATE.rageRoundsLeft ?? 10) !== 10) {
+        CHARACTER_STATE.rageRoundsLeft = 10;
+        renderRageRounds();
+      }
       const lbl = document.getElementById('rageRoundsLabel');
       if (lbl && cr) lbl.textContent = `⏱ Rondas de ${cr.name || 'recurso'} restantes (max 10)`;
     }, 600);
