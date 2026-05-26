@@ -147,4 +147,14 @@ Sin React, sin Vue, sin bundler, sin TypeScript, sin servidor.
 
 ## Licencia
 
-[MIT](LICENSE)
+El **código fuente** de esta aplicación está bajo licencia [MIT](LICENSE).
+
+---
+
+## Aviso legal — Fan Content Policy
+
+**Bitácora del Héroe** es Fan Content no oficial permitido bajo la [Fan Content Policy de Wizards of the Coast](https://company.wizards.com/en/legal/fancontentpolicy). No está aprobado ni respaldado por Wizards of the Coast.
+
+Partes del material usado son propiedad de Wizards of the Coast LLC. ©Wizards of the Coast LLC.
+
+Este proyecto es gratuito y sin fines comerciales. Dungeons & Dragons, D&D y Wizards of the Coast son marcas registradas de Wizards of the Coast LLC.

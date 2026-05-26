@@ -5552,3 +5552,22 @@ input[type="range"] { min-height: 20px; }
   background: rgba(201,168,76,0.04);
   border-radius: 0 4px 4px 0;
 }
+
+/* Fan Content Policy disclaimer */
+.fan-content-footer {
+  text-align: center;
+  padding: 10px 16px;
+  font-size: 0.68rem;
+  color: var(--text-secondary, #888);
+  opacity: 0.7;
+  border-top: 1px solid rgba(201,168,76,0.15);
+  margin-top: 24px;
+  line-height: 1.5;
+}
+.fan-content-footer a {
+  color: var(--gold, #c9a84c);
+  text-decoration: none;
+}
+.fan-content-footer a:hover {
+  text-decoration: underline;
+}
